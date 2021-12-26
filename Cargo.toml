@@ -1,0 +1,9 @@
+[package]
+name = "toucan_ecs"
+version = "0.1.0"
+authors = ["tuguzT <timurka.tugushev@gmail.com>"]
+repository = "https://github.com/toucan-rust/toucan_ecs"
+readme = "README.md"
+edition = "2021"
+
+[dependencies]
