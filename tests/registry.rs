@@ -25,13 +25,32 @@ fn no_register() {
     registry.add(entity, Position { x: 0.0, y: 0.0 });
 }
 
-#[derive(Copy, Clone)]
+#[test]
+fn integration() {
+    let mut registry = Registry::new();
+    registry.register::<Position>();
+
+    for i in 0..=10 {
+        let position = Position {
+            x: i as f32,
+            y: i as f32,
+        };
+        let entity = registry.create_with(position);
+        assert!(registry.contains(entity));
+    }
+
+    for (entity, position) in registry.view::<Position>() {
+        println!("entity: {:?}, position: {:?}", entity, position)
+    }
+}
+
+#[derive(Copy, Clone, Debug)]
 struct Position {
     x: f32,
     y: f32,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 struct Velocity {
     dx: f32,
     dy: f32,

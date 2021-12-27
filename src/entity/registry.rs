@@ -63,11 +63,18 @@ impl Registry {
         pool.save(entity, component);
     }
 
-    pub fn view<C>(&self)
+    pub fn view<C>(&self) -> impl Iterator<Item = (Entity, &C)>
     where
         C: Component,
     {
-        todo!("get view on set of components from tuple (by macros 😨)")
+        // todo get view on set of components from tuple (by macros 😨)
+        let pool = self
+            .get_pool::<C>()
+            .expect("component must be registered to be used");
+        self.entities.iter().map(|(entity, _)| {
+            let component = &pool[entity];
+            (entity, component)
+        })
     }
 
     fn get_pool<C>(&self) -> Option<&ComponentPool<C>>
