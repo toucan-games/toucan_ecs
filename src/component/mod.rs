@@ -1,6 +1,6 @@
 use std::any::Any;
 
-pub mod registry;
+pub mod pool;
 
 pub trait Component: Copy + Any {}
 

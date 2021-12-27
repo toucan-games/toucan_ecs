@@ -6,7 +6,7 @@ slotmap::new_key_type! {
     struct ComponentKey;
 }
 
-pub struct ComponentRegistry<C>
+pub struct ComponentPool<C>
 where
     C: Component,
 {
@@ -14,7 +14,7 @@ where
     mapping: SecondaryMap<Entity, ComponentKey>,
 }
 
-impl<C> ComponentRegistry<C>
+impl<C> ComponentPool<C>
 where
     C: Component,
 {
@@ -47,7 +47,7 @@ where
         }
     }
 
-    pub fn attached(&self, entity: Entity) -> bool {
+    pub fn contains(&self, entity: Entity) -> bool {
         self.mapping.contains_key(entity)
     }
 }
