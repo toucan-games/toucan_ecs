@@ -34,13 +34,12 @@ impl Registry {
         self.entities.insert(())
     }
 
-    pub fn create_with<C>(&mut self, component: C) -> Entity
+    pub fn create_with<S>(&mut self, components: S) -> Entity
     where
-        C: Component,
+        S: AddSet,
     {
-        // todo create entity with provided set of components from tuple (by macros 😨)
         let entity = self.create();
-        self.add(entity, component);
+        self.add_set(entity, components);
         entity
     }
 
@@ -56,11 +55,17 @@ impl Registry {
     where
         C: Component,
     {
-        // todo insert set of components from tuple (by macros 😨)
         let pool = self
             .get_pool_mut::<C>()
             .expect("component must be registered to be used");
         pool.save(entity, component);
+    }
+
+    pub fn add_set<S>(&mut self, entity: Entity, components: S)
+    where
+        S: AddSet,
+    {
+        components.add_set(self, entity)
     }
 
     pub fn view<C>(&self) -> impl Iterator<Item = (Entity, &C)>
@@ -96,4 +101,40 @@ impl Registry {
         let pool = pool.as_mut().downcast_mut().expect("downcast error");
         Some(pool)
     }
+}
+
+pub trait AddSet {
+    fn add_set(self, registry: &mut Registry, entity: Entity);
+}
+
+mod impls {
+    use super::*;
+
+    macro_rules! add_set_impl {
+        ($($arg:ident),* | $($count:tt),*) => {
+            impl<$($arg),*> AddSet for ($($arg,)*)
+                where
+                    $($arg: Component,)*
+            {
+                fn add_set(self, registry: &mut Registry, entity: Entity) {
+                    $(registry.add(entity, self.$count);)*
+                }
+            }
+        };
+    }
+
+    add_set_impl!(A | 0);
+    add_set_impl!(A, B | 0, 1);
+    add_set_impl!(A, B, C | 0, 1, 2);
+    add_set_impl!(A, B, C, D | 0, 1, 2, 3);
+    add_set_impl!(A, B, C, D, E | 0, 1, 2, 3, 4);
+    add_set_impl!(A, B, C, D, E, F | 0, 1, 2, 3, 4, 5);
+    add_set_impl!(A, B, C, D, E, F, G | 0, 1, 2, 3, 4, 5, 6);
+    add_set_impl!(A, B, C, D, E, F, G, H | 0, 1, 2, 3, 4, 5, 6, 7);
+    add_set_impl!(A, B, C, D, E, F, G, H, I | 0, 1, 2, 3, 4, 5, 6, 7, 8);
+    add_set_impl!(A, B, C, D, E, F, G, H, I, J | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    #[rustfmt::skip]
+    add_set_impl!(A, B, C, D, E, F, G, H, I, J, K | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+    #[rustfmt::skip]
+    add_set_impl!(A, B, C, D, E, F, G, H, I, J, K, L | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 }
