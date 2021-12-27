@@ -2,11 +2,11 @@ use slotmap::SlotMap;
 
 use crate::{Component, Entity};
 
-pub struct EntityManager {
+pub struct Registry {
     entities: SlotMap<Entity, ()>,
 }
 
-impl EntityManager {
+impl Registry {
     pub fn new() -> Self {
         Self {
             entities: SlotMap::with_key(),
@@ -26,7 +26,7 @@ impl EntityManager {
         entity
     }
 
-    pub fn contains(&self, entity: Entity) -> bool {
+    pub fn attached(&self, entity: Entity) -> bool {
         self.entities.contains_key(entity)
     }
 

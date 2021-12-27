@@ -1,4 +1,4 @@
-pub use entity::Entity;
+pub use entity::{Entity, registry::Registry};
 pub use component::Component;
 pub use system::System;
 
