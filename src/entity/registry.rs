@@ -111,30 +111,25 @@ mod impls {
     use super::*;
 
     macro_rules! add_set_impl {
-        ($($arg:ident),* | $($count:tt),*) => {
-            impl<$($arg),*> AddSet for ($($arg,)*)
-                where
-                    $($arg: Component,)*
+        ($arg:ident | $count:tt) => ();
+
+        ($arg:ident $(, $args:ident)+ | $idx:tt $(, $idxs:tt)+) => {
+            impl<$arg$(, $args)+> AddSet for ($arg$(, $args)+)
+            where
+                $arg: Component$(,
+                $args: Component
+                )+,
             {
                 fn add_set(self, registry: &mut Registry, entity: Entity) {
-                    $(registry.add(entity, self.$count);)*
+                    registry.add(entity, self.$idx);
+                    $(registry.add(entity, self.$idxs);)*
                 }
             }
+
+            add_set_impl!($($args),+ | $($idxs),+);
         };
     }
 
-    add_set_impl!(A | 0);
-    add_set_impl!(A, B | 0, 1);
-    add_set_impl!(A, B, C | 0, 1, 2);
-    add_set_impl!(A, B, C, D | 0, 1, 2, 3);
-    add_set_impl!(A, B, C, D, E | 0, 1, 2, 3, 4);
-    add_set_impl!(A, B, C, D, E, F | 0, 1, 2, 3, 4, 5);
-    add_set_impl!(A, B, C, D, E, F, G | 0, 1, 2, 3, 4, 5, 6);
-    add_set_impl!(A, B, C, D, E, F, G, H | 0, 1, 2, 3, 4, 5, 6, 7);
-    add_set_impl!(A, B, C, D, E, F, G, H, I | 0, 1, 2, 3, 4, 5, 6, 7, 8);
-    add_set_impl!(A, B, C, D, E, F, G, H, I, J | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
     #[rustfmt::skip]
-    add_set_impl!(A, B, C, D, E, F, G, H, I, J, K | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-    #[rustfmt::skip]
-    add_set_impl!(A, B, C, D, E, F, G, H, I, J, K, L | 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+    add_set_impl!(L, K, J, I, H, G, F, E, D, C, B, A | 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
 }
