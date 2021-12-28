@@ -27,7 +27,7 @@ where
         }
     }
 
-    pub fn save(&mut self, entity: Entity, component: C) {
+    pub fn attach(&mut self, entity: Entity, component: C) {
         let component = self.components.insert(component);
         self.mapping.insert(entity, component);
     }
@@ -49,7 +49,7 @@ where
         }
     }
 
-    pub fn contains(&self, entity: Entity) -> bool {
+    pub fn attached(&self, entity: Entity) -> bool {
         self.mapping.contains_key(entity)
     }
 }

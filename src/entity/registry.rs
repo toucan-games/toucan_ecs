@@ -1,12 +1,12 @@
 use std::any::{Any, TypeId};
 use std::collections::HashMap;
+use std::iter::empty;
 
 use slotmap::SlotMap;
 
 use crate::component::pool::ComponentPool;
+use crate::entity::builder::EntityBuilder;
 use crate::{Component, Entity};
-
-use super::add_set::AddSet;
 
 pub struct Registry {
     entities: SlotMap<Entity, ()>,
@@ -25,27 +25,24 @@ impl Registry {
     where
         C: Component,
     {
-        let type_id = TypeId::of::<C>();
-        if let None = self.get_pool::<C>() {
-            let pool = ComponentPool::<C>::new();
-            self.pools.insert(type_id, Box::new(pool));
+        let pool = self.get_pool_mut::<C>();
+        if pool.is_none() {
+            self.create_pool::<C>();
         }
     }
 
-    pub fn create(&mut self) -> Entity {
+    pub fn create_entity(&mut self) -> Entity {
         self.entities.insert(())
     }
 
-    pub fn create_with<S>(&mut self, components: S) -> Entity
-    where
-        S: AddSet,
-    {
-        let entity = self.create();
-        self.add_set(entity, components);
-        entity
+    pub fn build_entity(&mut self) -> EntityBuilder {
+        EntityBuilder {
+            entity: self.create_entity(),
+            registry: self,
+        }
     }
 
-    pub fn contains(&self, entity: Entity) -> bool {
+    pub fn attached(&self, entity: Entity) -> bool {
         self.entities.contains_key(entity)
     }
 
@@ -53,21 +50,13 @@ impl Registry {
         self.entities.remove(entity).is_some()
     }
 
-    pub fn add<C>(&mut self, entity: Entity, component: C)
+    pub fn attach<C>(&mut self, entity: Entity, component: C)
     where
         C: Component,
     {
-        let pool = self
-            .get_pool_mut::<C>()
-            .expect("component must be registered to be used");
-        pool.save(entity, component);
-    }
-
-    pub fn add_set<S>(&mut self, entity: Entity, components: S)
-    where
-        S: AddSet,
-    {
-        components.add_set(self, entity)
+        self.register::<C>();
+        let pool = self.get_pool_mut().unwrap();
+        pool.attach(entity, component);
     }
 
     pub fn view<C>(&self) -> impl Iterator<Item = (Entity, &C)>
@@ -102,5 +91,15 @@ impl Registry {
         let pool = self.pools.get_mut(&type_id)?;
         let pool = pool.as_mut().downcast_mut().expect("downcast error");
         Some(pool)
+    }
+
+    fn create_pool<C>(&mut self) -> &mut ComponentPool<C>
+    where
+        C: Component,
+    {
+        let type_id = TypeId::of::<C>();
+        let pool = ComponentPool::<C>::new();
+        self.pools.insert(type_id, Box::new(pool));
+        self.get_pool_mut().unwrap()
     }
 }

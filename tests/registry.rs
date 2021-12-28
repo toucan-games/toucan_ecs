@@ -1,28 +1,14 @@
 use toucan_ecs::Registry;
 
 #[test]
-fn register() {
+fn basic() {
     let mut registry = Registry::new();
 
-    let entity = registry.create();
-    assert!(registry.contains(entity));
+    let entity = registry.create_entity();
+    assert!(registry.attached(entity));
 
-    registry.register::<Position>();
-    registry.add(entity, Position { x: 0.0, y: 0.0 });
-
-    registry.register::<Velocity>();
-    registry.add(entity, Velocity { dx: 1.0, dy: 2.0 });
-}
-
-#[test]
-#[should_panic]
-fn no_register() {
-    let mut registry = Registry::new();
-
-    let entity = registry.create();
-    assert!(registry.contains(entity));
-
-    registry.add(entity, Position { x: 0.0, y: 0.0 });
+    registry.attach(entity, Position { x: 0.0, y: 0.0 });
+    registry.attach(entity, Velocity { dx: 1.0, dy: 2.0 });
 }
 
 #[test]
@@ -40,8 +26,13 @@ fn integration() {
             dy: -i / 10.0,
         };
         let mass = Mass(i);
-        let entity = registry.create_with((position, velocity, mass));
-        assert!(registry.contains(entity));
+        let entity = registry
+            .build_entity()
+            .attach(position)
+            .attach(velocity)
+            .attach(mass)
+            .build();
+        assert!(registry.attached(entity));
     }
 
     for (entity, component) in registry.view::<Position>() {
