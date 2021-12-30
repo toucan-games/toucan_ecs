@@ -1,5 +1,3 @@
-use std::ops::{Index, IndexMut};
-
 use slotmap::{SecondaryMap, SlotMap};
 
 use crate::{Component, Entity};
@@ -51,27 +49,5 @@ where
 
     pub fn attached(&self, entity: Entity) -> bool {
         self.mapping.contains_key(entity)
-    }
-}
-
-impl<C> Index<Entity> for ComponentPool<C>
-where
-    C: Component,
-{
-    type Output = C;
-
-    fn index(&self, entity: Entity) -> &Self::Output {
-        self.get(entity)
-            .expect("no component attached to the entity")
-    }
-}
-
-impl<C> IndexMut<Entity> for ComponentPool<C>
-where
-    C: Component,
-{
-    fn index_mut(&mut self, entity: Entity) -> &mut Self::Output {
-        self.get_mut(entity)
-            .expect("no component attached to the entity")
     }
 }

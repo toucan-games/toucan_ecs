@@ -1,11 +1,10 @@
 use std::any::{Any, TypeId};
 use std::collections::HashMap;
-use std::iter::empty;
 
 use slotmap::SlotMap;
 
 use crate::component::pool::ComponentPool;
-use crate::entity::builder::EntityBuilder;
+use crate::entity::entry::Entry;
 use crate::{Component, Entity};
 
 pub struct Registry {
@@ -31,15 +30,17 @@ impl Registry {
         }
     }
 
-    pub fn create_entity(&mut self) -> Entity {
+    pub fn create(&mut self) -> Entity {
         self.entities.insert(())
     }
 
-    pub fn build_entity(&mut self) -> EntityBuilder {
-        EntityBuilder {
-            entity: self.create_entity(),
-            registry: self,
-        }
+    pub fn create_entry(&mut self) -> Entry {
+        let entity = self.create();
+        self.entry(entity).unwrap()
+    }
+
+    pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
+        self.attached(entity).then(|| Entry::new(entity, self))
     }
 
     pub fn attached(&self, entity: Entity) -> bool {
@@ -68,7 +69,7 @@ impl Registry {
             .get_pool::<C>()
             .expect("component must be registered to be used");
         self.entities.iter().map(|(entity, _)| {
-            let component = &pool[entity];
+            let component = pool.get(entity).unwrap();
             (entity, component)
         })
     }

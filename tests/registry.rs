@@ -4,7 +4,7 @@ use toucan_ecs::Registry;
 fn basic() {
     let mut registry = Registry::new();
 
-    let entity = registry.create_entity();
+    let entity = registry.create();
     assert!(registry.attached(entity));
 
     registry.attach(entity, Position { x: 0.0, y: 0.0 });
@@ -26,12 +26,12 @@ fn integration() {
             dy: -i / 10.0,
         };
         let mass = Mass(i);
-        let entity = registry
-            .build_entity()
-            .attach(position)
-            .attach(velocity)
-            .attach(mass)
-            .build();
+        let entity = registry.create();
+        if let Some(mut entry) = registry.entry(entity) {
+            entry.attach(position);
+            entry.attach(velocity);
+            entry.attach(mass);
+        }
         assert!(registry.attached(entity));
     }
 
