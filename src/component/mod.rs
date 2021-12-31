@@ -1,7 +1,5 @@
-use std::any::Any;
-
 pub mod pool;
 
-pub trait Component: Copy + Any {}
+pub trait Component: 'static + Copy + Send + Sync {}
 
-impl<T> Component for T where T: Copy + Any {}
+impl<T> Component for T where T: 'static + Copy + Send + Sync {}
