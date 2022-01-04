@@ -33,6 +33,15 @@ impl Registry {
         self.entities.insert(())
     }
 
+    pub fn create_with<S>(&mut self, set: S) -> Entity
+    where
+        S: ComponentSet,
+    {
+        let entity = self.create();
+        self.attach_set(entity, set);
+        entity
+    }
+
     pub fn create_entry(&mut self) -> Entry {
         let entity = self.create();
         self.entry(entity).unwrap()
