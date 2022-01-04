@@ -1,15 +1,14 @@
-use std::any::{Any, TypeId};
+use std::any::Any;
 use std::collections::HashMap;
 
 use slotmap::SlotMap;
 
-use crate::component::pool::ComponentPool;
-use crate::entity::entry::Entry;
-use crate::{Component, Entity};
+use crate::component::{pool::ComponentPool, type_id::ComponentTypeId};
+use crate::{Component, Entity, Entry};
 
 pub struct Registry {
     entities: SlotMap<Entity, ()>,
-    pools: HashMap<TypeId, Box<dyn Any>>,
+    pools: HashMap<ComponentTypeId, Box<dyn Any>>,
 }
 
 impl Registry {
@@ -78,7 +77,7 @@ impl Registry {
     where
         C: Component,
     {
-        let type_id = TypeId::of::<C>();
+        let type_id = ComponentTypeId::of::<C>();
         let pool = self.pools.get(&type_id)?;
         let pool = pool.as_ref().downcast_ref().expect("downcast error");
         Some(pool)
@@ -88,7 +87,7 @@ impl Registry {
     where
         C: Component,
     {
-        let type_id = TypeId::of::<C>();
+        let type_id = ComponentTypeId::of::<C>();
         let pool = self.pools.get_mut(&type_id)?;
         let pool = pool.as_mut().downcast_mut().expect("downcast error");
         Some(pool)
@@ -98,7 +97,7 @@ impl Registry {
     where
         C: Component,
     {
-        let type_id = TypeId::of::<C>();
+        let type_id = ComponentTypeId::of::<C>();
         let pool = ComponentPool::<C>::new();
         self.pools.insert(type_id, Box::new(pool));
         self.get_pool_mut().unwrap()

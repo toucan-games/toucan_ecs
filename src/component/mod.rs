@@ -1,5 +1,6 @@
 pub mod pool;
+pub mod type_id;
 
-pub trait Component: 'static + Copy + Send + Sync {}
+pub trait Component: Copy + Send + Sync + 'static {}
 
-impl<T> Component for T where T: 'static + Copy + Send + Sync {}
+impl<T> Component for T where T: Copy + Send + Sync + 'static {}
