@@ -39,6 +39,20 @@ impl<'r> Entry<'r> {
         self.registry.get_mut(self.entity)
     }
 
+    pub fn remove<C>(&mut self)
+    where
+        C: Component,
+    {
+        self.registry.remove::<C>(self.entity)
+    }
+
+    pub fn remove_set<S>(&mut self)
+    where
+        S: ComponentSet,
+    {
+        self.registry.remove_set::<S>(self.entity)
+    }
+
     pub fn entity(&self) -> Entity {
         self.entity
     }

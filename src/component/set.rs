@@ -2,6 +2,8 @@ use crate::{Entity, Registry};
 
 pub trait ComponentSet {
     fn attach(self, registry: &mut Registry, entity: Entity);
+
+    fn remove(registry: &mut Registry, entity: Entity);
 }
 
 mod tuple {
@@ -29,6 +31,10 @@ mod tuple {
                 fn attach(self, registry: &mut Registry, entity: Entity) {
                     let ($($types,)*) = self;
                     $(registry.attach(entity, $types);)*
+                }
+
+                fn remove(registry: &mut Registry, entity: Entity) {
+                    $(registry.remove::<$types>(entity);)*
                 }
             }
         }

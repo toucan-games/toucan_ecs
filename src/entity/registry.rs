@@ -55,7 +55,7 @@ impl Registry {
         self.entities.contains_key(entity)
     }
 
-    pub fn remove(&mut self, entity: Entity) -> bool {
+    pub fn destroy(&mut self, entity: Entity) -> bool {
         self.entities.remove(entity).is_some()
     }
 
@@ -73,6 +73,23 @@ impl Registry {
         S: ComponentSet,
     {
         set.attach(self, entity)
+    }
+
+    pub fn remove<C>(&mut self, entity: Entity)
+    where
+        C: Component,
+    {
+        let pool = self.get_pool_mut::<C>();
+        if let Some(pool) = pool {
+            pool.remove(entity)
+        }
+    }
+
+    pub fn remove_set<S>(&mut self, entity: Entity)
+    where
+        S: ComponentSet,
+    {
+        S::remove(self, entity)
     }
 
     pub fn get<C>(&self, entity: Entity) -> Option<&C>
