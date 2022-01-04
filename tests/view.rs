@@ -17,9 +17,7 @@ fn view() {
         let mass = Mass(f);
         let entity = registry.create();
         if let Some(mut entry) = registry.entry(entity) {
-            entry.attach(position);
-            entry.attach(velocity);
-            entry.attach(mass);
+            entry.attach_set((position, velocity, mass));
         }
         assert!(registry.attached(entity));
     }

@@ -1,3 +1,4 @@
+use crate::component::set::ComponentSet;
 use crate::{Component, Entity, Registry};
 
 pub struct Entry<'r> {
@@ -15,6 +16,13 @@ impl<'r> Entry<'r> {
         C: Component,
     {
         self.registry.attach(self.entity, component);
+    }
+
+    pub fn attach_set<S>(&mut self, set: S)
+    where
+        S: ComponentSet,
+    {
+        self.registry.attach_set(self.entity, set)
     }
 
     pub fn entity(&self) -> Entity {

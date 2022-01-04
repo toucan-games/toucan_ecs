@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use slotmap::DenseSlotMap;
 
-use crate::component::{pool::ComponentPool, type_id::ComponentTypeId};
+use crate::component::{pool::ComponentPool, set::ComponentSet, type_id::ComponentTypeId};
 use crate::{Component, Entity, Entry};
 
 pub struct Registry {
@@ -57,6 +57,13 @@ impl Registry {
         self.register::<C>();
         let pool = self.get_pool_mut().unwrap();
         pool.attach(entity, component);
+    }
+
+    pub fn attach_set<S>(&mut self, entity: Entity, set: S)
+    where
+        S: ComponentSet,
+    {
+        set.attach(self, entity)
     }
 
     pub fn get<C>(&self, entity: Entity) -> Option<&C>
