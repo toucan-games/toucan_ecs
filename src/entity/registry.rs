@@ -1,20 +1,20 @@
 use std::any::Any;
 use std::collections::HashMap;
 
-use slotmap::SlotMap;
+use slotmap::DenseSlotMap;
 
 use crate::component::{pool::ComponentPool, type_id::ComponentTypeId};
 use crate::{Component, Entity, Entry};
 
 pub struct Registry {
-    entities: SlotMap<Entity, ()>,
+    entities: DenseSlotMap<Entity, ()>,
     pools: HashMap<ComponentTypeId, Box<dyn Any>>,
 }
 
 impl Registry {
     pub fn new() -> Self {
         Self {
-            entities: SlotMap::with_key(),
+            entities: DenseSlotMap::with_key(),
             pools: HashMap::new(),
         }
     }
@@ -59,18 +59,44 @@ impl Registry {
         pool.attach(entity, component);
     }
 
+    pub fn get<C>(&self, entity: Entity) -> Option<&C>
+    where
+        C: Component,
+    {
+        let pool = self.get_pool::<C>()?;
+        pool.get(entity)
+    }
+
+    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
+    where
+        C: Component,
+    {
+        let pool = self.get_pool_mut::<C>()?;
+        pool.get_mut(entity)
+    }
+
     pub fn view<C>(&self) -> impl Iterator<Item = (Entity, &C)>
     where
         C: Component,
     {
-        // todo get view on set of components from tuple (by macros 😨)
-        let pool = self
-            .get_pool::<C>()
-            .expect("component must be registered to be used");
-        self.entities.iter().map(|(entity, _)| {
-            let component = pool.get(entity).unwrap();
-            (entity, component)
+        let pool = self.get_pool();
+        let entities = self.entities.keys();
+        pool.map(|pool| {
+            entities.filter_map(|entity| {
+                let component = pool.get(entity)?;
+                Some((entity, component))
+            })
         })
+        .into_iter()
+        .flatten()
+    }
+
+    pub fn view_mut<C>(&mut self) -> impl Iterator<Item = (Entity, &mut C)>
+    where
+        C: Component,
+    {
+        todo!("get mutable view on set of components");
+        std::iter::empty()
     }
 
     fn get_pool<C>(&self) -> Option<&ComponentPool<C>>
