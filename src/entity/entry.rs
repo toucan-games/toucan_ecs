@@ -25,6 +25,20 @@ impl<'r> Entry<'r> {
         self.registry.attach_set(self.entity, set)
     }
 
+    pub fn get<C>(&self) -> Option<&C>
+    where
+        C: Component,
+    {
+        self.registry.get(self.entity)
+    }
+
+    pub fn get_mut<C>(&mut self) -> Option<&mut C>
+    where
+        C: Component,
+    {
+        self.registry.get_mut(self.entity)
+    }
+
     pub fn entity(&self) -> Entity {
         self.entity
     }
