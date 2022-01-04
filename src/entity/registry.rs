@@ -48,10 +48,10 @@ impl Registry {
     }
 
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
-        self.attached(entity).then(|| Entry::new(entity, self))
+        self.contains(entity).then(|| Entry::new(entity, self))
     }
 
-    pub fn attached(&self, entity: Entity) -> bool {
+    pub fn contains(&self, entity: Entity) -> bool {
         self.entities.contains_key(entity)
     }
 
@@ -73,6 +73,21 @@ impl Registry {
         S: ComponentSet,
     {
         set.attach(self, entity)
+    }
+
+    pub fn attached<C>(&self, entity: Entity) -> bool
+    where
+        C: Component,
+    {
+        let pool = self.get_pool::<C>();
+        pool.map(|pool| pool.attached(entity)).unwrap_or(false)
+    }
+
+    pub fn attached_set<S>(&self, entity: Entity) -> bool
+    where
+        S: ComponentSet,
+    {
+        S::attached(self, entity)
     }
 
     pub fn remove<C>(&mut self, entity: Entity)

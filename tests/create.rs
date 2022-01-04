@@ -8,7 +8,7 @@ fn create() {
     let mut registry = Registry::new();
 
     let entity = registry.create();
-    assert!(registry.attached(entity));
+    assert!(registry.contains(entity));
 }
 
 #[test]
@@ -23,14 +23,8 @@ fn create_with() {
     };
     let entity = registry.create_with(set);
 
-    assert!(registry.attached(entity));
-    assert_eq!(
-        registry.get::<Position>(entity),
-        Some(&Position { x: 1.0, y: 3.0 }),
-    );
-    assert_eq!(
-        registry.get::<Velocity>(entity),
-        Some(&Velocity { dx: 5.0, dy: -10.0 }),
-    );
-    assert_eq!(registry.get::<Mass>(entity), Some(&Mass(10.0)));
+    assert!(registry.contains(entity));
+    assert!(registry.attached::<Position>(entity));
+    assert!(registry.attached::<Velocity>(entity));
+    assert!(registry.attached::<Mass>(entity));
 }

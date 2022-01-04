@@ -1,3 +1,5 @@
+use std::ops::Not;
+
 use components::{Mass, Position, Velocity};
 use toucan_ecs::Registry;
 
@@ -8,17 +10,14 @@ fn attach() {
     let mut registry = Registry::new();
     let entity = registry.create();
 
-    assert_eq!(registry.get::<Position>(entity), None);
+    assert!(registry.attached::<Position>(entity).not());
     registry.attach(entity, Position { x: 0.0, y: 0.0 });
-    assert_ne!(registry.get::<Position>(entity), None);
+    assert!(registry.attached::<Position>(entity));
 
     registry.attach(entity, Velocity { dx: 1.0, dy: 2.0 });
-    assert_eq!(
-        registry.get::<Velocity>(entity),
-        Some(&Velocity { dx: 1.0, dy: 2.0 }),
-    );
+    assert!(registry.attached::<Velocity>(entity));
 
-    assert_eq!(registry.get::<Mass>(entity), None);
+    assert!(registry.attached::<Mass>(entity).not());
 }
 
 #[test]
@@ -26,9 +25,9 @@ fn attach_set() {
     let mut registry = Registry::new();
 
     let entity = registry.create();
-    assert_eq!(registry.get::<Position>(entity), None);
-    assert_eq!(registry.get::<Velocity>(entity), None);
-    assert_eq!(registry.get::<Mass>(entity), None);
+    assert!(registry.attached::<Position>(entity).not());
+    assert!(registry.attached::<Velocity>(entity).not());
+    assert!(registry.attached::<Mass>(entity).not());
 
     let set = {
         let position = Position { x: 1.0, y: 3.0 };
@@ -37,13 +36,7 @@ fn attach_set() {
         (position, velocity, mass)
     };
     registry.attach_set(entity, set);
-    assert_eq!(
-        registry.get::<Position>(entity),
-        Some(&Position { x: 1.0, y: 3.0 }),
-    );
-    assert_eq!(
-        registry.get::<Velocity>(entity),
-        Some(&Velocity { dx: 5.0, dy: -10.0 }),
-    );
-    assert_eq!(registry.get::<Mass>(entity), Some(&Mass(10.0)));
+    assert!(registry.attached::<Position>(entity));
+    assert!(registry.attached::<Velocity>(entity));
+    assert!(registry.attached::<Mass>(entity));
 }

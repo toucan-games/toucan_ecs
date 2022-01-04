@@ -4,6 +4,8 @@ pub trait ComponentSet {
     fn attach(self, registry: &mut Registry, entity: Entity);
 
     fn remove(registry: &mut Registry, entity: Entity);
+
+    fn attached(registry: &Registry, entity: Entity) -> bool;
 }
 
 mod tuple {
@@ -35,6 +37,10 @@ mod tuple {
 
                 fn remove(registry: &mut Registry, entity: Entity) {
                     $(registry.remove::<$types>(entity);)*
+                }
+
+                fn attached(registry: &Registry, entity: Entity) -> bool {
+                    $(registry.attached::<$types>(entity))&&*
                 }
             }
         }

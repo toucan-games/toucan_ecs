@@ -1,3 +1,5 @@
+use std::ops::Not;
+
 use components::{Mass, Position, Velocity};
 use toucan_ecs::Registry;
 
@@ -14,16 +16,16 @@ fn remove() {
         (position, velocity, mass)
     };
     let entity = registry.create_with(set);
-    assert!(registry.attached(entity));
-    assert_ne!(registry.get::<Position>(entity), None);
-    assert_ne!(registry.get::<Velocity>(entity), None);
-    assert_ne!(registry.get::<Mass>(entity), None);
+    assert!(registry.contains(entity));
+    assert!(registry.attached::<Position>(entity));
+    assert!(registry.attached::<Velocity>(entity));
+    assert!(registry.attached::<Mass>(entity));
 
     registry.remove::<Position>(entity);
-    assert_eq!(registry.get::<Position>(entity), None);
+    assert!(registry.attached::<Position>(entity).not());
 
     registry.remove::<Velocity>(entity);
-    assert_eq!(registry.get::<Velocity>(entity), None);
+    assert!(registry.attached::<Velocity>(entity).not());
 
     println!("Mass: {:?}", registry.get::<Mass>(entity).unwrap())
 }
@@ -41,8 +43,8 @@ fn remove_set() {
     let entity = registry.create_with(set);
 
     registry.remove_set::<(Position, Velocity)>(entity);
-    assert_eq!(registry.get::<Position>(entity), None);
-    assert_eq!(registry.get::<Velocity>(entity), None);
+    assert!(registry.attached::<Position>(entity).not());
+    assert!(registry.attached::<Velocity>(entity).not());
 
     println!("Mass: {:?}", registry.get::<Mass>(entity).unwrap())
 }

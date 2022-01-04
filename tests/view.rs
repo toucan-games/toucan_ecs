@@ -19,7 +19,7 @@ fn view() {
         if let Some(mut entry) = registry.entry(entity) {
             entry.attach_set((position, velocity, mass));
         }
-        assert!(registry.attached(entity));
+        assert!(registry.contains(entity));
     }
 
     for (entity, component) in registry.view::<Position>() {

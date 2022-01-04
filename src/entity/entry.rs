@@ -53,6 +53,20 @@ impl<'r> Entry<'r> {
         self.registry.remove_set::<S>(self.entity)
     }
 
+    pub fn attached<C>(&self) -> bool
+    where
+        C: Component,
+    {
+        self.registry.attached::<C>(self.entity)
+    }
+
+    pub fn attached_set<S>(&self) -> bool
+    where
+        S: ComponentSet,
+    {
+        self.registry.attached_set::<S>(self.entity)
+    }
+
     pub fn entity(&self) -> Entity {
         self.entity
     }
