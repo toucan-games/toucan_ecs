@@ -1,6 +1,10 @@
+use std::any::Any;
+
 use slotmap::{SecondaryMap, SlotMap};
 
 use crate::{Component, Entity};
+
+use super::Pool;
 
 slotmap::new_key_type! {
     struct ComponentKey;
@@ -40,14 +44,27 @@ where
         self.components.get_mut(*component)
     }
 
-    pub fn remove(&mut self, entity: Entity) {
+    pub fn attached(&self, entity: Entity) -> bool {
+        self.mapping.contains_key(entity)
+    }
+}
+
+impl<C> Pool for ComponentPool<C>
+where
+    C: Component,
+{
+    fn remove(&mut self, entity: Entity) {
         let component = self.mapping.remove(entity);
         if let Some(component) = component {
             self.components.remove(component);
         }
     }
 
-    pub fn attached(&self, entity: Entity) -> bool {
-        self.mapping.contains_key(entity)
+    fn as_any_ref(&self) -> &dyn Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn Any {
+        self
     }
 }

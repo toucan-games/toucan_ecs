@@ -53,6 +53,10 @@ impl<'r> Entry<'r> {
         self.registry.remove_set::<S>(self.entity)
     }
 
+    pub fn remove_all(&mut self) {
+        self.registry.remove_all(self.entity)
+    }
+
     pub fn attached<C>(&self) -> bool
     where
         C: Component,
@@ -65,6 +69,10 @@ impl<'r> Entry<'r> {
         S: ComponentSet,
     {
         self.registry.attached_set::<S>(self.entity)
+    }
+
+    pub fn destroy(self) {
+        self.registry.destroy(self.entity)
     }
 
     pub fn entity(&self) -> Entity {

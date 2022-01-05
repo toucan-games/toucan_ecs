@@ -1,14 +1,17 @@
-use std::any::Any;
 use std::collections::HashMap;
 
 use slotmap::DenseSlotMap;
 
-use crate::component::{pool::ComponentPool, set::ComponentSet, type_id::ComponentTypeId};
+use crate::component::{
+    pool::{ComponentPool, Pool},
+    set::ComponentSet,
+    type_id::ComponentTypeId,
+};
 use crate::{Component, Entity, Entry};
 
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
-    pools: HashMap<ComponentTypeId, Box<dyn Any>>,
+    pools: HashMap<ComponentTypeId, Box<dyn Pool>>,
 }
 
 impl Registry {
@@ -55,8 +58,9 @@ impl Registry {
         self.entities.contains_key(entity)
     }
 
-    pub fn destroy(&mut self, entity: Entity) -> bool {
-        self.entities.remove(entity).is_some()
+    pub fn destroy(&mut self, entity: Entity) {
+        self.remove_all(entity);
+        self.entities.remove(entity);
     }
 
     pub fn attach<C>(&mut self, entity: Entity, component: C)
@@ -107,6 +111,10 @@ impl Registry {
         S::remove(self, entity)
     }
 
+    pub fn remove_all(&mut self, entity: Entity) {
+        self.pools.values_mut().for_each(|pool| pool.remove(entity))
+    }
+
     pub fn get<C>(&self, entity: Entity) -> Option<&C>
     where
         C: Component,
@@ -153,7 +161,11 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let pool = self.pools.get(&type_id)?;
-        let pool = pool.as_ref().downcast_ref().expect("downcast error");
+        let pool = pool
+            .as_ref()
+            .as_any_ref()
+            .downcast_ref()
+            .expect("downcast error");
         Some(pool)
     }
 
@@ -163,7 +175,11 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let pool = self.pools.get_mut(&type_id)?;
-        let pool = pool.as_mut().downcast_mut().expect("downcast error");
+        let pool = pool
+            .as_mut()
+            .as_any_mut()
+            .downcast_mut()
+            .expect("downcast error");
         Some(pool)
     }
 
