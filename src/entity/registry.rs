@@ -7,6 +7,7 @@ use crate::component::{
     set::ComponentSet,
     type_id::ComponentTypeId,
 };
+use crate::entity::view::View;
 use crate::{Component, Entity, Entry};
 
 pub struct Registry {
@@ -131,20 +132,11 @@ impl Registry {
         pool.get_mut(entity)
     }
 
-    pub fn view_one<C>(&self) -> impl Iterator<Item = (Entity, &C)>
+    pub fn view_one<C>(&self) -> View<C>
     where
         C: Component,
     {
-        let pool = self.get_pool();
-        let entities = self.entities.keys();
-        pool.map(|pool| {
-            entities.filter_map(|entity| {
-                let component = pool.get(entity)?;
-                Some((entity, component))
-            })
-        })
-        .into_iter()
-        .flatten()
+        View::new(self.entities.keys(), self.get_pool())
     }
 
     pub fn view_mut_one<C>(&mut self) -> impl Iterator<Item = (Entity, &mut C)>
