@@ -31,7 +31,7 @@ fn destroy_with_data() {
 
     registry.destroy(entity);
     assert!(registry.contains(entity).not());
-    assert!(registry.attached::<Position>(entity).not());
-    assert!(registry.attached::<Velocity>(entity).not());
-    assert!(registry.attached::<Mass>(entity).not());
+    assert!(registry.attached_one::<Position>(entity).not());
+    assert!(registry.attached_one::<Velocity>(entity).not());
+    assert!(registry.attached_one::<Mass>(entity).not());
 }

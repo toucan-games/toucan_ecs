@@ -24,7 +24,7 @@ fn create_with() {
     let entity = registry.create_with(set);
 
     assert!(registry.contains(entity));
-    assert!(registry.attached::<Position>(entity));
-    assert!(registry.attached::<Velocity>(entity));
-    assert!(registry.attached::<Mass>(entity));
+    assert!(registry.attached_one::<Position>(entity));
+    assert!(registry.attached_one::<Velocity>(entity));
+    assert!(registry.attached_one::<Mass>(entity));
 }

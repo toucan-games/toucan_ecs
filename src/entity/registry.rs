@@ -41,13 +41,13 @@ impl Registry {
         S: ComponentSet,
     {
         let entity = self.create();
-        self.attach_set(entity, set);
+        self.attach(entity, set);
         entity
     }
 
     pub fn create_entry(&mut self) -> Entry {
         let entity = self.create();
-        self.entry(entity).unwrap()
+        Entry::new(entity, self)
     }
 
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
@@ -63,7 +63,7 @@ impl Registry {
         self.entities.remove(entity);
     }
 
-    pub fn attach<C>(&mut self, entity: Entity, component: C)
+    pub fn attach_one<C>(&mut self, entity: Entity, component: C)
     where
         C: Component,
     {
@@ -72,14 +72,14 @@ impl Registry {
         pool.attach(entity, component);
     }
 
-    pub fn attach_set<S>(&mut self, entity: Entity, set: S)
+    pub fn attach<S>(&mut self, entity: Entity, set: S)
     where
         S: ComponentSet,
     {
         set.attach(self, entity)
     }
 
-    pub fn attached<C>(&self, entity: Entity) -> bool
+    pub fn attached_one<C>(&self, entity: Entity) -> bool
     where
         C: Component,
     {
@@ -87,14 +87,14 @@ impl Registry {
         pool.map(|pool| pool.attached(entity)).unwrap_or(false)
     }
 
-    pub fn attached_set<S>(&self, entity: Entity) -> bool
+    pub fn attached<S>(&self, entity: Entity) -> bool
     where
         S: ComponentSet,
     {
         S::attached(self, entity)
     }
 
-    pub fn remove<C>(&mut self, entity: Entity)
+    pub fn remove_one<C>(&mut self, entity: Entity)
     where
         C: Component,
     {
@@ -104,7 +104,7 @@ impl Registry {
         }
     }
 
-    pub fn remove_set<S>(&mut self, entity: Entity)
+    pub fn remove<S>(&mut self, entity: Entity)
     where
         S: ComponentSet,
     {
@@ -131,7 +131,7 @@ impl Registry {
         pool.get_mut(entity)
     }
 
-    pub fn view<C>(&self) -> impl Iterator<Item = (Entity, &C)>
+    pub fn view_one<C>(&self) -> impl Iterator<Item = (Entity, &C)>
     where
         C: Component,
     {
@@ -147,7 +147,7 @@ impl Registry {
         .flatten()
     }
 
-    pub fn view_mut<C>(&mut self) -> impl Iterator<Item = (Entity, &mut C)>
+    pub fn view_mut_one<C>(&mut self) -> impl Iterator<Item = (Entity, &mut C)>
     where
         C: Component,
     {

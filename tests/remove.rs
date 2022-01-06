@@ -6,7 +6,7 @@ use toucan_ecs::Registry;
 mod components;
 
 #[test]
-fn remove() {
+fn remove_one() {
     let mut registry = Registry::new();
 
     let set = {
@@ -17,21 +17,21 @@ fn remove() {
     };
     let entity = registry.create_with(set);
     assert!(registry.contains(entity));
-    assert!(registry.attached::<Position>(entity));
-    assert!(registry.attached::<Velocity>(entity));
-    assert!(registry.attached::<Mass>(entity));
+    assert!(registry.attached_one::<Position>(entity));
+    assert!(registry.attached_one::<Velocity>(entity));
+    assert!(registry.attached_one::<Mass>(entity));
 
-    registry.remove::<Position>(entity);
-    assert!(registry.attached::<Position>(entity).not());
+    registry.remove_one::<Position>(entity);
+    assert!(registry.attached_one::<Position>(entity).not());
 
-    registry.remove::<Velocity>(entity);
-    assert!(registry.attached::<Velocity>(entity).not());
+    registry.remove_one::<Velocity>(entity);
+    assert!(registry.attached_one::<Velocity>(entity).not());
 
     println!("Mass: {:?}", registry.get::<Mass>(entity).unwrap())
 }
 
 #[test]
-fn remove_set() {
+fn remove() {
     let mut registry = Registry::new();
 
     let set = {
@@ -42,9 +42,9 @@ fn remove_set() {
     };
     let entity = registry.create_with(set);
 
-    registry.remove_set::<(Position, Velocity)>(entity);
-    assert!(registry.attached::<Position>(entity).not());
-    assert!(registry.attached::<Velocity>(entity).not());
+    registry.remove::<(Position, Velocity)>(entity);
+    assert!(registry.attached_one::<Position>(entity).not());
+    assert!(registry.attached_one::<Velocity>(entity).not());
 
     println!("Mass: {:?}", registry.get::<Mass>(entity).unwrap())
 }

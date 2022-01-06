@@ -11,18 +11,18 @@ impl<'r> Entry<'r> {
         Entry { entity, registry }
     }
 
-    pub fn attach<C>(&mut self, component: C)
+    pub fn attach_one<C>(&mut self, component: C)
     where
         C: Component,
     {
-        self.registry.attach(self.entity, component);
+        self.registry.attach_one(self.entity, component);
     }
 
-    pub fn attach_set<S>(&mut self, set: S)
+    pub fn attach<S>(&mut self, set: S)
     where
         S: ComponentSet,
     {
-        self.registry.attach_set(self.entity, set)
+        self.registry.attach(self.entity, set)
     }
 
     pub fn get<C>(&self) -> Option<&C>
@@ -39,36 +39,36 @@ impl<'r> Entry<'r> {
         self.registry.get_mut(self.entity)
     }
 
-    pub fn remove<C>(&mut self)
+    pub fn remove_one<C>(&mut self)
     where
         C: Component,
     {
-        self.registry.remove::<C>(self.entity)
+        self.registry.remove_one::<C>(self.entity)
     }
 
-    pub fn remove_set<S>(&mut self)
+    pub fn remove<S>(&mut self)
     where
         S: ComponentSet,
     {
-        self.registry.remove_set::<S>(self.entity)
+        self.registry.remove::<S>(self.entity)
     }
 
     pub fn remove_all(&mut self) {
         self.registry.remove_all(self.entity)
     }
 
-    pub fn attached<C>(&self) -> bool
+    pub fn attached_one<C>(&self) -> bool
     where
         C: Component,
     {
-        self.registry.attached::<C>(self.entity)
+        self.registry.attached_one::<C>(self.entity)
     }
 
-    pub fn attached_set<S>(&self) -> bool
+    pub fn attached<S>(&self) -> bool
     where
         S: ComponentSet,
     {
-        self.registry.attached_set::<S>(self.entity)
+        self.registry.attached::<S>(self.entity)
     }
 
     pub fn destroy(self) {
