@@ -3,7 +3,7 @@ use slotmap::dense::Keys;
 use crate::component::pool::ComponentPool;
 use crate::{Component, Entity};
 
-pub struct View<'data, C>
+pub struct ViewOne<'data, C>
 where
     C: Component,
 {
@@ -11,11 +11,11 @@ where
     pool: Option<&'data ComponentPool<C>>,
 }
 
-impl<'data, C> View<'data, C>
+impl<'data, C> ViewOne<'data, C>
 where
     C: Component,
 {
-    pub(super) fn new(
+    pub(in crate::entity) fn new(
         entities: Keys<'data, Entity, ()>,
         pool: Option<&'data ComponentPool<C>>,
     ) -> Self {
@@ -23,7 +23,7 @@ where
     }
 }
 
-impl<'data, C> Iterator for View<'data, C>
+impl<'data, C> Iterator for ViewOne<'data, C>
 where
     C: Component,
 {

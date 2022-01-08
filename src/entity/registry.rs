@@ -7,8 +7,9 @@ use crate::component::{
     set::ComponentSet,
     type_id::ComponentTypeId,
 };
-use crate::entity::view::View;
 use crate::{Component, Entity, Entry};
+
+use super::view::ViewOne;
 
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
@@ -132,11 +133,11 @@ impl Registry {
         pool.get_mut(entity)
     }
 
-    pub fn view_one<C>(&self) -> View<C>
+    pub fn view_one<C>(&self) -> ViewOne<C>
     where
         C: Component,
     {
-        View::new(self.entities.keys(), self.get_pool())
+        ViewOne::new(self.entities.keys(), self.get_pool())
     }
 
     pub fn view_mut_one<C>(&mut self) -> impl Iterator<Item = (Entity, &mut C)>
