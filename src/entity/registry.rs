@@ -9,7 +9,7 @@ use crate::component::{
 };
 use crate::{Component, Entity, Entry, Ref, RefMut};
 
-use super::view::{ViewOne, ViewOneMut};
+use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
 
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
@@ -147,7 +147,21 @@ impl Registry {
         ViewOneMut::new(self.entities.keys(), self.get_pool())
     }
 
-    fn get_pool<C>(&self) -> Option<&ComponentPool<C>>
+    pub fn view<'data, V>(&'data self) -> View<'data, V>
+    where
+        V: SharedViewable<'data>,
+    {
+        View::new(self.entities.keys(), self)
+    }
+
+    pub fn view_mut<'data, V>(&'data mut self) -> ViewMut<'data, V>
+    where
+        V: Viewable<'data>,
+    {
+        ViewMut::new(self.entities.keys(), self)
+    }
+
+    pub(super) fn get_pool<C>(&self) -> Option<&ComponentPool<C>>
     where
         C: Component,
     {
@@ -175,13 +189,12 @@ impl Registry {
         Some(pool)
     }
 
-    fn create_pool<C>(&mut self) -> &mut ComponentPool<C>
+    fn create_pool<C>(&mut self)
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let pool = ComponentPool::<C>::new();
         self.pools.insert(type_id, Box::new(pool));
-        self.get_pool_mut().unwrap()
     }
 }

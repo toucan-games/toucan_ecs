@@ -1,5 +1,8 @@
-pub use one::ViewOne;
-pub use one_mut::ViewOneMut;
+pub use view::{View, ViewMut};
+pub use view_one::{ViewOne, ViewOneMut};
+pub use viewable::{SharedViewable, Viewable, ViewableItem};
 
-mod one;
-mod one_mut;
+mod fetch;
+mod view;
+mod view_one;
+mod viewable;

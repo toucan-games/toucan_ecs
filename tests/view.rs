@@ -1,25 +1,11 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::Registry;
 
 mod components;
+mod utils;
 
 #[test]
 fn view_one() {
-    let mut registry = Registry::new();
-
-    for i in 0..=10 {
-        let f = i as f32;
-        let position = Position { x: f, y: f };
-        let velocity = Velocity {
-            dx: f / 10.0,
-            dy: -f / 10.0,
-        };
-        let mass = Mass(f);
-        let entity = registry.create();
-        if let Some(mut entry) = registry.entry(entity) {
-            entry.attach((position, velocity, mass));
-        }
-    }
+    let registry = utils::prepare_for_view();
 
     for (entity, component) in registry.view_one::<Position>() {
         println!("entity: {:?}, component: {:?}", entity, *component)
@@ -27,4 +13,13 @@ fn view_one() {
 }
 
 #[test]
-fn view() {}
+fn view() {
+    let registry = utils::prepare_for_view();
+
+    for (entity, (position, velocity, mass)) in registry.view::<(&Position, &Velocity, &Mass)>() {
+        println!(
+            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
+            entity, *position, *velocity, *mass
+        )
+    }
+}
