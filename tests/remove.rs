@@ -27,7 +27,7 @@ fn remove_one() {
     registry.remove_one::<Velocity>(entity);
     assert!(registry.attached_one::<Velocity>(entity).not());
 
-    println!("Mass: {:?}", registry.get::<Mass>(entity).unwrap())
+    println!("Mass: {:?}", *registry.get::<Mass>(entity).unwrap())
 }
 
 #[test]
@@ -46,5 +46,5 @@ fn remove() {
     assert!(registry.attached_one::<Position>(entity).not());
     assert!(registry.attached_one::<Velocity>(entity).not());
 
-    println!("Mass: {:?}", registry.get::<Mass>(entity).unwrap())
+    println!("Mass: {:?}", *registry.get::<Mass>(entity).unwrap())
 }

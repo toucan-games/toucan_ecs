@@ -1,5 +1,5 @@
 use crate::component::set::ComponentSet;
-use crate::{Component, Entity, Registry};
+use crate::{Component, Entity, Ref, RefMut, Registry};
 
 pub struct Entry<'r> {
     entity: Entity,
@@ -25,14 +25,14 @@ impl<'r> Entry<'r> {
         self.registry.attach(self.entity, set)
     }
 
-    pub fn get<C>(&self) -> Option<&C>
+    pub fn get<C>(&self) -> Option<Ref<C>>
     where
         C: Component,
     {
         self.registry.get(self.entity)
     }
 
-    pub fn get_mut<C>(&mut self) -> Option<&mut C>
+    pub fn get_mut<C>(&mut self) -> Option<RefMut<C>>
     where
         C: Component,
     {

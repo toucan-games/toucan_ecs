@@ -4,7 +4,7 @@ use toucan_ecs::Registry;
 mod components;
 
 #[test]
-fn view_one() {
+fn view_one_mut() {
     let mut registry = Registry::new();
 
     for i in 0..=10 {
@@ -21,10 +21,11 @@ fn view_one() {
         }
     }
 
-    for (entity, component) in registry.view_one::<Position>() {
+    for (entity, mut component) in registry.view_mut_one::<Position>() {
+        component.y -= 10.0;
         println!("entity: {:?}, component: {:?}", entity, *component)
     }
 }
 
 #[test]
-fn view() {}
+fn view_mut() {}

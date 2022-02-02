@@ -1,4 +1,5 @@
 pub mod entry;
+pub mod refs;
 pub mod registry;
 pub mod view;
 

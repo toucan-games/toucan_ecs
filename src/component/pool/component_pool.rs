@@ -1,8 +1,9 @@
 use std::any::Any;
+use std::sync::Mutex;
 
 use slotmap::{SecondaryMap, SlotMap};
 
-use crate::{Component, Entity};
+use crate::{Component, Entity, Ref, RefMut};
 
 use super::Pool;
 
@@ -14,7 +15,7 @@ pub struct ComponentPool<C>
 where
     C: Component,
 {
-    components: SlotMap<ComponentKey, C>,
+    components: SlotMap<ComponentKey, Mutex<C>>,
     mapping: SecondaryMap<Entity, ComponentKey>,
 }
 
@@ -30,18 +31,22 @@ where
     }
 
     pub fn attach(&mut self, entity: Entity, component: C) {
-        let component = self.components.insert(component);
+        let component = self.components.insert(Mutex::new(component));
         self.mapping.insert(entity, component);
     }
 
-    pub fn get(&self, entity: Entity) -> Option<&C> {
-        let component = self.mapping.get(entity)?;
-        self.components.get(*component)
+    pub fn get(&self, entity: Entity) -> Option<Ref<C>> {
+        let key = self.mapping.get(entity)?;
+        let mutex = self.components.get(*key)?;
+        let component = Ref(mutex.lock().unwrap());
+        Some(component)
     }
 
-    pub fn get_mut(&mut self, entity: Entity) -> Option<&mut C> {
-        let component = self.mapping.get(entity)?;
-        self.components.get_mut(*component)
+    pub fn get_mut(&self, entity: Entity) -> Option<RefMut<C>> {
+        let key = self.mapping.get(entity)?;
+        let mutex = self.components.get(*key)?;
+        let component = RefMut(mutex.lock().unwrap());
+        Some(component)
     }
 
     pub fn attached(&self, entity: Entity) -> bool {

@@ -7,9 +7,9 @@ use crate::component::{
     set::ComponentSet,
     type_id::ComponentTypeId,
 };
-use crate::{Component, Entity, Entry};
+use crate::{Component, Entity, Entry, Ref, RefMut};
 
-use super::view::ViewOne;
+use super::view::{ViewOne, ViewOneMut};
 
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
@@ -117,7 +117,7 @@ impl Registry {
         self.pools.values_mut().for_each(|pool| pool.remove(entity))
     }
 
-    pub fn get<C>(&self, entity: Entity) -> Option<&C>
+    pub fn get<C>(&self, entity: Entity) -> Option<Ref<C>>
     where
         C: Component,
     {
@@ -125,7 +125,7 @@ impl Registry {
         pool.get(entity)
     }
 
-    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
+    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<RefMut<C>>
     where
         C: Component,
     {
@@ -140,12 +140,11 @@ impl Registry {
         ViewOne::new(self.entities.keys(), self.get_pool())
     }
 
-    pub fn view_mut_one<C>(&mut self) -> impl Iterator<Item = (Entity, &mut C)>
+    pub fn view_mut_one<C>(&mut self) -> ViewOneMut<C>
     where
         C: Component,
     {
-        todo!("get mutable view on set of components");
-        std::iter::empty()
+        ViewOneMut::new(self.entities.keys(), self.get_pool())
     }
 
     fn get_pool<C>(&self) -> Option<&ComponentPool<C>>
