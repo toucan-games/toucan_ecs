@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
 use crate::component::{
@@ -137,28 +138,32 @@ impl Registry {
     where
         C: Component,
     {
-        ViewOne::new(self.entities.keys(), self.get_pool())
+        ViewOne::new(self)
     }
 
     pub fn view_mut_one<C>(&mut self) -> ViewOneMut<C>
     where
         C: Component,
     {
-        ViewOneMut::new(self.entities.keys(), self.get_pool())
+        ViewOneMut::new(self)
     }
 
     pub fn view<'data, V>(&'data self) -> View<'data, V>
     where
         V: SharedViewable<'data>,
     {
-        View::new(self.entities.keys(), self)
+        View::new(self)
     }
 
     pub fn view_mut<'data, V>(&'data mut self) -> ViewMut<'data, V>
     where
         V: Viewable<'data>,
     {
-        ViewMut::new(self.entities.keys(), self)
+        ViewMut::new(self)
+    }
+
+    pub(super) fn entities(&self) -> Keys<Entity, ()> {
+        self.entities.keys()
     }
 
     pub(super) fn get_pool<C>(&self) -> Option<&ComponentPool<C>>

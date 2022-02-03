@@ -19,7 +19,24 @@ fn view() {
     for (entity, (position, velocity, mass)) in registry.view::<(&Position, &Velocity, &Mass)>() {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
-            entity, *position, *velocity, *mass
+            entity, *position, *velocity, *mass,
+        )
+    }
+}
+
+#[test]
+fn option_view() {
+    let registry = utils::prepare_for_optional_view();
+
+    for (entity, (position, velocity, mass)) in
+        registry.view::<(&Position, Option<&Velocity>, Option<&Mass>)>()
+    {
+        println!(
+            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
+            entity,
+            *position,
+            velocity.as_deref(),
+            mass.as_deref(),
         )
     }
 }

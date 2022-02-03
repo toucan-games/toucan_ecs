@@ -9,7 +9,6 @@ where
     V: SharedViewable<'data>,
 {
     entities: Keys<'data, Entity, ()>,
-    registry: &'data Registry,
     fetch: Option<V::Fetch>,
 }
 
@@ -17,15 +16,11 @@ impl<'data, V> View<'data, V>
 where
     V: SharedViewable<'data>,
 {
-    pub(in crate::entity) fn new(
-        entities: Keys<'data, Entity, ()>,
-        registry: &'data Registry,
-    ) -> Self {
-        Self {
-            entities,
-            registry,
-            fetch: None,
-        }
+    // noinspection DuplicatedCode
+    pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
+        let entities = registry.entities();
+        let fetch = V::Fetch::try_from(registry).ok();
+        Self { entities, fetch }
     }
 }
 
@@ -37,11 +32,7 @@ where
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
-        if self.fetch.is_none() {
-            let new_fetch = V::Fetch::try_from(self.registry).ok()?;
-            self.fetch = Some(new_fetch);
-        }
-        let fetch = self.fetch.as_ref().unwrap();
+        let fetch = self.fetch.as_ref()?;
         loop {
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);
@@ -58,7 +49,6 @@ where
     V: Viewable<'data>,
 {
     entities: Keys<'data, Entity, ()>,
-    registry: &'data Registry,
     fetch: Option<V::Fetch>,
 }
 
@@ -66,15 +56,11 @@ impl<'data, V> ViewMut<'data, V>
 where
     V: Viewable<'data>,
 {
-    pub(in crate::entity) fn new(
-        entities: Keys<'data, Entity, ()>,
-        registry: &'data Registry,
-    ) -> Self {
-        Self {
-            entities,
-            registry,
-            fetch: None,
-        }
+    // noinspection DuplicatedCode
+    pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
+        let entities = registry.entities();
+        let fetch = V::Fetch::try_from(registry).ok();
+        Self { entities, fetch }
     }
 }
 
@@ -86,11 +72,7 @@ where
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
-        if self.fetch.is_none() {
-            let new_fetch = V::Fetch::try_from(self.registry).ok()?;
-            self.fetch = Some(new_fetch);
-        }
-        let fetch = self.fetch.as_ref().unwrap();
+        let fetch = self.fetch.as_ref()?;
         loop {
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);

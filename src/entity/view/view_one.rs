@@ -1,7 +1,7 @@
 use slotmap::dense::Keys;
 
 use crate::component::pool::ComponentPool;
-use crate::{Component, Entity, Ref, RefMut};
+use crate::{Component, Entity, Ref, RefMut, Registry};
 
 pub struct ViewOne<'data, C>
 where
@@ -15,10 +15,10 @@ impl<'data, C> ViewOne<'data, C>
 where
     C: Component,
 {
-    pub(in crate::entity) fn new(
-        entities: Keys<'data, Entity, ()>,
-        pool: Option<&'data ComponentPool<C>>,
-    ) -> Self {
+    // noinspection DuplicatedCode
+    pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
+        let entities = registry.entities();
+        let pool = registry.get_pool();
         Self { entities, pool }
     }
 }
@@ -52,10 +52,10 @@ impl<'data, C> ViewOneMut<'data, C>
 where
     C: Component,
 {
-    pub(in crate::entity) fn new(
-        entities: Keys<'data, Entity, ()>,
-        pool: Option<&'data ComponentPool<C>>,
-    ) -> Self {
+    // noinspection DuplicatedCode
+    pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
+        let entities = registry.entities();
+        let pool = registry.get_pool();
         Self { entities, pool }
     }
 }

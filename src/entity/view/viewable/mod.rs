@@ -1,4 +1,4 @@
-use super::fetch::{Fetch, FetchRead, FetchWrite};
+use super::fetch::Fetch;
 
 mod impls;
 mod tuple;
