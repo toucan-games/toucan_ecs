@@ -29,7 +29,7 @@ where
     type Item = Option<RefMut<'data, C>>;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
-        let item = self.pool.map(|pool| pool.get_mut(entity)).flatten();
+        let item = self.pool.and_then(|pool| pool.get_mut(entity));
         Ok(item)
     }
 }
