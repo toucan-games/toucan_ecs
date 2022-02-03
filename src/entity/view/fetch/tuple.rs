@@ -31,7 +31,7 @@ macro_rules! impl_fetch {
 
             #[allow(non_snake_case)]
             fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
-                let ($($types,)*) = &self;
+                let ($($types,)*) = self;
                 $(let $types = $types.fetch(entity)?;)*
                 Ok(($($types,)*))
             }
