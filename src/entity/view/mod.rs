@@ -1,8 +1,7 @@
-pub use view::{View, ViewMut};
-pub use view_one::{ViewOne, ViewOneMut};
+pub use iter::view::{View, ViewMut};
+pub use iter::view_one::{ViewOne, ViewOneMut};
 pub use viewable::{SharedViewable, Viewable, ViewableItem};
 
 mod fetch;
-mod view;
-mod view_one;
+mod iter;
 mod viewable;
