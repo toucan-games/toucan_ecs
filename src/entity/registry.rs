@@ -20,6 +20,7 @@ use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
 /// [view][`Registry::view`] each component separately or group of components together.
 ///
 /// Registry can be used the same way as `World` in some other ECS libraries.
+#[derive(Default)]
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
     pools: HashMap<ComponentTypeId, Box<dyn Pool + Send + Sync + 'static>>,
@@ -537,7 +538,7 @@ impl Registry {
     ///
     /// let registry = Registry::new();
     ///
-    /// for (entity, component) in registry.view_one::<Name>() {
+    /// for component in registry.view_one::<Name>() {
     ///     println!("component: {:?}", *component)
     /// }
     /// ```
@@ -566,7 +567,7 @@ impl Registry {
     ///
     /// let mut registry = Registry::new();
     ///
-    /// for (entity, mut component) in registry.view_one_mut::<Name>() {
+    /// for mut component in registry.view_one_mut::<Name>() {
     ///     component.0 = "Привет, Мир";
     ///     println!("component: {:?}", *component)
     /// }
@@ -598,7 +599,7 @@ impl Registry {
     ///
     /// let registry = Registry::new();
     ///
-    /// for (entity, (name, id)) in registry.view::<(Option<&Name>, &ID)>() {
+    /// for (name, id) in registry.view::<(Option<&Name>, &ID)>() {
     ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
     /// }
     /// ```
@@ -629,7 +630,7 @@ impl Registry {
     ///
     /// let mut registry = Registry::new();
     ///
-    /// for (entity, (name, mut id)) in registry.view_mut::<(Option<&Name>, &mut ID)>() {
+    /// for (name, mut id) in registry.view_mut::<(Option<&Name>, &mut ID)>() {
     ///     id.0 += 10;
     ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
     /// }

@@ -6,7 +6,7 @@ authors = ["tuguzT <timurka.tugushev@gmail.com>"]
 repository = "https://github.com/toucan-rust/toucan_ecs"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-keywords = ["ecs", "entity"]
+keywords = ["toucan", "ecs", "entity"]
 categories = ["data-structures", "game-engines"]
 edition = "2021"
 

@@ -1,8 +1,7 @@
 use slotmap::dense::Keys;
 
+use crate::entity::view::{fetch::Fetch, SharedViewable, Viewable, ViewableItem};
 use crate::{Entity, Registry};
-
-use super::{fetch::Fetch, SharedViewable, Viewable, ViewableItem};
 
 /// Iterator which returns [entities][`Entity`] and their shared borrows
 /// (not only [`Ref`][`crate::Ref`]) of components.
@@ -33,7 +32,7 @@ impl<'data, V> Iterator for View<'data, V>
 where
     V: SharedViewable<'data>,
 {
-    type Item = (Entity, ViewableItem<'data, V>);
+    type Item = ViewableItem<'data, V>;
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
@@ -42,7 +41,7 @@ where
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);
             match result {
-                Ok(item) => return Some((entity, item)),
+                Ok(item) => return Some(item),
                 Err(_) => continue,
             }
         }
@@ -78,7 +77,7 @@ impl<'data, V> Iterator for ViewMut<'data, V>
 where
     V: Viewable<'data>,
 {
-    type Item = (Entity, ViewableItem<'data, V>);
+    type Item = ViewableItem<'data, V>;
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
@@ -87,7 +86,7 @@ where
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);
             match result {
-                Ok(item) => return Some((entity, item)),
+                Ok(item) => return Some(item),
                 Err(_) => continue,
             }
         }

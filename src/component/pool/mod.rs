@@ -1,5 +1,5 @@
 pub use component_pool::ComponentPool;
-pub use pool::Pool;
+pub use traits::Pool;
 
 mod component_pool;
-mod pool;
+mod traits;

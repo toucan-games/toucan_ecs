@@ -1,4 +1,5 @@
 use components::{Mass, Position, Velocity};
+use toucan_ecs::Entity;
 
 mod components;
 mod utils;
@@ -7,8 +8,8 @@ mod utils;
 fn view_one() {
     let registry = utils::prepare_for_view();
 
-    for (entity, component) in registry.view_one::<Position>() {
-        println!("entity: {:?}, component: {:?}", entity, *component)
+    for component in registry.view_one::<Position>() {
+        println!("component: {:?}", *component)
     }
 }
 
@@ -16,7 +17,9 @@ fn view_one() {
 fn view() {
     let registry = utils::prepare_for_view();
 
-    for (entity, (position, velocity, mass)) in registry.view::<(&Position, &Velocity, &Mass)>() {
+    for (entity, position, velocity, mass) in
+        registry.view::<(Entity, &Position, &Velocity, &Mass)>()
+    {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
             entity, *position, *velocity, *mass,
@@ -28,8 +31,8 @@ fn view() {
 fn option_view() {
     let registry = utils::prepare_for_optional_view();
 
-    for (entity, (position, velocity, mass)) in
-        registry.view::<(&Position, Option<&Velocity>, Option<&Mass>)>()
+    for (entity, position, velocity, mass) in
+        registry.view::<(Entity, &Position, Option<&Velocity>, Option<&Mass>)>()
     {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
