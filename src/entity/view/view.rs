@@ -4,6 +4,11 @@ use crate::{Entity, Registry};
 
 use super::{fetch::Fetch, SharedViewable, Viewable, ViewableItem};
 
+/// Iterator which returns [entities][`Entity`] and their shared borrows
+/// (not only [`Ref`][`crate::Ref`]) of components.
+///
+/// It will be constructed from the query which is determined by the generic type.
+/// Only entities that satisfies the query will be returned.
 pub struct View<'data, V>
 where
     V: SharedViewable<'data>,
@@ -44,6 +49,11 @@ where
     }
 }
 
+/// Iterator which returns [entities][`Entity`] and their shared OR unique borrows
+/// (not only [`Ref`][`crate::Ref`] or [`RefMut`][`crate::RefMut`]) of components.
+///
+/// It will be constructed from the query which is determined by the generic type.
+/// Only entities that satisfies the query will be returned.
 pub struct ViewMut<'data, V>
 where
     V: Viewable<'data>,

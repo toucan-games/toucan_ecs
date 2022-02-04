@@ -7,7 +7,7 @@ mod utils;
 fn view_one_mut() {
     let mut registry = utils::prepare_for_view();
 
-    for (entity, mut component) in registry.view_mut_one::<Position>() {
+    for (entity, mut component) in registry.view_one_mut::<Position>() {
         component.x -= 10.0;
         println!("entity: {:?}, component: {:?}", entity, *component)
     }

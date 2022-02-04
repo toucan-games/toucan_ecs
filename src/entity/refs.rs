@@ -3,6 +3,7 @@ use std::sync::MutexGuard;
 
 use crate::Component;
 
+/// Shared borrow of the entity's component.
 #[repr(transparent)]
 pub struct Ref<'data, C: Component>(pub(crate) MutexGuard<'data, C>);
 
@@ -14,6 +15,7 @@ impl<'data, C: Component> Deref for Ref<'data, C> {
     }
 }
 
+/// Unique borrow of the entity's component.
 #[repr(transparent)]
 pub struct RefMut<'data, C: Component>(pub(crate) MutexGuard<'data, C>);
 

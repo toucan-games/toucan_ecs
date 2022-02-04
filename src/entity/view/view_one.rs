@@ -3,6 +3,10 @@ use slotmap::dense::Keys;
 use crate::component::pool::ComponentPool;
 use crate::{Component, Entity, Ref, RefMut, Registry};
 
+/// Iterator which returns [entities][`Entity`] and their [shared borrows][`Ref`]
+/// of components.
+///
+/// Only entities that has that type of component will be returned.
 pub struct ViewOne<'data, C>
 where
     C: Component,
@@ -40,6 +44,10 @@ where
     }
 }
 
+/// Iterator which returns [entities][`Entity`] and their [unique borrows][`RefMut`]
+/// of components.
+///
+/// Only entities that has that type of component will be returned.
 pub struct ViewOneMut<'data, C>
 where
     C: Component,
