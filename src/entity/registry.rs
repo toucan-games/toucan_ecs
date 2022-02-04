@@ -59,6 +59,30 @@ impl Registry {
         self.entities.insert(())
     }
 
+    /// Creates new entity with one component attached to it.
+    ///
+    /// This can be done by hand with [`attach_one`][`Registry::attach_one`] associated function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// #[derive(Copy, Clone)]
+    /// struct Name(&'static str);
+    ///
+    /// let mut registry = Registry::new();
+    /// let entity = registry.create_with_one(Name("Hello, World"));
+    /// assert!(registry.contains(entity));
+    /// ```
+    pub fn create_with_one<C>(&mut self, component: C) -> Entity
+    where
+        C: Component,
+    {
+        let entity = self.create();
+        self.attach_one(entity, component);
+        entity
+    }
+
     /// Creates new entity with set of components attached to it.
     ///
     /// This can be done by hand with [`attach`][`Registry::attach`] associated function.
@@ -86,7 +110,7 @@ impl Registry {
         entity
     }
 
-    /// Create [entry][`Entry`] for the newly created entity.
+    /// Creates new [entry][`Entry`] for the newly created entity.
     ///
     /// # Examples
     ///
@@ -100,6 +124,59 @@ impl Registry {
     /// ```
     pub fn create_entry(&mut self) -> Entry {
         let entity = self.create();
+        Entry::new(entity, self)
+    }
+
+    /// Creates [entry][`Entry`] for the newly created entity with one component attached to it.
+    ///
+    /// This can be done by hand with [`Entry::attach_one`] associated function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// #[derive(Copy, Clone)]
+    /// struct Name(&'static str);
+    ///
+    /// let mut registry = Registry::new();
+    /// let entry = registry.create_entry_with_one(Name("Hello, World"));
+    ///
+    /// let entity = entry.entity();
+    /// assert!(registry.contains(entity));
+    /// ```
+    pub fn create_entry_with_one<C>(&mut self, component: C) -> Entry
+    where
+        C: Component,
+    {
+        let entity = self.create_with_one(component);
+        Entry::new(entity, self)
+    }
+
+    /// Creates [entry][`Entry`] for the newly created entity with set of components attached to it.
+    ///
+    /// This can be done by hand with [`Entry::attach`] associated function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// #[derive(Copy, Clone)]
+    /// struct Name(&'static str);
+    ///
+    /// #[derive(Copy, Clone)]
+    /// struct ID(u32);
+    ///
+    /// let mut registry = Registry::new();
+    /// let entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
+    ///
+    /// let entity = entry.entity();
+    /// assert!(registry.contains(entity));
+    /// ```
+    pub fn create_entry_with<S>(&mut self, set: S) -> Entry
+    where
+        S: ComponentSet,
+    {
+        let entity = self.create_with(set);
         Entry::new(entity, self)
     }
 

@@ -67,8 +67,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry();
-    /// entry.attach_one(Name("Hello, World"));
+    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
     /// assert_eq!(entry.get().as_deref(), Some(&Name("Hello, World")));
     /// ```
     pub fn attach_one<C>(&mut self, component: C)
@@ -96,8 +95,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry();
-    /// entry.attach((Name("Hello, World"), ID(42)));
+    /// let mut entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
     /// assert!(entry.attached::<(ID, Name)>());
     /// ```
     pub fn attach<S>(&mut self, set: S)
@@ -175,9 +173,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry();
-    ///
-    /// entry.attach_one(Name("Hello, World"));
+    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
     /// assert!(entry.attached_one::<Name>());
     ///
     /// entry.remove_one::<Name>();
@@ -206,9 +202,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry();
-    /// entry.attach((Name("Hello, World"), ID(42)));
-    ///
+    /// let mut entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
     /// entry.remove::<(ID, Name)>();
     /// assert!(!entry.attached::<(Name, ID)>());
     /// ```
@@ -237,9 +231,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry();
-    /// entry.attach((Name("Hello, World"), ID(42)));
-    ///
+    /// let mut entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
     /// entry.remove_all();
     /// assert!(!entry.attached::<(Name, ID)>());
     /// ```
@@ -261,9 +253,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry();
-    /// entry.attach_one(Name("Hello, World"));
-    ///
+    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
@@ -288,9 +278,7 @@ impl<'r> Entry<'r> {
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry();
-    /// entry.attach_one(Name("Hello, World"));
-    ///
+    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
     /// let mut name = entry.get_mut::<Name>().unwrap();
     /// (*name).0 = "This name was changed";
     /// assert_ne!(*name, Name("Hello, World"));
