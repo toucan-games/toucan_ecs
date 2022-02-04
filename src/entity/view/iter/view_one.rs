@@ -31,14 +31,14 @@ impl<'data, C> Iterator for ViewOne<'data, C>
 where
     C: Component,
 {
-    type Item = (Entity, Ref<'data, C>);
+    type Item = Ref<'data, C>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let pool = self.pool?;
         loop {
             let entity = self.entities.next()?;
             if let Some(component) = pool.get(entity) {
-                return Some((entity, component));
+                return Some(component);
             }
         }
     }
@@ -72,14 +72,14 @@ impl<'data, C> Iterator for ViewOneMut<'data, C>
 where
     C: Component,
 {
-    type Item = (Entity, RefMut<'data, C>);
+    type Item = RefMut<'data, C>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let pool = self.pool?;
         loop {
             let entity = self.entities.next()?;
             if let Some(component) = pool.get_mut(entity) {
-                return Some((entity, component));
+                return Some(component);
             }
         }
     }

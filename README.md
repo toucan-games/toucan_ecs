@@ -62,7 +62,7 @@ assert!(!registry.attached_one::<ID>(entity));
 ## View components with ease
 
 ```rust
-use toucan_ecs::Registry;
+use toucan_ecs::{Entity, Registry};
 
 #[derive(Debug, Copy, Clone)]
 struct Position {
@@ -89,7 +89,7 @@ for i in 0..10 {
 }
 
 // Get all entities which have `Position` and CAN have `Mass` components
-for (_entity, (mut position, mass)) in registry.view_mut::<(&mut Position, Option<&Mass>)>() {
+for (_, mut position, mass) in registry.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
     position.x += 1.0;
     println!("position is {:?}, mass is {:?}", *position, mass.as_deref());
 }

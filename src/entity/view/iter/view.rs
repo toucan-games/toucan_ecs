@@ -32,7 +32,7 @@ impl<'data, V> Iterator for View<'data, V>
 where
     V: SharedViewable<'data>,
 {
-    type Item = (Entity, ViewableItem<'data, V>);
+    type Item = ViewableItem<'data, V>;
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
@@ -41,7 +41,7 @@ where
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);
             match result {
-                Ok(item) => return Some((entity, item)),
+                Ok(item) => return Some(item),
                 Err(_) => continue,
             }
         }
@@ -77,7 +77,7 @@ impl<'data, V> Iterator for ViewMut<'data, V>
 where
     V: Viewable<'data>,
 {
-    type Item = (Entity, ViewableItem<'data, V>);
+    type Item = ViewableItem<'data, V>;
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
@@ -86,7 +86,7 @@ where
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);
             match result {
-                Ok(item) => return Some((entity, item)),
+                Ok(item) => return Some(item),
                 Err(_) => continue,
             }
         }

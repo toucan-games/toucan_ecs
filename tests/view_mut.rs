@@ -1,4 +1,5 @@
 use components::{Mass, Position, Velocity};
+use toucan_ecs::Entity;
 
 mod components;
 mod utils;
@@ -7,9 +8,9 @@ mod utils;
 fn view_one_mut() {
     let mut registry = utils::prepare_for_view();
 
-    for (entity, mut component) in registry.view_one_mut::<Position>() {
+    for mut component in registry.view_one_mut::<Position>() {
         component.x -= 10.0;
-        println!("entity: {:?}, component: {:?}", entity, *component)
+        println!("component: {:?}", *component)
     }
 }
 
@@ -17,8 +18,8 @@ fn view_one_mut() {
 fn view_mut() {
     let mut registry = utils::prepare_for_view();
 
-    for (entity, (mut position, velocity, mut mass)) in
-        registry.view_mut::<(&mut Position, &Velocity, &mut Mass)>()
+    for (entity, mut position, velocity, mut mass) in
+        registry.view_mut::<(Entity, &mut Position, &Velocity, &mut Mass)>()
     {
         position.x -= 10.0;
         mass.0 += 1.0;
@@ -33,8 +34,8 @@ fn view_mut() {
 fn option_view_mut() {
     let mut registry = utils::prepare_for_optional_view();
 
-    for (entity, (mut position, velocity, mut mass)) in
-        registry.view_mut::<(&mut Position, Option<&Velocity>, Option<&mut Mass>)>()
+    for (entity, mut position, velocity, mut mass) in
+        registry.view_mut::<(Entity, &mut Position, Option<&Velocity>, Option<&mut Mass>)>()
     {
         position.x -= 10.0;
         if let Some(ref mut mass) = mass {
