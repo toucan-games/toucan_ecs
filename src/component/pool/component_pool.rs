@@ -38,14 +38,14 @@ where
     pub fn get(&self, entity: Entity) -> Option<Ref<C>> {
         let key = self.mapping.get(entity)?;
         let mutex = self.components.get(*key)?;
-        let component = Ref(mutex.lock().unwrap());
+        let component = Ref::new(mutex.lock().unwrap());
         Some(component)
     }
 
     pub fn get_mut(&self, entity: Entity) -> Option<RefMut<C>> {
         let key = self.mapping.get(entity)?;
         let mutex = self.components.get(*key)?;
-        let component = RefMut(mutex.lock().unwrap());
+        let component = RefMut::new(mutex.lock().unwrap());
         Some(component)
     }
 
