@@ -20,6 +20,7 @@ use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
 /// [view][`Registry::view`] each component separately or group of components together.
 ///
 /// Registry can be used the same way as `World` in some other ECS libraries.
+#[derive(Default)]
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
     pools: HashMap<ComponentTypeId, Box<dyn Pool + Send + Sync + 'static>>,
