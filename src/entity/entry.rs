@@ -280,7 +280,7 @@ impl<'r> Entry<'r> {
     ///
     /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
     /// let mut name = entry.get_mut::<Name>().unwrap();
-    /// (*name).0 = "This name was changed";
+    /// name.0 = "This name was changed";
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```

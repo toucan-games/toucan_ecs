@@ -508,7 +508,7 @@ impl Registry {
     ///
     /// let entity = registry.create_with((Name("Hello, World"),));
     /// let mut name = registry.get_mut::<Name>(entity).unwrap();
-    /// (*name).0 = "This name was changed";
+    /// name.0 = "This name was changed";
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
@@ -567,7 +567,7 @@ impl Registry {
     /// let mut registry = Registry::new();
     ///
     /// for (entity, mut component) in registry.view_one_mut::<Name>() {
-    ///     (*component).0 = "Привет, Мир";
+    ///     component.0 = "Привет, Мир";
     ///     println!("component: {:?}", *component)
     /// }
     /// ```
