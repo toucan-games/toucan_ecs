@@ -106,6 +106,8 @@ pub use entity::{
     Entity,
 };
 pub use component::Component;
+pub use resource::{storage::ResourceStorage, Resource};
 
 mod entity;
 mod component;
+mod resource;

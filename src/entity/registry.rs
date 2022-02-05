@@ -12,14 +12,12 @@ use crate::{Component, Entity, Entry, Ref, RefMut};
 
 use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
 
-/// Registry of the entities and all the data attached to them.
+/// Storage of the entities and all the data attached to them.
 ///
 /// Use this to [create][`Registry::create`] and [destroy][`Registry::destroy`] entities,
 /// [attach][`Registry::attach`] and [remove][`Registry::remove`] components' data of the entity,
 /// [create][`Registry::entry`] entry for the entity,
 /// [view][`Registry::view`] each component separately or group of components together.
-///
-/// Registry can be used the same way as `World` in some other ECS libraries.
 #[derive(Default)]
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
