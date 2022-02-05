@@ -78,7 +78,7 @@
 //! // Create our entities and their data
 //! for i in 0..10 {
 //!     let f = i as f32;
-//!     let position = Position{ x: f / 10.0, y: -f / 10.0 };
+//!     let position = Position { x: f / 10.0, y: -f / 10.0 };
 //!     let entity = registry.create_with((position,));
 //!     assert!(registry.attached_one::<Position>(entity));
 //!     if i % 2 != 0 {

@@ -1,4 +1,4 @@
-use crate::component::pool::ComponentPool;
+use crate::component::storage::DefaultStorage;
 use crate::{Component, Entity, RefMut, Registry};
 
 use super::Fetch;
@@ -7,7 +7,7 @@ pub struct FetchWrite<'data, C>
 where
     C: Component,
 {
-    pool: &'data ComponentPool<C>,
+    storage: &'data DefaultStorage<C>,
 }
 
 impl<'data, C> TryFrom<&'data Registry> for FetchWrite<'data, C>
@@ -18,8 +18,8 @@ where
 
     // noinspection DuplicatedCode
     fn try_from(registry: &'data Registry) -> Result<Self, Self::Error> {
-        let pool = registry.get_pool::<C>().ok_or(())?;
-        Ok(Self { pool })
+        let storage = registry.get_storage::<C>().ok_or(())?;
+        Ok(Self { storage })
     }
 }
 
@@ -30,6 +30,6 @@ where
     type Item = RefMut<'data, C>;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
-        self.pool.get_mut(entity).ok_or(())
+        self.storage.get_mut(entity).ok_or(())
     }
 }

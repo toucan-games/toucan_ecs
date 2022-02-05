@@ -52,6 +52,20 @@ impl<'r> Entry<'r> {
         self.entity
     }
 
+    /// Returns `true` if the entity does not exist or does not contain any data attached to it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::{Registry, Entry};
+    /// # let mut registry = Registry::new();
+    /// let mut entry = registry.create_entry();
+    /// assert!(entry.is_empty());
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        self.registry.is_entity_empty(self.entity)
+    }
+
     /// Attaches exactly one component to the entity.
     ///
     /// This function does not panic because it registers component type automatically.

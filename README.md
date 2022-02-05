@@ -3,14 +3,14 @@
 Simple and safe ECS library for Rust.
 
 Provides basic features, such as:
+
 - create and destroy entities;
 - attach, get or remove components from the entity;
 - use entry of the entity to modify it;
 - view components of different types;
 - view components immutably or mutably.
 
-For now library provides nothing for systems (are responsible for logic).
-You are free to create your own system!
+For now library provides nothing for systems (are responsible for logic). You are free to create your own system!
 
 This crate contains no `unsafe` code.
 
@@ -78,7 +78,7 @@ let mut registry = Registry::new();
 // Create our entities and their data
 for i in 0..10 {
     let f = i as f32;
-    let position = Position{ x: f / 10.0, y: -f / 10.0 };
+    let position = Position { x: f / 10.0, y: -f / 10.0 };
     let entity = registry.create_with((position,));
     assert!(registry.attached_one::<Position>(entity));
     if i % 2 != 0 {

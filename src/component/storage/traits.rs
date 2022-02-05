@@ -2,8 +2,12 @@ use std::any::Any;
 
 use crate::Entity;
 
-pub trait Pool: 'static {
+pub trait Storage: 'static {
     fn remove(&mut self, entity: Entity);
+
+    fn attached(&self, entity: Entity) -> bool;
+
+    fn clear(&mut self);
 
     fn as_any_ref(&self) -> &dyn Any;
 

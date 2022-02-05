@@ -1,5 +1,5 @@
-pub mod pool;
 pub mod set;
+pub mod storage;
 pub mod type_id;
 
 /// Trait for data that can be attached to the entity.

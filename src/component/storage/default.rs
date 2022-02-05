@@ -5,13 +5,14 @@ use slotmap::{SecondaryMap, SlotMap};
 
 use crate::{Component, Entity, Ref, RefMut};
 
-use super::Pool;
+use super::Storage;
 
 slotmap::new_key_type! {
     struct ComponentKey;
 }
 
-pub struct ComponentPool<C>
+#[derive(Default)]
+pub struct DefaultStorage<C>
 where
     C: Component,
 {
@@ -19,7 +20,7 @@ where
     mapping: SecondaryMap<Entity, ComponentKey>,
 }
 
-impl<C> ComponentPool<C>
+impl<C> DefaultStorage<C>
 where
     C: Component,
 {
@@ -48,13 +49,9 @@ where
         let component = RefMut::new(mutex.lock().unwrap());
         Some(component)
     }
-
-    pub fn attached(&self, entity: Entity) -> bool {
-        self.mapping.contains_key(entity)
-    }
 }
 
-impl<C> Pool for ComponentPool<C>
+impl<C> Storage for DefaultStorage<C>
 where
     C: Component,
 {
@@ -63,6 +60,15 @@ where
         if let Some(component) = component {
             self.components.remove(component);
         }
+    }
+
+    fn attached(&self, entity: Entity) -> bool {
+        self.mapping.contains_key(entity)
+    }
+
+    fn clear(&mut self) {
+        self.mapping.clear();
+        self.components.clear();
     }
 
     fn as_any_ref(&self) -> &dyn Any {

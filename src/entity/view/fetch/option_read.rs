@@ -1,4 +1,4 @@
-use crate::component::pool::ComponentPool;
+use crate::component::storage::DefaultStorage;
 use crate::{Component, Entity, Ref, Registry};
 
 use super::Fetch;
@@ -7,7 +7,7 @@ pub struct FetchOptionRead<'data, C>
 where
     C: Component,
 {
-    pool: Option<&'data ComponentPool<C>>,
+    storage: Option<&'data DefaultStorage<C>>,
 }
 
 impl<'data, C> TryFrom<&'data Registry> for FetchOptionRead<'data, C>
@@ -17,8 +17,8 @@ where
     type Error = ();
 
     fn try_from(registry: &'data Registry) -> Result<Self, Self::Error> {
-        let pool = registry.get_pool::<C>();
-        Ok(Self { pool })
+        let storage = registry.get_storage::<C>();
+        Ok(Self { storage })
     }
 }
 
@@ -29,7 +29,7 @@ where
     type Item = Option<Ref<'data, C>>;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
-        let item = self.pool.and_then(|pool| pool.get(entity));
+        let item = self.storage.and_then(|storage| storage.get(entity));
         Ok(item)
     }
 }

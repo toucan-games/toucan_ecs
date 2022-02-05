@@ -1,6 +1,6 @@
 use slotmap::dense::Keys;
 
-use crate::component::pool::ComponentPool;
+use crate::component::storage::DefaultStorage;
 use crate::{Component, Entity, Ref, RefMut, Registry};
 
 /// Iterator which returns [entities][`Entity`] and their [shared borrows][`Ref`]
@@ -12,7 +12,7 @@ where
     C: Component,
 {
     entities: Keys<'data, Entity, ()>,
-    pool: Option<&'data ComponentPool<C>>,
+    storage: Option<&'data DefaultStorage<C>>,
 }
 
 impl<'data, C> ViewOne<'data, C>
@@ -22,8 +22,8 @@ where
     // noinspection DuplicatedCode
     pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
         let entities = registry.entities();
-        let pool = registry.get_pool();
-        Self { entities, pool }
+        let storage = registry.get_storage();
+        Self { entities, storage }
     }
 }
 
@@ -34,10 +34,10 @@ where
     type Item = Ref<'data, C>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let pool = self.pool?;
+        let storage = self.storage?;
         loop {
             let entity = self.entities.next()?;
-            if let Some(component) = pool.get(entity) {
+            if let Some(component) = storage.get(entity) {
                 return Some(component);
             }
         }
@@ -53,7 +53,7 @@ where
     C: Component,
 {
     entities: Keys<'data, Entity, ()>,
-    pool: Option<&'data ComponentPool<C>>,
+    storage: Option<&'data DefaultStorage<C>>,
 }
 
 impl<'data, C> ViewOneMut<'data, C>
@@ -63,8 +63,8 @@ where
     // noinspection DuplicatedCode
     pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
         let entities = registry.entities();
-        let pool = registry.get_pool();
-        Self { entities, pool }
+        let storage = registry.get_storage();
+        Self { entities, storage }
     }
 }
 
@@ -75,10 +75,10 @@ where
     type Item = RefMut<'data, C>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let pool = self.pool?;
+        let storage = self.storage?;
         loop {
             let entity = self.entities.next()?;
-            if let Some(component) = pool.get_mut(entity) {
+            if let Some(component) = storage.get_mut(entity) {
                 return Some(component);
             }
         }

@@ -4,15 +4,15 @@ use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
 use crate::component::{
-    pool::{ComponentPool, Pool},
     set::ComponentSet,
+    storage::{DefaultStorage, Storage},
     type_id::ComponentTypeId,
 };
 use crate::{Component, Entity, Entry, Ref, RefMut};
 
 use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
 
-/// Storage of the entities and all the data attached to them.
+/// Registry of the entities and all the data attached to them.
 ///
 /// Use this to [create][`Registry::create`] and [destroy][`Registry::destroy`] entities,
 /// [attach][`Registry::attach`] and [remove][`Registry::remove`] components' data of the entity,
@@ -23,7 +23,8 @@ use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
 #[derive(Default)]
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
-    pools: HashMap<ComponentTypeId, Box<dyn Pool + Send + Sync + 'static>>,
+    extended_entities: Vec<Entity>,
+    storages: HashMap<ComponentTypeId, Box<dyn Storage + Send + Sync + 'static>>,
 }
 
 impl Registry {
@@ -38,7 +39,8 @@ impl Registry {
     pub fn new() -> Self {
         Self {
             entities: DenseSlotMap::with_key(),
-            pools: HashMap::new(),
+            extended_entities: Vec::new(),
+            storages: HashMap::new(),
         }
     }
 
@@ -55,6 +57,7 @@ impl Registry {
     ///
     /// let entity = registry.create();
     /// assert!(registry.contains(entity));
+    /// assert!(registry.is_entity_empty(entity));
     /// ```
     pub fn create(&mut self) -> Entity {
         self.entities.insert(())
@@ -74,6 +77,7 @@ impl Registry {
     /// let mut registry = Registry::new();
     /// let entity = registry.create_with_one(Name("Hello, World"));
     /// assert!(registry.contains(entity));
+    /// assert!(!registry.is_entity_empty(entity));
     /// ```
     pub fn create_with_one<C>(&mut self, component: C) -> Entity
     where
@@ -101,6 +105,7 @@ impl Registry {
     /// let mut registry = Registry::new();
     /// let entity = registry.create_with((Name("Hello, World"), ID(42)));
     /// assert!(registry.contains(entity));
+    /// assert!(!registry.is_entity_empty(entity));
     /// ```
     pub fn create_with<S>(&mut self, set: S) -> Entity
     where
@@ -122,6 +127,7 @@ impl Registry {
     /// let entry = registry.create_entry();
     /// let entity = entry.entity();
     /// assert!(registry.contains(entity));
+    /// assert!(registry.is_entity_empty(entity));
     /// ```
     pub fn create_entry(&mut self) -> Entry {
         let entity = self.create();
@@ -144,6 +150,7 @@ impl Registry {
     ///
     /// let entity = entry.entity();
     /// assert!(registry.contains(entity));
+    /// assert!(!registry.is_entity_empty(entity));
     /// ```
     pub fn create_entry_with_one<C>(&mut self, component: C) -> Entry
     where
@@ -172,6 +179,7 @@ impl Registry {
     ///
     /// let entity = entry.entity();
     /// assert!(registry.contains(entity));
+    /// assert!(!registry.is_entity_empty(entity));
     /// ```
     pub fn create_entry_with<S>(&mut self, set: S) -> Entry
     where
@@ -199,6 +207,94 @@ impl Registry {
     /// ```
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
         self.contains(entity).then(|| Entry::new(entity, self))
+    }
+
+    /// Extends registry with provided count of newly created entities.
+    /// Returns handles of newly created entities.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// let mut registry = Registry::new();
+    ///
+    /// let entities = registry.extend(10);
+    /// assert_eq!(entities.len(), 10);
+    /// ```
+    pub fn extend(&mut self, count: u32) -> &[Entity] {
+        self.extended_entities.clear();
+        (0..count).for_each(|_| {
+            let entity = self.create();
+            self.extended_entities.push(entity);
+        });
+        self.extended_entities.as_slice()
+    }
+
+    /// Extends registry with collection of components to the newly created entities.
+    /// Returns handles of newly created entities.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// #[derive(Copy, Clone)]
+    /// struct ID(u32);
+    ///
+    /// let mut registry = Registry::new();
+    ///
+    /// let entities = registry.extend_with_one([ID(1), ID(2), ID(3), ID(4), ID(5)]);
+    /// assert_eq!(entities.len(), 5);
+    /// ```
+    pub fn extend_with_one<I, C>(&mut self, into_iter: I) -> &[Entity]
+    where
+        I: IntoIterator<Item = C>,
+        C: Component,
+    {
+        self.extended_entities.clear();
+        let iter = into_iter.into_iter();
+        iter.for_each(|component| {
+            let entity = self.create_with_one(component);
+            self.extended_entities.push(entity);
+        });
+        self.extended_entities.as_slice()
+    }
+
+    // noinspection SpellCheckingInspection
+    /// Extends registry with collection of set of components to the newly created entities.
+    /// Returns handles of newly created entities.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// #[derive(Copy, Clone)]
+    /// struct Name(&'static str);
+    ///
+    /// #[derive(Copy, Clone)]
+    /// struct ID(u32);
+    ///
+    /// let mut registry = Registry::new();
+    ///
+    /// let entities = registry.extend_with([
+    ///     (Name("Hello, World"), ID(1)),
+    ///     (Name("Привет, Мир"), ID(2)),
+    ///     (Name("你好世界"), ID(3)),
+    ///     (Name("नमस्ते दुनिया"), ID(4)),
+    /// ]);
+    /// assert_eq!(entities.len(), 4);
+    /// ```
+    pub fn extend_with<I, S>(&mut self, into_iter: I) -> &[Entity]
+    where
+        I: IntoIterator<Item = S>,
+        S: ComponentSet,
+    {
+        self.extended_entities.clear();
+        let iter = into_iter.into_iter();
+        iter.for_each(|set| {
+            let entity = self.create_with(set);
+            self.extended_entities.push(entity);
+        });
+        self.extended_entities.as_slice()
     }
 
     /// Returns `true` if the registry contains the entity.
@@ -236,11 +332,45 @@ impl Registry {
         self.entities.remove(entity);
     }
 
+    /// Returns `true` if registry does not contain any entity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// let mut registry = Registry::new();
+    /// assert!(registry.is_empty());
+    ///
+    /// let _ = registry.create();
+    /// assert!(!registry.is_empty());
+    /// ```
+    pub fn is_empty(&self) -> bool {
+        self.entities.is_empty()
+    }
+
+    /// Clears this registry, destroying all entities and their data.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// let mut registry = Registry::new();
+    ///
+    /// registry.extend(100);
+    /// assert!(!registry.is_empty());
+    ///
+    /// registry.clear();
+    /// assert!(registry.is_empty());
+    /// ```
+    pub fn clear(&mut self) {
+        self.entities.clear();
+        self.extended_entities.clear();
+        self.storages
+            .values_mut()
+            .for_each(|storage| storage.clear());
+    }
+
     /// Registers new type of component to be stored in the registry.
-    ///
-    /// # Panics
-    ///
-    /// Attempt to attach unregistered component to the entity will result in panic.
     ///
     /// # Examples
     ///
@@ -257,9 +387,8 @@ impl Registry {
     where
         C: Component,
     {
-        let pool = self.get_pool_mut::<C>();
-        if pool.is_none() {
-            self.create_pool::<C>();
+        if !self.has_storage::<C>() {
+            self.create_storage::<C>();
         }
     }
 
@@ -288,8 +417,8 @@ impl Registry {
         C: Component,
     {
         self.register::<C>();
-        let pool = self.get_pool_mut().unwrap();
-        pool.attach(entity, component);
+        let storage = self.get_storage_mut().unwrap();
+        storage.attach(entity, component);
     }
 
     /// Attaches set of components to the entity.
@@ -346,8 +475,10 @@ impl Registry {
     where
         C: Component,
     {
-        let pool = self.get_pool::<C>();
-        pool.map(|pool| pool.attached(entity)).unwrap_or(false)
+        let storage = self.get_storage::<C>();
+        storage
+            .map(|storage| storage.attached(entity))
+            .unwrap_or(false)
     }
 
     /// Returns `true` if components in the generic set type are attached to the entity.
@@ -380,6 +511,23 @@ impl Registry {
         S::attached(self, entity)
     }
 
+    /// Returns `true` if the entity does not exist or does not contain any data attached to it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::Registry;
+    /// let mut registry = Registry::new();
+    ///
+    /// let entity = registry.create();
+    /// assert!(registry.is_entity_empty(entity));
+    /// ```
+    pub fn is_entity_empty(&self, entity: Entity) -> bool {
+        self.storages
+            .values()
+            .all(|storage| !storage.attached(entity))
+    }
+
     /// Removes component of one type from the entity.
     ///
     /// To remove components of multiple types from the entity at once,
@@ -404,9 +552,9 @@ impl Registry {
     where
         C: Component,
     {
-        let pool = self.get_pool_mut::<C>();
-        if let Some(pool) = pool {
-            pool.remove(entity)
+        let storage = self.get_storage_mut::<C>();
+        if let Some(storage) = storage {
+            storage.remove(entity)
         }
     }
 
@@ -459,10 +607,12 @@ impl Registry {
     ///
     /// let entity = registry.create_with((Name("Hello, World"), ID(42)));
     /// registry.remove_all(entity);
-    /// assert!(!registry.attached::<(Name, ID)>(entity));
+    /// assert!(registry.is_entity_empty(entity));
     /// ```
     pub fn remove_all(&mut self, entity: Entity) {
-        self.pools.values_mut().for_each(|pool| pool.remove(entity))
+        self.storages
+            .values_mut()
+            .for_each(|storage| storage.remove(entity))
     }
 
     /// Retrieves the [shared borrow][`Ref`] for the component of one type attached to the entity.
@@ -488,8 +638,8 @@ impl Registry {
     where
         C: Component,
     {
-        let pool = self.get_pool::<C>()?;
-        pool.get(entity)
+        let storage = self.get_storage::<C>()?;
+        storage.get(entity)
     }
 
     /// Retrieves the [unique borrow][`RefMut`] for the component of one type attached to the entity.
@@ -517,8 +667,8 @@ impl Registry {
     where
         C: Component,
     {
-        let pool = self.get_pool_mut::<C>()?;
-        pool.get_mut(entity)
+        let storage = self.get_storage_mut::<C>()?;
+        storage.get_mut(entity)
     }
 
     /// Creates a [view][`ViewOne`] of the one component type.
@@ -646,40 +796,48 @@ impl Registry {
         self.entities.keys()
     }
 
-    pub(super) fn get_pool<C>(&self) -> Option<&ComponentPool<C>>
+    pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let pool = self.pools.get(&type_id)?;
-        let pool = pool
+        let storage = self.storages.get(&type_id)?;
+        let storage = storage
             .as_ref()
             .as_any_ref()
             .downcast_ref()
             .expect("downcast error");
-        Some(pool)
+        Some(storage)
     }
 
-    fn get_pool_mut<C>(&mut self) -> Option<&mut ComponentPool<C>>
+    fn get_storage_mut<C>(&mut self) -> Option<&mut DefaultStorage<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let pool = self.pools.get_mut(&type_id)?;
-        let pool = pool
+        let storage = self.storages.get_mut(&type_id)?;
+        let storage = storage
             .as_mut()
             .as_any_mut()
             .downcast_mut()
             .expect("downcast error");
-        Some(pool)
+        Some(storage)
     }
 
-    fn create_pool<C>(&mut self)
+    fn has_storage<C>(&self) -> bool
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let pool = ComponentPool::<C>::new();
-        self.pools.insert(type_id, Box::new(pool));
+        self.storages.contains_key(&type_id)
+    }
+
+    fn create_storage<C>(&mut self)
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = DefaultStorage::<C>::new();
+        self.storages.insert(type_id, Box::new(storage));
     }
 }
