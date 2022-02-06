@@ -1,7 +1,9 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::Entity;
+use resources::Time;
+use toucan_ecs::{Entity, ResourceRead};
 
 mod components;
+mod resources;
 mod utils;
 
 #[test]
@@ -17,12 +19,16 @@ fn view_one() {
 fn view() {
     let registry = utils::prepare_for_view();
 
-    for (entity, position, velocity, mass) in
-        registry.view::<(Entity, &Position, &Velocity, &Mass)>()
+    for (entity, position, velocity, mass, time) in
+        registry.view::<(Entity, &Position, &Velocity, &Mass, ResourceRead<Time>)>()
     {
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
-            entity, *position, *velocity, *mass,
+            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}, time: {}",
+            entity,
+            *position,
+            *velocity,
+            *mass,
+            time.elapsed_secs(),
         )
     }
 }

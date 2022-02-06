@@ -3,10 +3,13 @@ use std::any::Any;
 pub use refs::{Ref, RefMut};
 pub use storage::ResourceStorage;
 pub use type_id::ResourceTypeId;
+pub use viewable::{ResourceRead, ResourceWrite};
 
+mod fetch;
 mod refs;
 mod storage;
 mod type_id;
+mod viewable;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///

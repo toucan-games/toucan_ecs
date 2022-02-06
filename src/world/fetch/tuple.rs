@@ -12,14 +12,14 @@ macro_rules! fetch {
 
 macro_rules! impl_fetch {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> TryFrom<&'data Registry> for ($($types,)*)
+        impl<'data, $($types),*> TryFrom<&'data World> for ($($types,)*)
         where
             $($types: Fetch<'data>,)*
         {
             type Error = ();
 
-            fn try_from(registry: &'data Registry) -> Result<Self, Self::Error> {
-                Ok(($($types::try_from(registry)?,)*))
+            fn try_from(world: &'data World) -> Result<Self, Self::Error> {
+                Ok(($($types::try_from(world)?,)*))
             }
         }
 

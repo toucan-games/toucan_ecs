@@ -1,7 +1,9 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::Entity;
+use resources::Time;
+use toucan_ecs::{Entity, ResourceWrite};
 
 mod components;
+mod resources;
 mod utils;
 
 #[test]
@@ -18,14 +20,23 @@ fn view_one_mut() {
 fn view_mut() {
     let mut registry = utils::prepare_for_view();
 
-    for (entity, mut position, velocity, mut mass) in
-        registry.view_mut::<(Entity, &mut Position, &Velocity, &mut Mass)>()
-    {
+    for (entity, mut position, velocity, mut mass, mut time) in registry.view_mut::<(
+        Entity,
+        &mut Position,
+        &Velocity,
+        &mut Mass,
+        ResourceWrite<Time>,
+    )>() {
         position.x -= 10.0;
         mass.0 += 1.0;
+        time.reset();
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
-            entity, *position, *velocity, *mass,
+            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}, time: {}",
+            entity,
+            *position,
+            *velocity,
+            *mass,
+            time.elapsed_secs(),
         )
     }
 }

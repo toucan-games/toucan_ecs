@@ -98,13 +98,10 @@
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
 
-pub use entity::{
-    view::{View, ViewMut, ViewOne, ViewOneMut},
-    Entity, Entry,
-};
+pub use entity::{Entity, Entry, ViewOne, ViewOneMut};
 pub use component::Component;
-pub use resource::Resource;
-pub use world::World;
+pub use resource::{Resource, ResourceRead, ResourceWrite};
+pub use world::{View, ViewMut, World};
 
 mod entity;
 mod component;

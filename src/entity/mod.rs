@@ -1,11 +1,11 @@
 pub use entry::Entry;
 pub use registry::Registry;
-
-pub mod view;
+pub use view_one::{ViewOne, ViewOneMut};
 
 mod entry;
 mod fetch;
 mod registry;
+mod view_one;
 mod viewable;
 
 slotmap::new_key_type! {

@@ -1,8 +1,7 @@
 use slotmap::dense::Keys;
 
-use crate::entity::Registry;
 use crate::world::{Fetch, SharedViewable, Viewable, ViewableItem};
-use crate::Entity;
+use crate::{Entity, World};
 
 /// Iterator which returns [entities][`Entity`] and their shared borrows of components.
 ///
@@ -21,9 +20,9 @@ where
     V: SharedViewable<'data>,
 {
     // noinspection DuplicatedCode
-    pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
-        let entities = registry.entities();
-        let fetch = V::Fetch::try_from(registry).ok();
+    pub(crate) fn new(world: &'data World) -> Self {
+        let entities = world.registry().entities();
+        let fetch = V::Fetch::try_from(world).ok();
         Self { entities, fetch }
     }
 }
@@ -65,9 +64,9 @@ where
     V: Viewable<'data>,
 {
     // noinspection DuplicatedCode
-    pub(in crate::entity) fn new(registry: &'data Registry) -> Self {
-        let entities = registry.entities();
-        let fetch = V::Fetch::try_from(registry).ok();
+    pub(crate) fn new(world: &'data World) -> Self {
+        let entities = world.registry().entities();
+        let fetch = V::Fetch::try_from(world).ok();
         Self { entities, fetch }
     }
 }

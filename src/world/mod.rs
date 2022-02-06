@@ -1,12 +1,14 @@
 pub use fetch::Fetch;
+pub use view::{View, ViewMut};
 pub use viewable::{SharedViewable, Viewable, ViewableItem};
 
 use crate::component::{ComponentSet, Ref as ComponentRef, RefMut as ComponentRefMut};
 use crate::entity::Registry;
 use crate::resource::{Ref as ResourceRef, RefMut as ResourceRefMut, ResourceStorage};
-use crate::{Component, Entity, Entry, Resource, View, ViewMut, ViewOne, ViewOneMut};
+use crate::{Component, Entity, Entry, Resource, ViewOne, ViewOneMut};
 
 mod fetch;
+mod view;
 mod viewable;
 
 /// Storage of the entities and all the data attached to them.
@@ -808,7 +810,7 @@ impl World {
     where
         V: SharedViewable<'data>,
     {
-        self.registry.view::<V>()
+        View::new(self)
     }
 
     /// Creates a [view][`ViewMut`] of the multiple component types.
@@ -840,6 +842,14 @@ impl World {
     where
         V: Viewable<'data>,
     {
-        self.registry.view_mut::<V>()
+        ViewMut::new(self)
+    }
+
+    pub(crate) fn registry(&self) -> &Registry {
+        &self.registry
+    }
+
+    pub(crate) fn resources(&self) -> &ResourceStorage {
+        &self.resources
     }
 }

@@ -64,7 +64,7 @@ impl ResourceStorage {
         Some(resource)
     }
 
-    pub fn get_mut<R>(&mut self) -> Option<RefMut<R>>
+    pub fn get_mut<R>(&self) -> Option<RefMut<R>>
     where
         R: Resource,
     {

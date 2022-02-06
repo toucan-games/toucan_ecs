@@ -1,10 +1,12 @@
 use toucan_ecs::World;
 
 use crate::components::{Mass, Position, Velocity};
+use crate::resources::Time;
 
 pub fn prepare_for_view() -> World {
     let mut world = World::new();
 
+    world.create_resource(Time::new());
     for i in 0..=10 {
         let f = i as f32;
         let position = Position { x: f, y: -f };
@@ -22,6 +24,7 @@ pub fn prepare_for_view() -> World {
 pub fn prepare_for_optional_view() -> World {
     let mut world = World::new();
 
+    world.create_resource(Time::new());
     for i in 0..=10 {
         let f = i as f32;
         let position = Position { x: f, y: -f };

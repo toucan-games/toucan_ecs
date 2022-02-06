@@ -4,10 +4,9 @@ use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
 use crate::component::{ComponentSet, ComponentTypeId, DefaultStorage, Ref, RefMut, Storage};
-use crate::world::{SharedViewable, Viewable};
 use crate::{Component, Entity, Entry};
 
-use super::view::{View, ViewMut, ViewOne, ViewOneMut};
+use super::view_one::{ViewOne, ViewOneMut};
 
 #[derive(Default)]
 pub struct Registry {
@@ -231,21 +230,7 @@ impl Registry {
         ViewOneMut::new(self)
     }
 
-    pub fn view<'data, V>(&'data self) -> View<'data, V>
-    where
-        V: SharedViewable<'data>,
-    {
-        View::new(self)
-    }
-
-    pub fn view_mut<'data, V>(&'data mut self) -> ViewMut<'data, V>
-    where
-        V: Viewable<'data>,
-    {
-        ViewMut::new(self)
-    }
-
-    pub(super) fn entities(&self) -> Keys<Entity, ()> {
+    pub(crate) fn entities(&self) -> Keys<Entity, ()> {
         self.entities.keys()
     }
 

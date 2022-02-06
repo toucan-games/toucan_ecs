@@ -1,7 +1,6 @@
 use crate::component::{DefaultStorage, Ref};
-use crate::entity::Registry;
 use crate::world::Fetch;
-use crate::{Component, Entity};
+use crate::{Component, Entity, World};
 
 pub struct FetchOptionRead<'data, C>
 where
@@ -10,14 +9,15 @@ where
     storage: Option<&'data DefaultStorage<C>>,
 }
 
-impl<'data, C> TryFrom<&'data Registry> for FetchOptionRead<'data, C>
+impl<'data, C> TryFrom<&'data World> for FetchOptionRead<'data, C>
 where
     C: Component,
 {
     type Error = ();
 
-    fn try_from(registry: &'data Registry) -> Result<Self, Self::Error> {
-        let storage = registry.get_storage::<C>();
+    // noinspection DuplicatedCode
+    fn try_from(world: &'data World) -> Result<Self, Self::Error> {
+        let storage = world.registry().get_storage::<C>();
         Ok(Self { storage })
     }
 }
