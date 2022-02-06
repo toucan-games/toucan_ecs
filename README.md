@@ -23,21 +23,21 @@ This crate contains no `unsafe` code.
 ## Create and destroy entities
 
 ```rust
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
-let mut registry = Registry::new();
+let mut world = World::new();
 
-let entity = registry.create();
-assert!(registry.contains(entity));
+let entity = world.create();
+assert!(world.contains(entity));
 
-registry.destroy(entity);
-assert!(!registry.contains(entity));
+world.destroy(entity);
+assert!(!world.contains(entity));
 ```
 
 ## Use entries to simplify access to the entity's data
 
 ```rust
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
 #[derive(Copy, Clone)]
 struct Name(&'static str);
@@ -45,28 +45,28 @@ struct Name(&'static str);
 #[derive(Copy, Clone)]
 struct ID(u32);
 
-let mut registry = Registry::new();
+let mut world = World::new();
 
 // Create new entity
 let entity = {
-    let mut entry = registry.create_entry();
-    entry.attach((Name("Hello, World"), ID(42)));
+let mut entry = world.create_entry();
+entry.attach((Name("Hello, World"), ID(42)));
     assert!(entry.attached::<(Name, ID)>());
     entry.entity()
 };
-assert!(registry.attached::<(Name, ID)>(entity));
+assert!(world.attached::<(Name, ID)>(entity));
 
 // Or reuse existing ones
-if let Some(mut entry) = registry.entry(entity) {
-    entry.remove_one::<ID>();
+if let Some( mut entry) = world.entry(entity) {
+entry.remove_one::< ID > ();
 }
-assert!(!registry.attached_one::<ID>(entity));
+assert!(!world.attached_one::<ID>(entity));
 ```
 
 ## View components with ease
 
 ```rust
-use toucan_ecs::{Entity, Registry};
+use toucan_ecs::{Entity, World};
 
 #[derive(Debug, Copy, Clone)]
 struct Position {
@@ -77,24 +77,24 @@ struct Position {
 #[derive(Debug, Copy, Clone)]
 struct Mass(f32);
 
-let mut registry = Registry::new();
+let mut world = World::new();
 
 // Create our entities and their data
 for i in 0..10 {
-    let f = i as f32;
-    let position = Position { x: f / 10.0, y: -f / 10.0 };
-    let entity = registry.create_with((position,));
-    assert!(registry.attached_one::<Position>(entity));
-    if i % 2 != 0 {
-        let mass = Mass(f);
-        registry.attach_one(entity, mass);
-        assert!(registry.attached_one::<Mass>(entity));
-    }
+let f = i as f32;
+let position = Position { x: f / 10.0, y: - f / 10.0 };
+let entity = world.create_with((position, ));
+assert ! (world.attached_one::< Position > (entity));
+if i % 2 != 0 {
+let mass = Mass(f);
+world.attach_one(entity, mass);
+assert ! (world.attached_one::< Mass > (entity));
+}
 }
 
 // Get all entities which have `Position` and CAN have `Mass` components
-for (_, mut position, mass) in registry.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
-    position.x += 1.0;
-    println!("position is {:?}, mass is {:?}", *position, mass.as_deref());
+for (_, mut position, mass) in world.view_mut::<(Entity, & mut Position, Option< & Mass>) > () {
+position.x += 1.0;
+println !("position is {:?}, mass is {:?}", * position, mass.as_deref());
 }
 ```

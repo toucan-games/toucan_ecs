@@ -1,8 +1,10 @@
 use std::any::Any;
 
+pub use refs::{Ref, RefMut};
 pub use storage::ResourceStorage;
 pub use type_id::ResourceTypeId;
 
+mod refs;
 mod storage;
 mod type_id;
 

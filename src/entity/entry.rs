@@ -1,5 +1,6 @@
 use crate::component::{ComponentSet, Ref, RefMut};
-use crate::{Component, Entity, Registry};
+use crate::entity::Registry;
+use crate::{Component, Entity};
 
 /// Entry of the specific [entity][`Entity`].
 ///
@@ -7,9 +8,8 @@ use crate::{Component, Entity, Registry};
 /// you don't have to provide it each time to retrieve something,
 /// you can do it only once.
 ///
-/// You can retrieve this
-/// from [`Registry::create_entry`] to create new entity and easily access it
-/// or from [`Registry::entry`] if an entity was created earlier.
+/// You can retrieve this from [`crate::World::create_entry`] to create new entity and
+/// easily access it or from [`crate::World::entry`] if an entity was created earlier.
 pub struct Entry<'r> {
     entity: Entity,
     registry: &'r mut Registry,
@@ -25,13 +25,13 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
-    /// let mut entry = registry.create_entry();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
+    /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
     ///
     /// entry.destroy();
-    /// assert!(!registry.contains(entity));
+    /// assert!(!world.contains(entity));
     /// ```
     pub fn destroy(self) {
         self.registry.destroy(self.entity)
@@ -42,11 +42,11 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
-    /// let mut entry = registry.create_entry();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
+    /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
-    /// assert!(registry.contains(entity));
+    /// assert!(world.contains(entity));
     /// ```
     pub fn entity(&self) -> Entity {
         self.entity
@@ -57,9 +57,9 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
-    /// let mut entry = registry.create_entry();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
+    /// let mut entry = world.create_entry();
     /// assert!(entry.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
@@ -76,12 +76,12 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
+    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
     /// assert_eq!(entry.get().as_deref(), Some(&Name("Hello, World")));
     /// ```
     pub fn attach_one<C>(&mut self, component: C)
@@ -101,15 +101,15 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
+    /// let mut entry = world.create_entry_with((Name("Hello, World"), ID(42)));
     /// assert!(entry.attached::<(ID, Name)>());
     /// ```
     pub fn attach<S>(&mut self, set: S)
@@ -127,12 +127,12 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry();
+    /// let mut entry = world.create_entry();
     /// assert!(!entry.attached_one::<Name>());
     ///
     /// entry.attach_one(Name("Hello, World"));
@@ -153,15 +153,15 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry();
+    /// let mut entry = world.create_entry();
     /// assert!(!entry.attached::<(ID, Name)>());
     ///
     /// entry.attach((Name("Hello, World"), ID(42)));
@@ -182,12 +182,12 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
+    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
     /// assert!(entry.attached_one::<Name>());
     ///
     /// entry.remove_one::<Name>();
@@ -208,15 +208,15 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
+    /// let mut entry = world.create_entry_with((Name("Hello, World"), ID(42)));
     /// entry.remove::<(ID, Name)>();
     /// assert!(!entry.attached::<(Name, ID)>());
     /// ```
@@ -237,15 +237,15 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
     ///
     /// #[derive(Copy, Clone)]
     /// struct ID(u32);
     ///
-    /// let mut entry = registry.create_entry_with((Name("Hello, World"), ID(42)));
+    /// let mut entry = world.create_entry_with((Name("Hello, World"), ID(42)));
     /// entry.remove_all();
     /// assert!(!entry.attached::<(Name, ID)>());
     /// ```
@@ -253,7 +253,7 @@ impl<'r> Entry<'r> {
         self.registry.remove_all(self.entity)
     }
 
-    /// Retrieves the [shared borrow][`Ref`] for the component of one type attached to the entity.
+    /// Retrieves the shared borrow for the component of one type attached to the entity.
     /// Returns [`None`][`Option::None`] if component is not attached to the entity.
     ///
     /// Note that function would block current thread
@@ -262,12 +262,12 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
+    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
@@ -278,7 +278,7 @@ impl<'r> Entry<'r> {
         self.registry.get(self.entity)
     }
 
-    /// Retrieves the [unique borrow][`RefMut`] for the component of one type attached to the entity.
+    /// Retrieves the unique borrow for the component of one type attached to the entity.
     /// Returns [`None`][`Option::None`] if component is not attached to the entity.
     ///
     /// Note that function would block current thread
@@ -287,12 +287,12 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{Registry, Entry};
-    /// # let mut registry = Registry::new();
+    /// # use toucan_ecs::{World, Entry};
+    /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = registry.create_entry_with_one(Name("Hello, World"));
+    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
     /// let mut name = entry.get_mut::<Name>().unwrap();
     /// name.0 = "This name was changed";
     /// assert_ne!(*name, Name("Hello, World"));

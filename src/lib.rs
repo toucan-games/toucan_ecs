@@ -7,7 +7,7 @@
 //! - attach, get or remove components from the entity;
 //! - use [entry][`Entry`] of the entity to modify it;
 //! - view components of different types;
-//! - view components [immutably][`Registry::view`] or [mutably][`Registry::view_mut`].
+//! - view components [immutably][`World::view`] or [mutably][`World::view_mut`].
 //!
 //! For now library provides nothing for systems (are responsible for logic).
 //! You are free to create your own system!
@@ -19,21 +19,21 @@
 //! ## Create and destroy entities
 //!
 //! ```
-//! use toucan_ecs::Registry;
+//! use toucan_ecs::World;
 //!
-//! let mut registry = Registry::new();
+//! let mut world = World::new();
 //!
-//! let entity = registry.create();
-//! assert!(registry.contains(entity));
+//! let entity = world.create();
+//! assert!(world.contains(entity));
 //!
-//! registry.destroy(entity);
-//! assert!(!registry.contains(entity));
+//! world.destroy(entity);
+//! assert!(!world.contains(entity));
 //! ```
 //!
 //! ## Use entries to simplify access to the entity's data
 //!
 //! ```
-//! use toucan_ecs::Registry;
+//! use toucan_ecs::World;
 //!
 //! #[derive(Copy, Clone)]
 //! struct Name(&'static str);
@@ -41,28 +41,28 @@
 //! #[derive(Copy, Clone)]
 //! struct ID(u32);
 //!
-//! let mut registry = Registry::new();
+//! let mut world = World::new();
 //!
 //! // Create new entity
 //! let entity = {
-//!     let mut entry = registry.create_entry();
+//!     let mut entry = world.create_entry();
 //!     entry.attach((Name("Hello, World"), ID(42)));
 //!     assert!(entry.attached::<(Name, ID)>());
 //!     entry.entity()
 //! };
-//! assert!(registry.attached::<(Name, ID)>(entity));
+//! assert!(world.attached::<(Name, ID)>(entity));
 //!
 //! // Or reuse existing ones
-//! if let Some(mut entry) = registry.entry(entity) {
+//! if let Some(mut entry) = world.entry(entity) {
 //!     entry.remove_one::<ID>();
 //! }
-//! assert!(!registry.attached_one::<ID>(entity));
+//! assert!(!world.attached_one::<ID>(entity));
 //! ```
 //!
 //! ## View components with ease
 //!
 //! ```
-//! use toucan_ecs::{Entity, Registry};
+//! use toucan_ecs::{Entity, World};
 //!
 //! #[derive(Debug, Copy, Clone)]
 //! struct Position {
@@ -73,23 +73,23 @@
 //! #[derive(Debug, Copy, Clone)]
 //! struct Mass(f32);
 //!
-//! let mut registry = Registry::new();
+//! let mut world = World::new();
 //!
 //! // Create our entities and their data
 //! for i in 0..10 {
 //!     let f = i as f32;
 //!     let position = Position { x: f / 10.0, y: -f / 10.0 };
-//!     let entity = registry.create_with((position,));
-//!     assert!(registry.attached_one::<Position>(entity));
+//!     let entity = world.create_with((position,));
+//!     assert!(world.attached_one::<Position>(entity));
 //!     if i % 2 != 0 {
 //!         let mass = Mass(f);
-//!         registry.attach_one(entity, mass);
-//!         assert!(registry.attached_one::<Mass>(entity));
+//!         world.attach_one(entity, mass);
+//!         assert!(world.attached_one::<Mass>(entity));
 //!     }
 //! }
 //!
 //! // Get all entities which have `Position` and CAN have `Mass` components
-//! for (_, mut position, mass) in registry.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
+//! for (_, mut position, mass) in world.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
 //!     position.x += 1.0;
 //!     println!("position is {:?}, mass is {:?}", *position, mass.as_deref());
 //! }
@@ -100,10 +100,11 @@
 
 pub use entity::{
     view::{View, ViewMut, ViewOne, ViewOneMut},
-    Entity, Entry, Registry,
+    Entity, Entry,
 };
-pub use component::{Component, Ref, RefMut};
-pub use resource::{Resource, ResourceStorage};
+pub use component::Component;
+pub use resource::Resource;
+pub use world::World;
 
 mod entity;
 mod component;

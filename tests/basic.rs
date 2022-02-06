@@ -1,6 +1,6 @@
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
 #[test]
 fn new() {
-    let _ = Registry::new();
+    let _ = World::new();
 }

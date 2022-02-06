@@ -5,18 +5,27 @@ use super::Component;
 
 /// Shared borrow of the entity's component.
 #[repr(transparent)]
-pub struct Ref<'data, C: Component> {
+pub struct Ref<'data, C>
+where
+    C: Component,
+{
     #[allow(non_snake_case)]
     __: MutexGuard<'data, C>,
 }
 
-impl<'data, C: Component> Ref<'data, C> {
+impl<'data, C> Ref<'data, C>
+where
+    C: Component,
+{
     pub(super) fn new(data: MutexGuard<'data, C>) -> Self {
         Self { __: data }
     }
 }
 
-impl<'data, C: Component> Deref for Ref<'data, C> {
+impl<'data, C> Deref for Ref<'data, C>
+where
+    C: Component,
+{
     type Target = C;
 
     fn deref(&self) -> &Self::Target {
@@ -26,18 +35,27 @@ impl<'data, C: Component> Deref for Ref<'data, C> {
 
 /// Unique borrow of the entity's component.
 #[repr(transparent)]
-pub struct RefMut<'data, C: Component> {
+pub struct RefMut<'data, C>
+where
+    C: Component,
+{
     #[allow(non_snake_case)]
     __: MutexGuard<'data, C>,
 }
 
-impl<'data, C: Component> RefMut<'data, C> {
+impl<'data, C> RefMut<'data, C>
+where
+    C: Component,
+{
     pub(super) fn new(data: MutexGuard<'data, C>) -> Self {
         Self { __: data }
     }
 }
 
-impl<'data, C: Component> Deref for RefMut<'data, C> {
+impl<'data, C> Deref for RefMut<'data, C>
+where
+    C: Component,
+{
     type Target = C;
 
     fn deref(&self) -> &Self::Target {
@@ -45,7 +63,10 @@ impl<'data, C: Component> Deref for RefMut<'data, C> {
     }
 }
 
-impl<'data, C: Component> DerefMut for RefMut<'data, C> {
+impl<'data, C> DerefMut for RefMut<'data, C>
+where
+    C: Component,
+{
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.__.deref_mut()
     }

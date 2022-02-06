@@ -1,33 +1,33 @@
 use std::ops::Not;
 
 use components::{Mass, Position, Velocity};
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
 mod components;
 
 #[test]
 fn attach_one() {
-    let mut registry = Registry::new();
-    let entity = registry.create();
+    let mut world = World::new();
+    let entity = world.create();
 
-    assert!(registry.attached_one::<Position>(entity).not());
-    registry.attach_one(entity, Position { x: 0.0, y: 0.0 });
-    assert!(registry.attached_one::<Position>(entity));
+    assert!(world.attached_one::<Position>(entity).not());
+    world.attach_one(entity, Position { x: 0.0, y: 0.0 });
+    assert!(world.attached_one::<Position>(entity));
 
-    registry.attach_one(entity, Velocity { dx: 1.0, dy: 2.0 });
-    assert!(registry.attached_one::<Velocity>(entity));
+    world.attach_one(entity, Velocity { dx: 1.0, dy: 2.0 });
+    assert!(world.attached_one::<Velocity>(entity));
 
-    assert!(registry.attached_one::<Mass>(entity).not());
+    assert!(world.attached_one::<Mass>(entity).not());
 }
 
 #[test]
 fn attach() {
-    let mut registry = Registry::new();
+    let mut world = World::new();
 
-    let entity = registry.create();
-    assert!(registry.attached_one::<Position>(entity).not());
-    assert!(registry.attached_one::<Velocity>(entity).not());
-    assert!(registry.attached_one::<Mass>(entity).not());
+    let entity = world.create();
+    assert!(world.attached_one::<Position>(entity).not());
+    assert!(world.attached_one::<Velocity>(entity).not());
+    assert!(world.attached_one::<Mass>(entity).not());
 
     let set = {
         let position = Position { x: 1.0, y: 3.0 };
@@ -35,8 +35,8 @@ fn attach() {
         let mass = Mass(10.0);
         (position, velocity, mass)
     };
-    registry.attach(entity, set);
-    assert!(registry.attached_one::<Position>(entity));
-    assert!(registry.attached_one::<Velocity>(entity));
-    assert!(registry.attached_one::<Mass>(entity));
+    world.attach(entity, set);
+    assert!(world.attached_one::<Position>(entity));
+    assert!(world.attached_one::<Velocity>(entity));
+    assert!(world.attached_one::<Mass>(entity));
 }

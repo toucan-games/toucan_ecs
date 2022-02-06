@@ -1,10 +1,10 @@
 use slotmap::dense::Keys;
 
+use crate::entity::Registry;
 use crate::world::{Fetch, SharedViewable, Viewable, ViewableItem};
-use crate::{Entity, Registry};
+use crate::Entity;
 
-/// Iterator which returns [entities][`Entity`] and their shared borrows
-/// (not only [`Ref`][`crate::Ref`]) of components.
+/// Iterator which returns [entities][`Entity`] and their shared borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfies the query will be returned.
@@ -48,8 +48,7 @@ where
     }
 }
 
-/// Iterator which returns [entities][`Entity`] and their shared OR unique borrows
-/// (not only [`Ref`][`crate::Ref`] or [`RefMut`][`crate::RefMut`]) of components.
+/// Iterator which returns [entities][`Entity`] and their shared OR unique borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfies the query will be returned.

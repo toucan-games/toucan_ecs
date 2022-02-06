@@ -1,19 +1,19 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
 mod components;
 
 #[test]
 fn create() {
-    let mut registry = Registry::new();
+    let mut world = World::new();
 
-    let entity = registry.create();
-    assert!(registry.contains(entity));
+    let entity = world.create();
+    assert!(world.contains(entity));
 }
 
 #[test]
 fn create_with() {
-    let mut registry = Registry::new();
+    let mut world = World::new();
 
     let set = {
         let position = Position { x: 1.0, y: 3.0 };
@@ -21,10 +21,10 @@ fn create_with() {
         let mass = Mass(10.0);
         (position, velocity, mass)
     };
-    let entity = registry.create_with(set);
+    let entity = world.create_with(set);
 
-    assert!(registry.contains(entity));
-    assert!(registry.attached_one::<Position>(entity));
-    assert!(registry.attached_one::<Velocity>(entity));
-    assert!(registry.attached_one::<Mass>(entity));
+    assert!(world.contains(entity));
+    assert!(world.attached_one::<Position>(entity));
+    assert!(world.attached_one::<Velocity>(entity));
+    assert!(world.attached_one::<Mass>(entity));
 }

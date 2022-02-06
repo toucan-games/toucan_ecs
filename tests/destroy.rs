@@ -1,24 +1,24 @@
 use std::ops::Not;
 
 use components::{Mass, Position, Velocity};
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
 mod components;
 
 #[test]
 fn destroy() {
-    let mut registry = Registry::new();
+    let mut world = World::new();
 
-    let entity = registry.create();
-    assert!(registry.contains(entity));
+    let entity = world.create();
+    assert!(world.contains(entity));
 
-    registry.destroy(entity);
-    assert!(registry.contains(entity).not());
+    world.destroy(entity);
+    assert!(world.contains(entity).not());
 }
 
 #[test]
 fn destroy_with_data() {
-    let mut registry = Registry::new();
+    let mut world = World::new();
 
     let set = {
         let position = Position { x: 1.0, y: 3.0 };
@@ -26,12 +26,12 @@ fn destroy_with_data() {
         let mass = Mass(10.0);
         (position, velocity, mass)
     };
-    let entity = registry.create_with(set);
-    assert!(registry.contains(entity));
+    let entity = world.create_with(set);
+    assert!(world.contains(entity));
 
-    registry.destroy(entity);
-    assert!(registry.contains(entity).not());
-    assert!(registry.attached_one::<Position>(entity).not());
-    assert!(registry.attached_one::<Velocity>(entity).not());
-    assert!(registry.attached_one::<Mass>(entity).not());
+    world.destroy(entity);
+    assert!(world.contains(entity).not());
+    assert!(world.attached_one::<Position>(entity).not());
+    assert!(world.attached_one::<Velocity>(entity).not());
+    assert!(world.attached_one::<Mass>(entity).not());
 }

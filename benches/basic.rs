@@ -1,15 +1,15 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 
-use toucan_ecs::Registry;
+use toucan_ecs::World;
 
 mod components;
 
 fn create_registry(criterion: &mut Criterion) {
     fn create_registry() {
-        let _registry = Registry::new();
+        let _world = World::new();
     }
 
-    criterion.bench_function("create registry", |bencher| bencher.iter(create_registry));
+    criterion.bench_function("create world", |bencher| bencher.iter(create_registry));
 }
 
 criterion_group!(basic_benches, create_registry);

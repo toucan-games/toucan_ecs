@@ -1,7 +1,8 @@
 use std::marker::PhantomData;
 
+use crate::entity::Registry;
 use crate::world::Fetch;
-use crate::{Entity, Registry};
+use crate::Entity;
 
 pub struct FetchEntity(PhantomData<Entity>);
 
