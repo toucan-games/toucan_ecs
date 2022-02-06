@@ -1,7 +1,12 @@
-pub mod entry;
-pub mod refs;
-pub mod registry;
+pub use entry::Entry;
+pub use registry::Registry;
+
 pub mod view;
+
+mod entry;
+mod fetch;
+mod registry;
+mod viewable;
 
 slotmap::new_key_type! {
     /// Unique handle of the entity in ECS.

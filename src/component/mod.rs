@@ -1,6 +1,12 @@
-pub mod set;
-pub mod storage;
-pub mod type_id;
+pub use refs::{Ref, RefMut};
+pub use set::ComponentSet;
+pub use storage::{DefaultStorage, Storage};
+pub use type_id::ComponentTypeId;
+
+mod refs;
+mod set;
+mod storage;
+mod type_id;
 
 /// Trait for data that can be attached to the entity.
 ///

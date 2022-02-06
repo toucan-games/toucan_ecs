@@ -3,14 +3,11 @@ use std::collections::HashMap;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
-use crate::component::{
-    set::ComponentSet,
-    storage::{DefaultStorage, Storage},
-    type_id::ComponentTypeId,
-};
-use crate::{Component, Entity, Entry, Ref, RefMut};
+use crate::component::{ComponentSet, ComponentTypeId, DefaultStorage, Ref, RefMut, Storage};
+use crate::world::{SharedViewable, Viewable};
+use crate::{Component, Entity, Entry};
 
-use super::view::{SharedViewable, View, ViewMut, ViewOne, ViewOneMut, Viewable};
+use super::view::{View, ViewMut, ViewOne, ViewOneMut};
 
 /// Storage of the entities and all the data attached to them.
 ///

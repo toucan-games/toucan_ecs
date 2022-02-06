@@ -1,6 +1,6 @@
 use slotmap::dense::Keys;
 
-use crate::entity::view::{fetch::Fetch, SharedViewable, Viewable, ViewableItem};
+use crate::world::{Fetch, SharedViewable, Viewable, ViewableItem};
 use crate::{Entity, Registry};
 
 /// Iterator which returns [entities][`Entity`] and their shared borrows

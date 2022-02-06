@@ -1,7 +1,6 @@
-use crate::component::storage::DefaultStorage;
-use crate::{Component, Entity, RefMut, Registry};
-
-use super::Fetch;
+use crate::component::{DefaultStorage, RefMut};
+use crate::world::Fetch;
+use crate::{Component, Entity, Registry};
 
 pub struct FetchWrite<'data, C>
 where

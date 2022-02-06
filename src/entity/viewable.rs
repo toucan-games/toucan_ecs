@@ -1,9 +1,7 @@
-use crate::entity::view::fetch::{
-    FetchEntity, FetchOptionRead, FetchOptionWrite, FetchRead, FetchWrite,
-};
+use crate::world::{SharedViewable, Viewable};
 use crate::{Component, Entity};
 
-use super::{SharedViewable, Viewable};
+use super::fetch::{FetchEntity, FetchOptionRead, FetchOptionWrite, FetchRead, FetchWrite};
 
 impl<'data> Viewable<'data> for Entity {
     type Fetch = FetchEntity;

@@ -1,6 +1,6 @@
 use std::any::TypeId;
 
-use crate::Component;
+use super::Component;
 
 #[repr(transparent)]
 #[derive(Eq, PartialEq, Hash)]

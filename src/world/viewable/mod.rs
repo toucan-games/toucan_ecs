@@ -1,6 +1,5 @@
 use super::fetch::Fetch;
 
-mod impls;
 mod tuple;
 
 pub type ViewableItem<'data, V> = <<V as Viewable<'data>>::Fetch as Fetch<'data>>::Item;

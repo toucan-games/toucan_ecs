@@ -1,7 +1,7 @@
 use slotmap::dense::Keys;
 
-use crate::component::storage::DefaultStorage;
-use crate::{Component, Entity, Ref, RefMut, Registry};
+use crate::component::{DefaultStorage, Ref, RefMut};
+use crate::{Component, Entity, Registry};
 
 /// Iterator which returns [entities][`Entity`] and their [shared borrows][`Ref`]
 /// of components.

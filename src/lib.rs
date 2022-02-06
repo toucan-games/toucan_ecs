@@ -99,15 +99,13 @@
 #![forbid(unsafe_code)]
 
 pub use entity::{
-    entry::Entry,
-    refs::{Ref, RefMut},
-    registry::Registry,
     view::{View, ViewMut, ViewOne, ViewOneMut},
-    Entity,
+    Entity, Entry, Registry,
 };
-pub use component::Component;
-pub use resource::{storage::ResourceStorage, Resource};
+pub use component::{Component, Ref, RefMut};
+pub use resource::{Resource, ResourceStorage};
 
 mod entity;
 mod component;
 mod resource;
+mod world;

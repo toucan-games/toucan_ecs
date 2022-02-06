@@ -1,7 +1,10 @@
 use std::any::Any;
 
-pub mod storage;
-pub mod type_id;
+pub use storage::ResourceStorage;
+pub use type_id::ResourceTypeId;
+
+mod storage;
+mod type_id;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///

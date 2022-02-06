@@ -1,5 +1,5 @@
-use crate::component::set::ComponentSet;
-use crate::{Component, Entity, Ref, RefMut, Registry};
+use crate::component::{ComponentSet, Ref, RefMut};
+use crate::{Component, Entity, Registry};
 
 /// Entry of the specific [entity][`Entity`].
 ///

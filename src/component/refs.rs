@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 use std::sync::MutexGuard;
 
-use crate::Component;
+use super::Component;
 
 /// Shared borrow of the entity's component.
 #[repr(transparent)]
@@ -11,7 +11,7 @@ pub struct Ref<'data, C: Component> {
 }
 
 impl<'data, C: Component> Ref<'data, C> {
-    pub(crate) fn new(data: MutexGuard<'data, C>) -> Self {
+    pub(super) fn new(data: MutexGuard<'data, C>) -> Self {
         Self { __: data }
     }
 }
@@ -32,7 +32,7 @@ pub struct RefMut<'data, C: Component> {
 }
 
 impl<'data, C: Component> RefMut<'data, C> {
-    pub(crate) fn new(data: MutexGuard<'data, C>) -> Self {
+    pub(super) fn new(data: MutexGuard<'data, C>) -> Self {
         Self { __: data }
     }
 }
