@@ -1,8 +1,8 @@
+# toucan_ecs
+
 [![Crate](https://img.shields.io/crates/v/toucan_ecs.svg)](https://crates.io/crates/toucan_ecs)
 [![Docs](https://docs.rs/toucan_ecs/badge.svg)](https://docs.rs/toucan_ecs)
 ![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
-
-# toucan_ecs
 
 Simple and safe ECS library for Rust.
 
