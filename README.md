@@ -49,16 +49,16 @@ let mut world = World::new();
 
 // Create new entity
 let entity = {
-let mut entry = world.create_entry();
-entry.attach((Name("Hello, World"), ID(42)));
+    let mut entry = world.create_entry();
+    entry.attach((Name("Hello, World"), ID(42)));
     assert!(entry.attached::<(Name, ID)>());
     entry.entity()
 };
 assert!(world.attached::<(Name, ID)>(entity));
 
 // Or reuse existing ones
-if let Some( mut entry) = world.entry(entity) {
-entry.remove_one::< ID > ();
+if let Some(mut entry) = world.entry(entity) {
+    entry.remove_one::< ID > ();
 }
 assert!(!world.attached_one::<ID>(entity));
 ```
@@ -81,20 +81,20 @@ let mut world = World::new();
 
 // Create our entities and their data
 for i in 0..10 {
-let f = i as f32;
-let position = Position { x: f / 10.0, y: - f / 10.0 };
-let entity = world.create_with((position, ));
-assert ! (world.attached_one::< Position > (entity));
-if i % 2 != 0 {
-let mass = Mass(f);
-world.attach_one(entity, mass);
-assert ! (world.attached_one::< Mass > (entity));
-}
+    let f = i as f32;
+    let position = Position { x: f / 10.0, y: -f / 10.0 };
+    let entity = world.create_with((position,));
+    assert!(world.attached_one::<Position>(entity));
+    if i % 2 != 0 {
+        let mass = Mass(f);
+        world.attach_one(entity, mass);
+        assert!(world.attached_one::<Mass>(entity));
+    }
 }
 
 // Get all entities which have `Position` and CAN have `Mass` components
-for (_, mut position, mass) in world.view_mut::<(Entity, & mut Position, Option< & Mass>) > () {
-position.x += 1.0;
-println !("position is {:?}, mass is {:?}", * position, mass.as_deref());
+for (_, mut position, mass) in world.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
+    position.x += 1.0;
+    println!("position is {:?}, mass is {:?}", *position, mass.as_deref());
 }
 ```
