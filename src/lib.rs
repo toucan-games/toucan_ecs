@@ -100,10 +100,12 @@
 
 pub use entity::{Entity, Entry, Not, ViewOne, ViewOneMut};
 pub use component::Component;
+#[cfg(feature = "resource")]
 pub use resource::{Res, Resource};
 pub use world::{View, ViewMut, World};
 
 mod entity;
 mod component;
+#[cfg(feature = "resource")]
 mod resource;
 mod world;

@@ -1,44 +1,60 @@
 use components::{Mass, Position, Velocity};
-use resources::Time;
-use toucan_ecs::{Entity, Not, Res};
+use toucan_ecs::{Entity, Not};
 
 mod components;
+#[cfg(feature = "resource")]
 mod resources;
 mod utils;
 
 #[test]
 fn view_one() {
-    let registry = utils::prepare_for_view();
+    let world = utils::prepare_for_view();
 
-    for component in registry.view_one::<Position>() {
+    for component in world.view_one::<Position>() {
         println!("component: {:?}", *component)
     }
 }
 
 #[test]
 fn view() {
-    let registry = utils::prepare_for_view();
+    let world = utils::prepare_for_view();
 
-    for (entity, position, velocity, mass, time) in
-        registry.view::<(Entity, &Position, &Velocity, &Mass, Res<&Time>)>()
+    for (entity, position, velocity, mass) in world.view::<(Entity, &Position, &Velocity, &Mass)>()
     {
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}, time: {}",
-            entity,
-            *position,
-            *velocity,
-            *mass,
-            time.elapsed_secs(),
+            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
+            entity, *position, *velocity, *mass,
         )
     }
 }
 
 #[test]
 fn complex_view() {
-    let registry = utils::prepare_for_complex_view();
+    let world = utils::prepare_for_complex_view();
+
+    for (entity, position, velocity, _) in
+        world.view::<(Entity, &Position, Option<&Velocity>, Not<Mass>)>()
+    {
+        println!(
+            "entity: {:?}, position: {:?}, velocity: {:?}",
+            entity,
+            *position,
+            velocity.as_deref(),
+        )
+    }
+}
+
+#[test]
+#[cfg(feature = "resource")]
+fn complex_resource_view() {
+    use resources::Time;
+    use toucan_ecs::Res;
+
+    let mut world = utils::prepare_for_complex_view();
+    world.create_resource(Time::new());
 
     for (entity, position, velocity, _, time) in
-        registry.view::<(Entity, &Position, Option<&Velocity>, Not<Mass>, Res<&Time>)>()
+        world.view::<(Entity, &Position, Option<&Velocity>, Not<Mass>, Res<&Time>)>()
     {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, time: {}",

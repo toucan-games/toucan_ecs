@@ -4,8 +4,9 @@ pub use viewable::{SharedViewable, Viewable, ViewableItem};
 
 use crate::component::{ComponentSet, Ref as ComponentRef, RefMut as ComponentRefMut};
 use crate::entity::Registry;
-use crate::resource::{Ref as ResourceRef, RefMut as ResourceRefMut, ResourceStorage};
-use crate::{Component, Entity, Entry, Resource, ViewOne, ViewOneMut};
+#[cfg(feature = "resource")]
+use crate::resource::{Ref as ResourceRef, RefMut as ResourceRefMut, Resource, ResourceStorage};
+use crate::{Component, Entity, Entry, ViewOne, ViewOneMut};
 
 mod fetch;
 mod view;
@@ -20,6 +21,7 @@ mod viewable;
 #[derive(Default)]
 pub struct World {
     registry: Registry,
+    #[cfg(feature = "resource")]
     resources: ResourceStorage,
 }
 
@@ -35,6 +37,7 @@ impl World {
     pub fn new() -> Self {
         Self {
             registry: Registry::new(),
+            #[cfg(feature = "resource")]
             resources: ResourceStorage::new(),
         }
     }
@@ -74,6 +77,7 @@ impl World {
     /// world.create_resource(Resource(42));
     /// assert!(!world.is_empty());
     /// ```
+    #[cfg(feature = "resource")]
     pub fn create_resource<R>(&mut self, resource: R)
     where
         R: Resource,
@@ -322,6 +326,7 @@ impl World {
     /// world.create_resource(Resource(42));
     /// assert!(world.contains_resource::<Resource>());
     /// ```
+    #[cfg(feature = "resource")]
     pub fn contains_resource<R>(&self) -> bool
     where
         R: Resource,
@@ -359,6 +364,7 @@ impl World {
     /// world.destroy_resource::<Resource>();
     /// assert!(!world.contains_resource::<Resource>());
     /// ```
+    #[cfg(feature = "resource")]
     pub fn destroy_resource<R>(&mut self)
     where
         R: Resource,
@@ -379,7 +385,19 @@ impl World {
     /// assert!(!world.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
+        self.cfg_is_empty()
+    }
+
+    #[cfg(feature = "resource")]
+    #[inline(always)]
+    fn cfg_is_empty(&self) -> bool {
         self.registry.is_empty() && self.resources.is_empty()
+    }
+
+    #[cfg(not(feature = "resource"))]
+    #[inline(always)]
+    fn cfg_is_empty(&self) -> bool {
+        self.registry.is_empty()
     }
 
     /// Clears this world, destroying all resources, all entities and their data.
@@ -398,6 +416,7 @@ impl World {
     /// ```
     pub fn clear(&mut self) {
         self.registry.clear();
+        #[cfg(feature = "resource")]
         self.resources.clear();
     }
 
@@ -697,6 +716,7 @@ impl World {
     /// let resource = world.get_resource::<Resource>().unwrap();
     /// assert_eq!(*resource, Resource(42));
     /// ```
+    #[cfg(feature = "resource")]
     pub fn get_resource<R>(&self) -> Option<ResourceRef<R>>
     where
         R: Resource,
@@ -720,6 +740,7 @@ impl World {
     /// *resource = Resource(35);
     /// assert_eq!(*resource, Resource(35));
     /// ```
+    #[cfg(feature = "resource")]
     pub fn get_resource_mut<R>(&mut self) -> Option<ResourceRefMut<R>>
     where
         R: Resource,
@@ -849,6 +870,7 @@ impl World {
         &self.registry
     }
 
+    #[cfg(feature = "resource")]
     pub(crate) fn resources(&self) -> &ResourceStorage {
         &self.resources
     }
