@@ -100,7 +100,7 @@
 
 pub use entity::{Entity, Entry, ViewOne, ViewOneMut};
 pub use component::Component;
-pub use resource::{Resource, ResourceRead, ResourceWrite};
+pub use resource::{Res, Resource};
 pub use world::{View, ViewMut, World};
 
 mod entity;

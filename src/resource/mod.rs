@@ -3,7 +3,7 @@ use std::any::Any;
 pub use refs::{Ref, RefMut};
 pub use storage::ResourceStorage;
 pub use type_id::ResourceTypeId;
-pub use viewable::{ResourceRead, ResourceWrite};
+pub use viewable::Res;
 
 mod fetch;
 mod refs;
