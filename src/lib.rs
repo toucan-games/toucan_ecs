@@ -98,7 +98,7 @@
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
 
-pub use entity::{Entity, Entry, ViewOne, ViewOneMut};
+pub use entity::{Entity, Entry, Not, ViewOne, ViewOneMut};
 pub use component::Component;
 pub use resource::{Res, Resource};
 pub use world::{View, ViewMut, World};

@@ -1,6 +1,7 @@
 pub use entry::Entry;
 pub use registry::Registry;
 pub use view_one::{ViewOne, ViewOneMut};
+pub use viewable::Not;
 
 mod entry;
 mod fetch;

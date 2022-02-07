@@ -1,7 +1,11 @@
+use std::marker::PhantomData;
+
 use crate::world::{SharedViewable, Viewable};
 use crate::{Component, Entity};
 
-use super::fetch::{FetchEntity, FetchOptionRead, FetchOptionWrite, FetchRead, FetchWrite};
+use super::fetch::{
+    FetchEntity, FetchNot, FetchOptionRead, FetchOptionWrite, FetchRead, FetchWrite,
+};
 
 impl<'data> Viewable<'data> for Entity {
     type Fetch = FetchEntity;
@@ -40,3 +44,21 @@ where
 {
     type Fetch = FetchOptionWrite<'data, C>;
 }
+
+/// Marker for retrieving entities without component of generic type.
+/// It must be used in query to be retrieved.
+pub struct Not<C>
+where
+    C: Component,
+{
+    _ph: PhantomData<*const C>,
+}
+
+impl<'data, C> Viewable<'data> for Not<C>
+where
+    C: Component,
+{
+    type Fetch = FetchNot<'data, C>;
+}
+
+impl<'data, C> SharedViewable<'data> for Not<C> where C: Component {}

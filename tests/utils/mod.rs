@@ -7,7 +7,7 @@ pub fn prepare_for_view() -> World {
     let mut world = World::new();
 
     world.create_resource(Time::new());
-    for i in 0..=10 {
+    for i in 1..=10 {
         let f = i as f32;
         let position = Position { x: f, y: -f };
         let velocity = Velocity {
@@ -21,11 +21,11 @@ pub fn prepare_for_view() -> World {
     world
 }
 
-pub fn prepare_for_optional_view() -> World {
+pub fn prepare_for_complex_view() -> World {
     let mut world = World::new();
 
     world.create_resource(Time::new());
-    for i in 0..=10 {
+    for i in 1..=10 {
         let f = i as f32;
         let position = Position { x: f, y: -f };
         let velocity = Velocity {

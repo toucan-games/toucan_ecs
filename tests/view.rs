@@ -1,6 +1,6 @@
 use components::{Mass, Position, Velocity};
 use resources::Time;
-use toucan_ecs::{Entity, Res};
+use toucan_ecs::{Entity, Not, Res};
 
 mod components;
 mod resources;
@@ -34,18 +34,18 @@ fn view() {
 }
 
 #[test]
-fn option_view() {
-    let registry = utils::prepare_for_optional_view();
+fn complex_view() {
+    let registry = utils::prepare_for_complex_view();
 
-    for (entity, position, velocity, mass) in
-        registry.view::<(Entity, &Position, Option<&Velocity>, Option<&Mass>)>()
+    for (entity, position, velocity, _, time) in
+        registry.view::<(Entity, &Position, Option<&Velocity>, Not<Mass>, Res<&Time>)>()
     {
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
+            "entity: {:?}, position: {:?}, velocity: {:?}, time: {}",
             entity,
             *position,
             velocity.as_deref(),
-            mass.as_deref(),
+            time.elapsed_secs(),
         )
     }
 }

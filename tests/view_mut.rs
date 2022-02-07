@@ -1,6 +1,6 @@
 use components::{Mass, Position, Velocity};
 use resources::Time;
-use toucan_ecs::{Entity, Res};
+use toucan_ecs::{Entity, Not, Res};
 
 mod components;
 mod resources;
@@ -38,22 +38,26 @@ fn view_mut() {
 }
 
 #[test]
-fn option_view_mut() {
-    let mut registry = utils::prepare_for_optional_view();
+fn complex_view_mut() {
+    let mut registry = utils::prepare_for_complex_view();
 
-    for (entity, mut position, velocity, mut mass) in
-        registry.view_mut::<(Entity, &mut Position, Option<&Velocity>, Option<&mut Mass>)>()
-    {
+    for (entity, mut position, _, mut mass, time) in registry.view_mut::<(
+        Entity,
+        &mut Position,
+        Not<Velocity>,
+        Option<&mut Mass>,
+        Res<&Time>,
+    )>() {
         position.x -= 10.0;
         if let Some(ref mut mass) = mass {
             mass.0 += 1.0;
         }
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
+            "entity: {:?}, position: {:?}, mass: {:?}, time: {}",
             entity,
             *position,
-            velocity.as_deref(),
             mass.as_deref(),
+            time.elapsed_secs(),
         )
     }
 }
