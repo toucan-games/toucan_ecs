@@ -1,5 +1,6 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::{Entity, Not};
+use toucan_ecs::component::viewable::Not;
+use toucan_ecs::Entity;
 
 mod components;
 #[cfg(feature = "resource")]
@@ -56,7 +57,7 @@ fn complex_view_mut() {
 #[cfg(feature = "resource")]
 fn complex_resource_view_mut() {
     use resources::Time;
-    use toucan_ecs::Res;
+    use toucan_ecs::resource::viewable::Res;
 
     let mut world = utils::prepare_for_complex_view();
     world.create_resource(Time::new());

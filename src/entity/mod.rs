@@ -1,10 +1,12 @@
+//! Provides entity handle, entry for the specific entity in the world.
+
 pub use entry::Entry;
-pub use registry::Registry;
+pub(crate) use registry::Registry;
 pub use view_one::{ViewOne, ViewOneMut};
-pub use viewable::Not;
+
+pub(crate) mod fetch;
 
 mod entry;
-mod fetch;
 mod registry;
 mod view_one;
 mod viewable;
@@ -12,7 +14,7 @@ mod viewable;
 slotmap::new_key_type! {
     /// Unique handle of the entity in ECS.
     ///
-    /// Similarly as in arenas, can be stored anywhere
-    /// to obtain components attached to the entity later.
+    /// Similarly as in arenas, you can store it anywhere
+    /// to obtain components attached to the entity.
     pub struct Entity;
 }

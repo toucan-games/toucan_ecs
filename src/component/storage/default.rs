@@ -3,8 +3,8 @@ use std::sync::Mutex;
 
 use slotmap::{SecondaryMap, SlotMap};
 
-use crate::component::{Ref, RefMut};
-use crate::{Component, Entity};
+use crate::component::{Component, Ref, RefMut};
+use crate::entity::Entity;
 
 use super::Storage;
 

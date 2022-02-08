@@ -1,4 +1,5 @@
-use crate::{Entity, World};
+use crate::entity::Entity;
+use crate::world::World;
 
 mod tuple;
 

@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
-use crate::resource::RefMut;
-use crate::world::Fetch;
-use crate::{Entity, Resource, World};
+use crate::entity::Entity;
+use crate::resource::{RefMut, Resource};
+use crate::world::{Fetch, World};
 
 pub struct FetchWrite<'data, R>
 where

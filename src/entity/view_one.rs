@@ -1,12 +1,11 @@
 use slotmap::dense::Keys;
 
-use crate::component::{DefaultStorage, Ref, RefMut};
-use crate::entity::Registry;
-use crate::{Component, Entity};
+use crate::component::{Component, DefaultStorage, Ref, RefMut};
+use crate::entity::{Entity, Registry};
 
 /// Iterator which returns [entities][`Entity`] and their shared borrows of components.
 ///
-/// Only entities that has that type of component will be returned.
+/// Only entities that has generic component type will be returned.
 pub struct ViewOne<'data, C>
 where
     C: Component,
@@ -46,7 +45,7 @@ where
 
 /// Iterator which returns [entities][`Entity`] and their unique borrows of components.
 ///
-/// Only entities that has that type of component will be returned.
+/// Only entities that has generic component type will be returned.
 pub struct ViewOneMut<'data, C>
 where
     C: Component,

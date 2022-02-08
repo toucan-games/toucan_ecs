@@ -1,6 +1,5 @@
-use crate::component::{ComponentSet, Ref, RefMut};
-use crate::entity::Registry;
-use crate::{Component, Entity};
+use crate::component::{Component, ComponentSet, Ref, RefMut};
+use crate::entity::{Entity, Registry};
 
 /// Entry of the specific [entity][`Entity`].
 ///
@@ -8,8 +7,9 @@ use crate::{Component, Entity};
 /// you don't have to provide it each time to retrieve something,
 /// you can do it only once.
 ///
-/// You can retrieve this from [`crate::World::create_entry`] to create new entity and
-/// easily access it or from [`crate::World::entry`] if an entity was created earlier.
+/// You can retrieve this from
+/// [`World::create_entry`][`crate::World::create_entry`] to create new entity and easily access it
+/// or from [`World::entry`][`crate::World::entry`] if an entity was created earlier.
 pub struct Entry<'r> {
     entity: Entity,
     registry: &'r mut Registry,
@@ -25,7 +25,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -42,7 +43,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -57,7 +59,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// assert!(entry.is_empty());
@@ -76,7 +79,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -101,7 +105,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -127,7 +132,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -153,7 +159,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -182,7 +189,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -208,7 +216,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -237,7 +246,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -262,7 +272,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -287,7 +298,8 @@ impl<'r> Entry<'r> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::{World, Entry};
+    /// # use toucan_ecs::World;
+    /// # use toucan_ecs::entity::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);

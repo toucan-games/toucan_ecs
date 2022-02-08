@@ -1,23 +1,25 @@
+//! Provides trait for resources and borrow types for them.
+
 use std::any::Any;
 
 pub use refs::{Ref, RefMut};
-pub use storage::ResourceStorage;
-pub use type_id::ResourceTypeId;
-pub use viewable::Res;
+pub(crate) use storage::ResourceStorage;
+
+pub mod viewable;
 
 mod fetch;
 mod refs;
 mod storage;
 mod type_id;
-mod viewable;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///
 /// This trait is implemented for all the types which implement [`Send`], [`Sync`] traits
 /// and contain no non-static references.
 ///
-/// Unlike [components][`crate::Component`], resources does not need to be [copyable][`Copy`]
-/// because they are used to share some state across entities and manage some resources.
+/// Unlike [components][`crate::component::Component`],
+/// resources does not need to be [copyable][`Copy`] because they are used
+/// to share some state across entities and manage some resources.
 ///
 /// Storing and accessing resources can be useful to access unique data in systems.
 pub trait Resource: Send + Sync + 'static {

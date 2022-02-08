@@ -3,8 +3,10 @@ use std::collections::HashMap;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
-use crate::component::{ComponentSet, ComponentTypeId, DefaultStorage, Ref, RefMut, Storage};
-use crate::{Component, Entity, Entry};
+use crate::component::{
+    Component, ComponentSet, ComponentTypeId, DefaultStorage, Ref, RefMut, Storage,
+};
+use crate::entity::{Entity, Entry};
 
 use super::view_one::{ViewOne, ViewOneMut};
 

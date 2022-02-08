@@ -1,9 +1,11 @@
+//! Special markers and utilities to view [resources][`Resource`].
+
 use std::marker::PhantomData;
 
 use crate::world::{SharedViewable, Viewable};
-use crate::Resource;
 
 use super::fetch::{FetchRead, FetchWrite};
+use super::Resource;
 
 /// Marker for retrieving shared/unique borrow of resource from the world.
 /// It must be used in query to be retrieved.

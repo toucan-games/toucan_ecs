@@ -1,6 +1,6 @@
-use crate::component::DefaultStorage;
-use crate::world::Fetch;
-use crate::{Component, Entity, World};
+use crate::component::{Component, DefaultStorage};
+use crate::entity::Entity;
+use crate::world::{Fetch, World};
 
 pub struct FetchNot<'data, C>
 where

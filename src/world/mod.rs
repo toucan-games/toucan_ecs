@@ -1,18 +1,21 @@
-pub use fetch::Fetch;
-pub use view::{View, ViewMut};
-pub use viewable::{SharedViewable, Viewable, ViewableItem};
+//! General management of entities, their components
+//! and resources (if enabled by the feature `resource`).
 
-use crate::component::{ComponentSet, Ref as ComponentRef, RefMut as ComponentRefMut};
-use crate::entity::Registry;
+pub(crate) use fetch::Fetch;
+pub use view::{View, ViewMut};
+pub(crate) use viewable::{SharedViewable, Viewable, ViewableItem};
+
+use crate::component::{Component, ComponentSet, Ref, RefMut};
+use crate::entity::{Entity, Entry, Registry, ViewOne, ViewOneMut};
 #[cfg(feature = "resource")]
-use crate::resource::{Ref as ResourceRef, RefMut as ResourceRefMut, Resource, ResourceStorage};
-use crate::{Component, Entity, Entry, ViewOne, ViewOneMut};
+use crate::resource::{Ref as ResRef, RefMut as ResRefMut, Resource, ResourceStorage};
 
 mod fetch;
 mod view;
 mod viewable;
 
 /// Storage of the entities and all the data attached to them.
+/// Additionally can store resources if enabled by the feature `resource`.
 ///
 /// Use this to [create][`World::create`] and [destroy][`World::destroy`] entities,
 /// [attach][`World::attach`] and [remove][`World::remove`] components' data of the entity,
@@ -666,7 +669,7 @@ impl World {
     /// let name = world.get::<Name>(entity).unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&self, entity: Entity) -> Option<ComponentRef<C>>
+    pub fn get<C>(&self, entity: Entity) -> Option<Ref<C>>
     where
         C: Component,
     {
@@ -694,7 +697,7 @@ impl World {
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
-    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<ComponentRefMut<C>>
+    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<RefMut<C>>
     where
         C: Component,
     {
@@ -717,7 +720,7 @@ impl World {
     /// assert_eq!(*resource, Resource(42));
     /// ```
     #[cfg(feature = "resource")]
-    pub fn get_resource<R>(&self) -> Option<ResourceRef<R>>
+    pub fn get_resource<R>(&self) -> Option<ResRef<R>>
     where
         R: Resource,
     {
@@ -741,7 +744,7 @@ impl World {
     /// assert_eq!(*resource, Resource(35));
     /// ```
     #[cfg(feature = "resource")]
-    pub fn get_resource_mut<R>(&mut self) -> Option<ResourceRefMut<R>>
+    pub fn get_resource_mut<R>(&mut self) -> Option<ResRefMut<R>>
     where
         R: Resource,
     {

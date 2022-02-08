@@ -5,7 +5,7 @@
 //! Provides basic features, such as:
 //! - create and destroy entities;
 //! - attach, get or remove components from the entity;
-//! - use [entry][`Entry`] of the entity to modify it;
+//! - use [entry][`crate::entity::Entry`] of the entity to modify it;
 //! - view components of different types;
 //! - view components [immutably][`World::view`] or [mutably][`World::view_mut`].
 //!
@@ -98,14 +98,11 @@
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
 
-pub use entity::{Entity, Entry, Not, ViewOne, ViewOneMut};
-pub use component::Component;
-#[cfg(feature = "resource")]
-pub use resource::{Res, Resource};
-pub use world::{View, ViewMut, World};
+pub use entity::Entity;
+pub use world::World;
 
-mod entity;
-mod component;
+pub mod component;
+pub mod entity;
 #[cfg(feature = "resource")]
-mod resource;
-mod world;
+pub mod resource;
+pub mod world;

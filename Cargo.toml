@@ -13,12 +13,12 @@ edition = "2021"
 [dependencies]
 slotmap = "1.0.6"
 
-[features]
-resource = []
-
 [dev-dependencies]
 criterion = "0.3.5"
 
 [[bench]]
 name = "basic"
 harness = false
+
+[features]
+resource = []

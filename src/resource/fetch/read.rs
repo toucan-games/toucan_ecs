@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
-use crate::resource::Ref;
-use crate::world::Fetch;
-use crate::{Entity, Resource, World};
+use crate::entity::Entity;
+use crate::resource::{Ref, Resource};
+use crate::world::{Fetch, World};
 
 pub struct FetchRead<'data, R>
 where

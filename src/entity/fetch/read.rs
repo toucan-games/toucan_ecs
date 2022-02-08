@@ -1,6 +1,6 @@
-use crate::component::{DefaultStorage, Ref};
-use crate::world::Fetch;
-use crate::{Component, Entity, World};
+use crate::component::{Component, DefaultStorage, Ref};
+use crate::entity::Entity;
+use crate::world::{Fetch, World};
 
 pub struct FetchRead<'data, C>
 where

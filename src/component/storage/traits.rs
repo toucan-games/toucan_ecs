@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use crate::Entity;
+use crate::entity::Entity;
 
 pub trait Storage: 'static {
     fn remove(&mut self, entity: Entity);
