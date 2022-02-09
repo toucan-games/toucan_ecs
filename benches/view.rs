@@ -35,9 +35,7 @@ fn setup() -> World {
 fn view(criterion: &mut Criterion) {
     fn routine(world: World) {
         let view = world.view::<(&Position, Option<&Velocity>, &Mass)>();
-        view.for_each(|item| {
-            black_box(item);
-        });
+        view.for_each(|_| ());
     }
 
     criterion.bench_function("view world", |bencher| {

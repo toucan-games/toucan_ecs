@@ -1,24 +1,20 @@
 use std::any::Any;
 use std::sync::Mutex;
 
-use slotmap::{SecondaryMap, SlotMap};
+use slotmap::SecondaryMap;
 
 use crate::component::{Component, Ref, RefMut};
 use crate::entity::Entity;
 
 use super::Storage;
 
-slotmap::new_key_type! {
-    struct ComponentKey;
-}
-
 #[derive(Default)]
+#[repr(transparent)]
 pub struct DefaultStorage<C>
 where
     C: Component,
 {
-    components: SlotMap<ComponentKey, Mutex<C>>,
-    mapping: SecondaryMap<Entity, ComponentKey>,
+    components: SecondaryMap<Entity, Mutex<C>>,
 }
 
 impl<C> DefaultStorage<C>
@@ -27,26 +23,22 @@ where
 {
     pub fn new() -> Self {
         Self {
-            components: SlotMap::with_key(),
-            mapping: SecondaryMap::new(),
+            components: SecondaryMap::new(),
         }
     }
 
     pub fn attach(&mut self, entity: Entity, component: C) {
-        let component = self.components.insert(Mutex::new(component));
-        self.mapping.insert(entity, component);
+        self.components.insert(entity, Mutex::new(component));
     }
 
     pub fn get(&self, entity: Entity) -> Option<Ref<C>> {
-        let key = self.mapping.get(entity)?;
-        let mutex = self.components.get(*key)?;
+        let mutex = self.components.get(entity)?;
         let component = Ref::new(mutex.lock().unwrap());
         Some(component)
     }
 
     pub fn get_mut(&self, entity: Entity) -> Option<RefMut<C>> {
-        let key = self.mapping.get(entity)?;
-        let mutex = self.components.get(*key)?;
+        let mutex = self.components.get(entity)?;
         let component = RefMut::new(mutex.lock().unwrap());
         Some(component)
     }
@@ -57,18 +49,14 @@ where
     C: Component,
 {
     fn remove(&mut self, entity: Entity) {
-        let component = self.mapping.remove(entity);
-        if let Some(component) = component {
-            self.components.remove(component);
-        }
+        self.components.remove(entity);
     }
 
     fn attached(&self, entity: Entity) -> bool {
-        self.mapping.contains_key(entity)
+        self.components.contains_key(entity)
     }
 
     fn clear(&mut self) {
-        self.mapping.clear();
         self.components.clear();
     }
 
