@@ -14,10 +14,17 @@ edition = "2021"
 slotmap = "1.0.6"
 
 [dev-dependencies]
-criterion = "0.3.5"
+criterion = { version = "0.3.5", features = ["html_reports"] }
+
+[lib]
+bench = false
 
 [[bench]]
-name = "basic"
+name = "world"
+harness = false
+
+[[bench]]
+name = "view"
 harness = false
 
 [features]
