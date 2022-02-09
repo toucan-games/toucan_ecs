@@ -2,6 +2,7 @@
 //! and resources (if enabled by the feature `resource`).
 
 pub(crate) use fetch::Fetch;
+pub(crate) use hash::TypeIdHasher;
 pub use view::{View, ViewMut};
 pub(crate) use viewable::{SharedViewable, Viewable, ViewableItem};
 
@@ -11,6 +12,7 @@ use crate::entity::{Entity, Entry, Registry, ViewOne, ViewOneMut};
 use crate::resource::{Ref as ResRef, RefMut as ResRefMut, Resource, ResourceStorage};
 
 mod fetch;
+mod hash;
 mod view;
 mod viewable;
 

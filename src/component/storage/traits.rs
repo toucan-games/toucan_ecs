@@ -2,7 +2,7 @@ use std::any::Any;
 
 use crate::entity::Entity;
 
-pub trait Storage: 'static {
+pub trait Storage: Send + Sync + 'static {
     fn remove(&mut self, entity: Entity);
 
     fn attached(&self, entity: Entity) -> bool;

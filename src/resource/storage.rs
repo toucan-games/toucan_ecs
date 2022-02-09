@@ -1,5 +1,8 @@
 use std::collections::HashMap;
+use std::hash::BuildHasherDefault;
 use std::sync::Mutex;
+
+use crate::world::TypeIdHasher;
 
 use super::type_id::ResourceTypeId;
 use super::{Ref, RefMut, Resource};
@@ -11,13 +14,13 @@ use super::{Ref, RefMut, Resource};
 /// or [mutably][`ResourceStorage::get_mut`].
 #[derive(Default)]
 pub struct ResourceStorage {
-    resources: HashMap<ResourceTypeId, Mutex<Box<dyn Resource>>>,
+    resources: HashMap<ResourceTypeId, Mutex<Box<dyn Resource>>, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl ResourceStorage {
     pub fn new() -> Self {
         Self {
-            resources: HashMap::new(),
+            resources: HashMap::default(),
         }
     }
 

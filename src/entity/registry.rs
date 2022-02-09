@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::hash::BuildHasherDefault;
 
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
@@ -7,6 +8,7 @@ use crate::component::{
     Component, ComponentSet, ComponentTypeId, DefaultStorage, Ref, RefMut, Storage,
 };
 use crate::entity::{Entity, Entry};
+use crate::world::TypeIdHasher;
 
 use super::view_one::{ViewOne, ViewOneMut};
 
@@ -14,7 +16,7 @@ use super::view_one::{ViewOne, ViewOneMut};
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
     extended_entities: Vec<Entity>,
-    storages: HashMap<ComponentTypeId, Box<dyn Storage + Send + Sync + 'static>>,
+    storages: HashMap<ComponentTypeId, Box<dyn Storage>, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
@@ -22,7 +24,7 @@ impl Registry {
         Self {
             entities: DenseSlotMap::with_key(),
             extended_entities: Vec::new(),
-            storages: HashMap::new(),
+            storages: HashMap::default(),
         }
     }
 
