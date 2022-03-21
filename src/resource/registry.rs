@@ -12,11 +12,11 @@ use super::Resource;
 /// resources, get resources [immutably][`ResourceStorage::get`]
 /// or [mutably][`ResourceStorage::get_mut`].
 #[derive(Default)]
-pub struct ResourceStorage {
+pub struct Registry {
     resources: HashMap<ResourceTypeId, Box<dyn Resource>, BuildHasherDefault<TypeIdHasher>>,
 }
 
-impl ResourceStorage {
+impl Registry {
     pub fn new() -> Self {
         Self {
             resources: HashMap::default(),

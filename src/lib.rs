@@ -91,6 +91,7 @@
 //! // Get all entities which have `Position` and CAN have `Mass` components todo
 //! ```
 
+#![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_auto_cfg))]
 #![warn(missing_docs)]
 #![warn(clippy::disallowed_types)]
 #![forbid(unsafe_code)]

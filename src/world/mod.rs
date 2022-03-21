@@ -6,7 +6,7 @@ pub(crate) use hash::TypeIdHasher;
 use crate::component::{Component, ComponentSet, Entry, Registry};
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
-use crate::resource::{Resource, ResourceStorage};
+use crate::resource::{Resource, Registry as ResourceRegistry};
 
 mod hash;
 
@@ -21,7 +21,7 @@ mod hash;
 pub struct World {
     registry: Registry,
     #[cfg(feature = "resource")]
-    resources: ResourceStorage,
+    resources: ResourceRegistry,
 }
 
 impl World {
@@ -37,7 +37,7 @@ impl World {
         Self {
             registry: Registry::new(),
             #[cfg(feature = "resource")]
-            resources: ResourceStorage::new(),
+            resources: ResourceRegistry::new(),
         }
     }
 

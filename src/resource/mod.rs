@@ -2,9 +2,9 @@
 
 use std::any::Any;
 
-pub(crate) use storage::ResourceStorage;
+pub(crate) use registry::Registry;
 
-mod storage;
+mod registry;
 mod type_id;
 
 /// Trait for data that can be stored as singleton in ECS.
