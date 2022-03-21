@@ -1,5 +1,5 @@
-use crate::entity::Entity;
 use crate::component::Registry;
+use crate::entity::Entity;
 
 mod tuple;
 

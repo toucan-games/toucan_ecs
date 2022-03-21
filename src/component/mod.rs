@@ -6,11 +6,11 @@ pub(crate) use set::ComponentSet;
 pub(crate) use storage::{DefaultStorage, Storage};
 pub(crate) use type_id::ComponentTypeId;
 
+mod entry;
+mod registry;
 mod set;
 mod storage;
 mod type_id;
-mod registry;
-mod entry;
 
 /// Trait for data that can be attached to the entity.
 ///
