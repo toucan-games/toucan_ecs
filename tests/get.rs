@@ -16,7 +16,7 @@ fn get() {
         *data,
         Velocity {
             dx: 10.0,
-            dy: -10.0
+            dy: -10.0,
         }
     );
 }
@@ -34,7 +34,7 @@ fn get_mut() {
         *data,
         Velocity {
             dx: 10.0,
-            dy: -10.0
+            dy: -10.0,
         }
     );
 }

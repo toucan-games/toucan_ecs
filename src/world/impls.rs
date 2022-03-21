@@ -1,7 +1,9 @@
-use crate::component::{Component, ComponentSet, Entry, Registry};
+use crate::component::{Component, ComponentSet, Entry, Registry, ViewOne};
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
+
+use super::{View, Viewable};
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
@@ -732,5 +734,71 @@ impl World {
         R: Resource,
     {
         self.resources.get_mut::<R>()
+    }
+
+    /// Creates a [view][`ViewOne`] of the one component type.
+    ///
+    /// This iterator will return [entities][`Entity`] and their shared borrows
+    /// of components. Only entities that has that type of component will be returned.
+    ///
+    /// More complex views can be constructed with [view][`World::view`] associated function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::World;
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct Name(&'static str);
+    ///
+    /// let world = World::new();
+    ///
+    /// for component in world.view_one::<Name>() {
+    ///     println!("component: {:?}", *component)
+    /// }
+    /// ```
+    pub fn view_one<C>(&self) -> ViewOne<C>
+    where
+        C: Component,
+    {
+        self.registry.view_one::<C>()
+    }
+
+    /// Creates a [view][`View`] of the multiple component types.
+    ///
+    /// This iterator will return [entities][`Entity`] and their shared borrows of components.
+    ///
+    /// View will be constructed from the query which is determined by the generic type.
+    /// Only entities that satisfies the query will be returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::World;
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct Name(&'static str);
+    ///
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct ID(u32);
+    ///
+    /// let world = World::new();
+    ///
+    /// for (name, id) in world.view::<(Option<&Name>, &ID)>() {
+    ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
+    /// }
+    /// ```
+    pub fn view<'data, V>(&'data self) -> View<'data, V>
+    where
+        V: Viewable<'data>,
+    {
+        View::new(self)
+    }
+
+    pub(crate) fn registry(&self) -> &Registry {
+        &self.registry
+    }
+
+    #[cfg(feature = "resource")]
+    pub(crate) fn resources(&self) -> &ResourceRegistry {
+        &self.resources
     }
 }

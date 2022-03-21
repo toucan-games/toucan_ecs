@@ -4,8 +4,11 @@ use std::any::Any;
 
 pub(crate) use registry::Registry;
 
+mod fetch;
+pub mod marker;
 mod registry;
 mod type_id;
+mod viewable;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///

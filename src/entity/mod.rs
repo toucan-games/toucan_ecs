@@ -1,5 +1,8 @@
 //! Provides entity handle, entry for the specific entity in the world.
 
+mod fetch;
+mod viewable;
+
 slotmap::new_key_type! {
     /// Unique handle of the entity in ECS.
     ///

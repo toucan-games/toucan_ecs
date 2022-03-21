@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
+use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
+use crate::component::view_one::ViewOne;
 use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Entry, Storage};
 use crate::entity::Entity;
 use crate::world::TypeIdHasher;
@@ -215,7 +217,14 @@ impl Registry {
         storage.get_mut(entity)
     }
 
-    fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
+    pub fn view_one<C>(&self) -> ViewOne<C>
+    where
+        C: Component,
+    {
+        ViewOne::new(self)
+    }
+
+    pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
     where
         C: Component,
     {
@@ -258,5 +267,9 @@ impl Registry {
         let type_id = ComponentTypeId::of::<C>();
         let storage = DefaultStorage::<C>::new();
         self.storages.insert(type_id, Box::new(storage));
+    }
+
+    pub(crate) fn entities(&self) -> Keys<Entity, ()> {
+        self.entities.keys()
     }
 }
