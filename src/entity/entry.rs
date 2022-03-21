@@ -1,4 +1,4 @@
-use crate::component::{Component, ComponentSet, Ref, RefMut};
+use crate::component::{Component, ComponentSet};
 use crate::entity::{Entity, Registry};
 
 /// Entry of the specific [entity][`Entity`].
@@ -266,9 +266,6 @@ impl<'r> Entry<'r> {
     /// Retrieves the shared borrow for the component of one type attached to the entity.
     /// Returns [`None`][`Option::None`] if component is not attached to the entity.
     ///
-    /// Note that function would block current thread
-    /// if the same instance of component will be retrieved more than once.
-    ///
     /// # Examples
     ///
     /// ```
@@ -282,7 +279,7 @@ impl<'r> Entry<'r> {
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&'r self) -> Option<Ref<'r, C>>
+    pub fn get<C>(&'r self) -> Option<&'r C>
     where
         C: Component,
     {
@@ -291,9 +288,6 @@ impl<'r> Entry<'r> {
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
     /// Returns [`None`][`Option::None`] if component is not attached to the entity.
-    ///
-    /// Note that function would block current thread
-    /// if the same instance of component will be retrieved more than once.
     ///
     /// # Examples
     ///
@@ -310,7 +304,7 @@ impl<'r> Entry<'r> {
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
-    pub fn get_mut<C>(&'r mut self) -> Option<RefMut<'r, C>>
+    pub fn get_mut<C>(&'r mut self) -> Option<&'r mut C>
     where
         C: Component,
     {

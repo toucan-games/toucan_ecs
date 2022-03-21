@@ -23,9 +23,5 @@ bench = false
 name = "world"
 harness = false
 
-[[bench]]
-name = "view"
-harness = false
-
 [features]
 resource = []

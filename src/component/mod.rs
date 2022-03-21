@@ -1,13 +1,9 @@
 //! Provides trait for components and borrow types for them.
 
-pub use refs::{Ref, RefMut};
 pub(crate) use set::ComponentSet;
 pub(crate) use storage::{DefaultStorage, Storage};
 pub(crate) use type_id::ComponentTypeId;
 
-pub mod viewable;
-
-mod refs;
 mod set;
 mod storage;
 mod type_id;

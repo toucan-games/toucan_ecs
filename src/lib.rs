@@ -7,7 +7,7 @@
 //! - attach, get or remove components from the entity;
 //! - use [entry][`crate::entity::Entry`] of the entity to modify it;
 //! - view components of different types;
-//! - view components [immutably][`World::view`] or [mutably][`World::view_mut`].
+//! - view components immutably or mutably.
 //!
 //! For now library provides nothing for systems (are responsible for logic).
 //! You are free to create your own system!
@@ -88,14 +88,11 @@
 //!     }
 //! }
 //!
-//! // Get all entities which have `Position` and CAN have `Mass` components
-//! for (_, mut position, mass) in world.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
-//!     position.x += 1.0;
-//!     println!("position is {:?}, mass is {:?}", *position, mass.as_deref());
-//! }
+//! // Get all entities which have `Position` and CAN have `Mass` components todo
 //! ```
 
 #![warn(missing_docs)]
+#![warn(clippy::disallowed_types)]
 #![forbid(unsafe_code)]
 
 pub use entity::Entity;

@@ -1,16 +1,11 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
-use crate::component::{
-    Component, ComponentSet, ComponentTypeId, DefaultStorage, Ref, RefMut, Storage,
-};
+use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Storage};
 use crate::entity::{Entity, Entry};
 use crate::world::TypeIdHasher;
-
-use super::view_one::{ViewOne, ViewOneMut};
 
 #[derive(Default)]
 pub struct Registry {
@@ -204,7 +199,7 @@ impl Registry {
             .for_each(|storage| storage.remove(entity))
     }
 
-    pub fn get<C>(&self, entity: Entity) -> Option<Ref<C>>
+    pub fn get<C>(&self, entity: Entity) -> Option<&C>
     where
         C: Component,
     {
@@ -212,7 +207,7 @@ impl Registry {
         storage.get(entity)
     }
 
-    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<RefMut<C>>
+    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
     where
         C: Component,
     {
@@ -220,25 +215,7 @@ impl Registry {
         storage.get_mut(entity)
     }
 
-    pub fn view_one<C>(&self) -> ViewOne<C>
-    where
-        C: Component,
-    {
-        ViewOne::new(self)
-    }
-
-    pub fn view_one_mut<C>(&mut self) -> ViewOneMut<C>
-    where
-        C: Component,
-    {
-        ViewOneMut::new(self)
-    }
-
-    pub(crate) fn entities(&self) -> Keys<Entity, ()> {
-        self.entities.keys()
-    }
-
-    pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
+    fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
     where
         C: Component,
     {

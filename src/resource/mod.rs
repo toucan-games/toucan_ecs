@@ -2,13 +2,8 @@
 
 use std::any::Any;
 
-pub use refs::{Ref, RefMut};
 pub(crate) use storage::ResourceStorage;
 
-pub mod viewable;
-
-mod fetch;
-mod refs;
 mod storage;
 mod type_id;
 

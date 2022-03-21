@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
-use std::sync::Mutex;
 
 use crate::world::TypeIdHasher;
 
 use super::type_id::ResourceTypeId;
-use super::{Ref, RefMut, Resource};
+use super::Resource;
 
 /// Storage of the resources - singletons in ECS.
 ///
@@ -14,7 +13,7 @@ use super::{Ref, RefMut, Resource};
 /// or [mutably][`ResourceStorage::get_mut`].
 #[derive(Default)]
 pub struct ResourceStorage {
-    resources: HashMap<ResourceTypeId, Mutex<Box<dyn Resource>>, BuildHasherDefault<TypeIdHasher>>,
+    resources: HashMap<ResourceTypeId, Box<dyn Resource>, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl ResourceStorage {
@@ -37,8 +36,7 @@ impl ResourceStorage {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        self.resources
-            .insert(type_id, Mutex::new(Box::new(resource)));
+        self.resources.insert(type_id, Box::new(resource));
     }
 
     pub fn destroy<R>(&mut self)
@@ -57,23 +55,23 @@ impl ResourceStorage {
         self.resources.contains_key(&type_id)
     }
 
-    pub fn get<R>(&self) -> Option<Ref<R>>
+    pub fn get<R>(&self) -> Option<&R>
     where
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
-        let resource = Ref::new(resource.lock().unwrap());
+        let resource = resource.as_ref().as_any_ref().downcast_ref().expect("downcast error");
         Some(resource)
     }
 
-    pub fn get_mut<R>(&self) -> Option<RefMut<R>>
+    pub fn get_mut<R>(&mut self) -> Option<&mut R>
     where
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        let resource = self.resources.get(&type_id)?;
-        let resource = RefMut::new(resource.lock().unwrap());
+        let resource = self.resources.get_mut(&type_id)?;
+        let resource = resource.as_mut().as_any_mut().downcast_mut().expect("downcast error");
         Some(resource)
     }
 }

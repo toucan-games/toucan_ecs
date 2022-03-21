@@ -1,20 +1,14 @@
 //! General management of entities, their components
 //! and resources (if enabled by the feature `resource`).
 
-pub(crate) use fetch::Fetch;
 pub(crate) use hash::TypeIdHasher;
-pub use view::{View, ViewMut};
-pub(crate) use viewable::{SharedViewable, Viewable, ViewableItem};
 
-use crate::component::{Component, ComponentSet, Ref, RefMut};
-use crate::entity::{Entity, Entry, Registry, ViewOne, ViewOneMut};
+use crate::component::{Component, ComponentSet};
+use crate::entity::{Entity, Entry, Registry};
 #[cfg(feature = "resource")]
-use crate::resource::{Ref as ResRef, RefMut as ResRefMut, Resource, ResourceStorage};
+use crate::resource::{Resource, ResourceStorage};
 
-mod fetch;
 mod hash;
-mod view;
-mod viewable;
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
@@ -22,7 +16,7 @@ mod viewable;
 /// Use this to [create][`World::create`] and [destroy][`World::destroy`] entities,
 /// [attach][`World::attach`] and [remove][`World::remove`] components' data of the entity,
 /// [create][`World::entry`] entry for the entity,
-/// [view][`World::view`] each component separately or group of components together.
+/// view each component separately or group of components together.
 #[derive(Default)]
 pub struct World {
     registry: Registry,
@@ -655,9 +649,6 @@ impl World {
     /// Retrieves the shared borrow for the component of one type attached to the entity.
     /// Returns [`None`][`Option::None`] if component is not attached to the entity.
     ///
-    /// Note that function would block current thread
-    /// if the same instance of component will be retrieved more than once.
-    ///
     /// # Examples
     ///
     /// ```
@@ -671,7 +662,7 @@ impl World {
     /// let name = world.get::<Name>(entity).unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&self, entity: Entity) -> Option<Ref<C>>
+    pub fn get<C>(&self, entity: Entity) -> Option<&C>
     where
         C: Component,
     {
@@ -680,9 +671,6 @@ impl World {
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
     /// Returns [`None`][`Option::None`] if component is not attached to the entity.
-    ///
-    /// Note that function would block current thread
-    /// if the same instance of component will be retrieved more than once.
     ///
     /// # Examples
     ///
@@ -699,7 +687,7 @@ impl World {
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
-    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<RefMut<C>>
+    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
     where
         C: Component,
     {
@@ -722,7 +710,7 @@ impl World {
     /// assert_eq!(*resource, Resource(42));
     /// ```
     #[cfg(feature = "resource")]
-    pub fn get_resource<R>(&self) -> Option<ResRef<R>>
+    pub fn get_resource<R>(&self) -> Option<&R>
     where
         R: Resource,
     {
@@ -746,137 +734,10 @@ impl World {
     /// assert_eq!(*resource, Resource(35));
     /// ```
     #[cfg(feature = "resource")]
-    pub fn get_resource_mut<R>(&mut self) -> Option<ResRefMut<R>>
+    pub fn get_resource_mut<R>(&mut self) -> Option<&mut R>
     where
         R: Resource,
     {
         self.resources.get_mut::<R>()
-    }
-
-    /// Creates a [view][`ViewOne`] of the one component type.
-    ///
-    /// This iterator will return [entities][`Entity`] and their shared borrows
-    /// of components. Only entities that has that type of component will be returned.
-    ///
-    /// More complex views can be constructed with [view][`World::view`] associated function.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// #[derive(Copy, Clone, Debug)]
-    /// struct Name(&'static str);
-    ///
-    /// let world = World::new();
-    ///
-    /// for component in world.view_one::<Name>() {
-    ///     println!("component: {:?}", *component)
-    /// }
-    /// ```
-    pub fn view_one<C>(&self) -> ViewOne<C>
-    where
-        C: Component,
-    {
-        self.registry.view_one::<C>()
-    }
-
-    // noinspection SpellCheckingInspection
-    /// Creates a [view][`ViewOneMut`] of the one component type.
-    ///
-    /// This iterator will return [entities][`Entity`] and their unique borrows
-    /// of components. Only entities that has that type of component will be returned.
-    ///
-    /// More complex views can be constructed with [view][`World::view`] associated function.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// #[derive(Copy, Clone, Debug)]
-    /// struct Name(&'static str);
-    ///
-    /// let mut world = World::new();
-    ///
-    /// for mut component in world.view_one_mut::<Name>() {
-    ///     component.0 = "Привет, Мир";
-    ///     println!("component: {:?}", *component)
-    /// }
-    /// ```
-    pub fn view_one_mut<C>(&mut self) -> ViewOneMut<C>
-    where
-        C: Component,
-    {
-        self.registry.view_one_mut::<C>()
-    }
-
-    /// Creates a [view][`View`] of the multiple component types.
-    ///
-    /// This iterator will return [entities][`Entity`] and their shared borrows of components.
-    ///
-    /// View will be constructed from the query which is determined by the generic type.
-    /// Only entities that satisfies the query will be returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// #[derive(Copy, Clone, Debug)]
-    /// struct Name(&'static str);
-    ///
-    /// #[derive(Copy, Clone, Debug)]
-    /// struct ID(u32);
-    ///
-    /// let world = World::new();
-    ///
-    /// for (name, id) in world.view::<(Option<&Name>, &ID)>() {
-    ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
-    /// }
-    /// ```
-    pub fn view<'data, V>(&'data self) -> View<'data, V>
-    where
-        V: SharedViewable<'data>,
-    {
-        View::new(self)
-    }
-
-    /// Creates a [view][`ViewMut`] of the multiple component types.
-    ///
-    /// This iterator will return [entities][`Entity`] and their shared OR unique
-    /// borrows of components.
-    ///
-    /// View will be constructed from the query which is determined by the generic type.
-    /// Only entities that satisfies the query will be returned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// #[derive(Copy, Clone, Debug)]
-    /// struct Name(&'static str);
-    ///
-    /// #[derive(Copy, Clone, Debug)]
-    /// struct ID(u32);
-    ///
-    /// let mut world = World::new();
-    ///
-    /// for (name, mut id) in world.view_mut::<(Option<&Name>, &mut ID)>() {
-    ///     id.0 += 10;
-    ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
-    /// }
-    /// ```
-    pub fn view_mut<'data, V>(&'data mut self) -> ViewMut<'data, V>
-    where
-        V: Viewable<'data>,
-    {
-        ViewMut::new(self)
-    }
-
-    pub(crate) fn registry(&self) -> &Registry {
-        &self.registry
-    }
-
-    #[cfg(feature = "resource")]
-    pub(crate) fn resources(&self) -> &ResourceStorage {
-        &self.resources
     }
 }

@@ -2,14 +2,9 @@
 
 pub use entry::Entry;
 pub(crate) use registry::Registry;
-pub use view_one::{ViewOne, ViewOneMut};
-
-pub(crate) mod fetch;
 
 mod entry;
 mod registry;
-mod view_one;
-mod viewable;
 
 slotmap::new_key_type! {
     /// Unique handle of the entity in ECS.

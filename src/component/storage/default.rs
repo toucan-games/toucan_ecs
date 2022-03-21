@@ -1,9 +1,8 @@
 use std::any::Any;
-use std::sync::Mutex;
 
 use slotmap::SecondaryMap;
 
-use crate::component::{Component, Ref, RefMut};
+use crate::component::Component;
 use crate::entity::Entity;
 
 use super::Storage;
@@ -14,7 +13,7 @@ pub struct DefaultStorage<C>
 where
     C: Component,
 {
-    components: SecondaryMap<Entity, Mutex<C>>,
+    components: SecondaryMap<Entity, C>,
 }
 
 impl<C> DefaultStorage<C>
@@ -28,19 +27,15 @@ where
     }
 
     pub fn attach(&mut self, entity: Entity, component: C) {
-        self.components.insert(entity, Mutex::new(component));
+        self.components.insert(entity, component);
     }
 
-    pub fn get(&self, entity: Entity) -> Option<Ref<C>> {
-        let mutex = self.components.get(entity)?;
-        let component = Ref::new(mutex.lock().unwrap());
-        Some(component)
+    pub fn get(&self, entity: Entity) -> Option<&C> {
+        self.components.get(entity)
     }
 
-    pub fn get_mut(&self, entity: Entity) -> Option<RefMut<C>> {
-        let mutex = self.components.get(entity)?;
-        let component = RefMut::new(mutex.lock().unwrap());
-        Some(component)
+    pub fn get_mut(&mut self, entity: Entity) -> Option<&mut C> {
+        self.components.get_mut(entity)
     }
 }
 
