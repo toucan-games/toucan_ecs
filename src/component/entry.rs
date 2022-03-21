@@ -1,5 +1,5 @@
-use crate::component::{Component, ComponentSet};
-use crate::entity::{Entity, Registry};
+use crate::component::{Component, ComponentSet, Registry};
+use crate::entity::Entity;
 
 /// Entry of the specific [entity][`Entity`].
 ///
@@ -26,7 +26,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -44,7 +44,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -60,7 +60,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// assert!(entry.is_empty());
@@ -80,7 +80,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -89,8 +89,8 @@ impl<'r> Entry<'r> {
     /// assert_eq!(entry.get().as_deref(), Some(&Name("Hello, World")));
     /// ```
     pub fn attach_one<C>(&mut self, component: C)
-    where
-        C: Component,
+        where
+            C: Component,
     {
         self.registry.attach_one(self.entity, component);
     }
@@ -106,7 +106,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -118,8 +118,8 @@ impl<'r> Entry<'r> {
     /// assert!(entry.attached::<(ID, Name)>());
     /// ```
     pub fn attach<S>(&mut self, set: S)
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         self.registry.attach(self.entity, set)
     }
@@ -133,7 +133,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -145,8 +145,8 @@ impl<'r> Entry<'r> {
     /// assert!(entry.attached_one::<Name>());
     /// ```
     pub fn attached_one<C>(&self) -> bool
-    where
-        C: Component,
+        where
+            C: Component,
     {
         self.registry.attached_one::<C>(self.entity)
     }
@@ -160,7 +160,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -175,8 +175,8 @@ impl<'r> Entry<'r> {
     /// assert!(entry.attached::<(Name, ID)>());
     /// ```
     pub fn attached<S>(&self) -> bool
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         self.registry.attached::<S>(self.entity)
     }
@@ -190,7 +190,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -202,8 +202,8 @@ impl<'r> Entry<'r> {
     /// assert!(!entry.attached_one::<Name>());
     /// ```
     pub fn remove_one<C>(&mut self)
-    where
-        C: Component,
+        where
+            C: Component,
     {
         self.registry.remove_one::<C>(self.entity)
     }
@@ -217,7 +217,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -230,8 +230,8 @@ impl<'r> Entry<'r> {
     /// assert!(!entry.attached::<(Name, ID)>());
     /// ```
     pub fn remove<S>(&mut self)
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         self.registry.remove::<S>(self.entity)
     }
@@ -247,7 +247,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -270,7 +270,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -280,8 +280,8 @@ impl<'r> Entry<'r> {
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
     pub fn get<C>(&'r self) -> Option<&'r C>
-    where
-        C: Component,
+        where
+            C: Component,
     {
         self.registry.get(self.entity)
     }
@@ -293,7 +293,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::entity::Entry;
+    /// # use toucan_ecs::component::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -305,8 +305,8 @@ impl<'r> Entry<'r> {
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
     pub fn get_mut<C>(&'r mut self) -> Option<&'r mut C>
-    where
-        C: Component,
+        where
+            C: Component,
     {
         self.registry.get_mut(self.entity)
     }

@@ -3,8 +3,8 @@
 
 pub(crate) use hash::TypeIdHasher;
 
-use crate::component::{Component, ComponentSet};
-use crate::entity::{Entity, Entry, Registry};
+use crate::component::{Component, ComponentSet, Entry, Registry};
+use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{Resource, ResourceStorage};
 

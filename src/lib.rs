@@ -5,7 +5,7 @@
 //! Provides basic features, such as:
 //! - create and destroy entities;
 //! - attach, get or remove components from the entity;
-//! - use [entry][`crate::entity::Entry`] of the entity to modify it;
+//! - use [entry][`crate::component::Entry`] of the entity to modify it;
 //! - view components of different types;
 //! - view components immutably or mutably.
 //!

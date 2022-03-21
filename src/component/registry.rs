@@ -3,8 +3,8 @@ use std::hash::BuildHasherDefault;
 
 use slotmap::DenseSlotMap;
 
-use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Storage};
-use crate::entity::{Entity, Entry};
+use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Storage, Entry};
+use crate::entity::Entity;
 use crate::world::TypeIdHasher;
 
 #[derive(Default)]
@@ -28,8 +28,8 @@ impl Registry {
     }
 
     pub fn create_with_one<C>(&mut self, component: C) -> Entity
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let entity = self.create();
         self.attach_one(entity, component);
@@ -37,8 +37,8 @@ impl Registry {
     }
 
     pub fn create_with<S>(&mut self, set: S) -> Entity
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         let entity = self.create();
         self.attach(entity, set);
@@ -51,16 +51,16 @@ impl Registry {
     }
 
     pub fn create_entry_with_one<C>(&mut self, component: C) -> Entry
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let entity = self.create_with_one(component);
         Entry::new(entity, self)
     }
 
     pub fn create_entry_with<S>(&mut self, set: S) -> Entry
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         let entity = self.create_with(set);
         Entry::new(entity, self)
@@ -80,9 +80,9 @@ impl Registry {
     }
 
     pub fn extend_with_one<I, C>(&mut self, into_iter: I) -> &[Entity]
-    where
-        I: IntoIterator<Item = C>,
-        C: Component,
+        where
+            I: IntoIterator<Item = C>,
+            C: Component,
     {
         self.extended_entities.clear();
         let iter = into_iter.into_iter();
@@ -94,9 +94,9 @@ impl Registry {
     }
 
     pub fn extend_with<I, S>(&mut self, into_iter: I) -> &[Entity]
-    where
-        I: IntoIterator<Item = S>,
-        S: ComponentSet,
+        where
+            I: IntoIterator<Item = S>,
+            S: ComponentSet,
     {
         self.extended_entities.clear();
         let iter = into_iter.into_iter();
@@ -129,8 +129,8 @@ impl Registry {
     }
 
     pub fn register<C>(&mut self)
-    where
-        C: Component,
+        where
+            C: Component,
     {
         if !self.has_storage::<C>() {
             self.create_storage::<C>();
@@ -138,8 +138,8 @@ impl Registry {
     }
 
     pub fn attach_one<C>(&mut self, entity: Entity, component: C)
-    where
-        C: Component,
+        where
+            C: Component,
     {
         self.register::<C>();
         let storage = self.get_storage_mut().unwrap();
@@ -147,15 +147,15 @@ impl Registry {
     }
 
     pub fn attach<S>(&mut self, entity: Entity, set: S)
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         set.attach(self, entity)
     }
 
     pub fn attached_one<C>(&self, entity: Entity) -> bool
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let storage = self.get_storage::<C>();
         storage
@@ -164,8 +164,8 @@ impl Registry {
     }
 
     pub fn attached<S>(&self, entity: Entity) -> bool
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         S::attached(self, entity)
     }
@@ -177,8 +177,8 @@ impl Registry {
     }
 
     pub fn remove_one<C>(&mut self, entity: Entity)
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let storage = self.get_storage_mut::<C>();
         if let Some(storage) = storage {
@@ -187,8 +187,8 @@ impl Registry {
     }
 
     pub fn remove<S>(&mut self, entity: Entity)
-    where
-        S: ComponentSet,
+        where
+            S: ComponentSet,
     {
         S::remove(self, entity)
     }
@@ -200,24 +200,24 @@ impl Registry {
     }
 
     pub fn get<C>(&self, entity: Entity) -> Option<&C>
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let storage = self.get_storage::<C>()?;
         storage.get(entity)
     }
 
     pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let storage = self.get_storage_mut::<C>()?;
         storage.get_mut(entity)
     }
 
     fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
@@ -230,8 +230,8 @@ impl Registry {
     }
 
     fn get_storage_mut<C>(&mut self) -> Option<&mut DefaultStorage<C>>
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
@@ -244,16 +244,16 @@ impl Registry {
     }
 
     fn has_storage<C>(&self) -> bool
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         self.storages.contains_key(&type_id)
     }
 
     fn create_storage<C>(&mut self)
-    where
-        C: Component,
+        where
+            C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = DefaultStorage::<C>::new();

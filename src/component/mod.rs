@@ -1,5 +1,7 @@
 //! Provides trait for components and borrow types for them.
 
+pub use entry::Entry;
+pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
 pub(crate) use storage::{DefaultStorage, Storage};
 pub(crate) use type_id::ComponentTypeId;
@@ -7,6 +9,8 @@ pub(crate) use type_id::ComponentTypeId;
 mod set;
 mod storage;
 mod type_id;
+mod registry;
+mod entry;
 
 /// Trait for data that can be attached to the entity.
 ///
