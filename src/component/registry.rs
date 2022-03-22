@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
+use as_any::Downcast;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
@@ -230,11 +231,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        let storage = storage
-            .as_ref()
-            .as_any_ref()
-            .downcast_ref()
-            .expect("downcast error");
+        let storage = storage.as_ref().downcast_ref().expect("downcast error");
         Some(storage)
     }
 
@@ -244,11 +241,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        let storage = storage
-            .as_mut()
-            .as_any_mut()
-            .downcast_mut()
-            .expect("downcast error");
+        let storage = storage.as_mut().downcast_mut().expect("downcast error");
         Some(storage)
     }
 

@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
+use as_any::Downcast;
+
 use crate::world::TypeIdHasher;
 
 use super::type_id::ResourceTypeId;
@@ -61,11 +63,7 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
-        let resource = resource
-            .as_ref()
-            .as_any_ref()
-            .downcast_ref()
-            .expect("downcast error");
+        let resource = resource.as_ref().downcast_ref().expect("downcast error");
         Some(resource)
     }
 
@@ -75,11 +73,7 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get_mut(&type_id)?;
-        let resource = resource
-            .as_mut()
-            .as_any_mut()
-            .downcast_mut()
-            .expect("downcast error");
+        let resource = resource.as_mut().downcast_mut().expect("downcast error");
         Some(resource)
     }
 }

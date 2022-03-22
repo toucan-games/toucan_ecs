@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use slotmap::SecondaryMap;
 
 use crate::component::Component;
@@ -53,13 +51,5 @@ where
 
     fn clear(&mut self) {
         self.components.clear();
-    }
-
-    fn as_any_ref(&self) -> &dyn Any {
-        self
-    }
-
-    fn as_any_mut(&mut self) -> &mut dyn Any {
-        self
     }
 }

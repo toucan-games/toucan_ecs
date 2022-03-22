@@ -1,7 +1,5 @@
 //! Provides trait for resources and borrow types for them.
 
-use std::any::Any;
-
 pub(crate) use registry::Registry;
 
 mod fetch;
@@ -20,23 +18,6 @@ mod viewable;
 /// to share some state across entities and manage some resources.
 ///
 /// Storing and accessing resources can be useful to access unique data in systems.
-pub trait Resource: Send + Sync + 'static {
-    #[doc(hidden)]
-    fn as_any_ref(&self) -> &dyn Any;
+pub trait Resource: Send + Sync + 'static + ::as_any::AsAny {}
 
-    #[doc(hidden)]
-    fn as_any_mut(&mut self) -> &mut dyn Any;
-}
-
-impl<T> Resource for T
-where
-    T: Send + Sync + 'static,
-{
-    fn as_any_ref(&self) -> &dyn Any {
-        self
-    }
-
-    fn as_any_mut(&mut self) -> &mut dyn Any {
-        self
-    }
-}
+impl<T> Resource for T where T: Send + Sync + 'static {}
