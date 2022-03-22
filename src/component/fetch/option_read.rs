@@ -1,5 +1,5 @@
 use crate::component::{Component, DefaultStorage};
-use crate::world::Fetch;
+use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
 pub struct FetchOptionRead<'data, C>
@@ -13,7 +13,7 @@ impl<'data, C> TryFrom<&'data World> for FetchOptionRead<'data, C>
 where
     C: Component,
 {
-    type Error = ();
+    type Error = FetchError;
 
     // noinspection DuplicatedCode
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
@@ -28,7 +28,7 @@ where
 {
     type Item = Option<&'data C>;
 
-    fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
+    fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
         let item = self.storage.and_then(|storage| storage.get(entity));
         Ok(item)
     }

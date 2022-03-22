@@ -1,5 +1,5 @@
 use crate::component::{Component, DefaultStorage};
-use crate::world::Fetch;
+use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
 pub struct FetchNot<'data, C>
@@ -13,7 +13,7 @@ impl<'data, C> TryFrom<&'data World> for FetchNot<'data, C>
 where
     C: Component,
 {
-    type Error = ();
+    type Error = FetchError;
 
     // noinspection DuplicatedCode
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
@@ -28,14 +28,14 @@ where
 {
     type Item = ();
 
-    fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
+    fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
         match self.storage {
             None => Ok(()),
             Some(storage) => {
                 let component = storage.get(entity);
                 match component {
                     None => Ok(()),
-                    Some(_) => Err(()),
+                    Some(_) => Err(FetchError),
                 }
             }
         }

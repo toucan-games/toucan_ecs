@@ -2,6 +2,7 @@
 //! and resources (if enabled by the feature `resource`).
 
 pub(crate) use fetch::Fetch;
+pub(crate) use fetch::FetchError;
 pub(crate) use hash::TypeIdHasher;
 pub use impls::World;
 pub use view::View;

@@ -16,7 +16,7 @@ macro_rules! impl_fetch {
         where
             $($types: Fetch<'data>,)*
         {
-            type Error = ();
+            type Error = FetchError;
 
             fn try_from(world: &'data World) -> Result<Self, Self::Error> {
                 Ok(($($types::try_from(world)?,)*))
@@ -30,7 +30,7 @@ macro_rules! impl_fetch {
             type Item = ($($types::Item,)*);
 
             #[allow(non_snake_case)]
-            fn fetch(&self, entity: Entity) -> Result<Self::Item, ()> {
+            fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
                 let ($($types,)*) = self;
                 $(let $types = $types.fetch(entity)?;)*
                 Ok(($($types,)*))
