@@ -1,4 +1,4 @@
-use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BatchSize, Criterion};
 
 use components::{Mass, Position, Velocity};
 use toucan_ecs::World;
@@ -35,7 +35,9 @@ fn setup() -> World {
 fn view(criterion: &mut Criterion) {
     fn routine(world: World) {
         let view = world.view::<(&Position, Option<&Velocity>, &Mass)>();
-        view.for_each(|_| ());
+        view.for_each(|item| {
+            black_box(item);
+        });
     }
 
     criterion.bench_function("view world", |bencher| {

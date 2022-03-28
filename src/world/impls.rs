@@ -3,7 +3,7 @@ use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 
-use super::{View, Viewable};
+use super::{Query, View};
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
@@ -786,9 +786,9 @@ impl World {
     ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
     /// }
     /// ```
-    pub fn view<'data, V>(&'data self) -> View<'data, V>
+    pub fn view<'data, Q>(&'data self) -> View<'data, Q>
     where
-        V: Viewable<'data>,
+        Q: Query<'data>,
     {
         View::new(self)
     }

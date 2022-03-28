@@ -1,8 +1,8 @@
-use crate::world::Viewable;
+use crate::world::Query;
 use crate::Entity;
 
 use super::fetch::FetchEntity;
 
-impl<'data> Viewable<'data> for Entity {
+impl<'data> Query<'data> for Entity {
     type Fetch = FetchEntity;
 }

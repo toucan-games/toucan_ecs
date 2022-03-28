@@ -10,12 +10,12 @@ pub use view_one::ViewOne;
 mod entry;
 mod fetch;
 pub mod marker;
+mod query;
 mod registry;
 mod set;
 mod storage;
 mod type_id;
 mod view_one;
-mod viewable;
 
 /// Trait for data that can be attached to the entity.
 ///

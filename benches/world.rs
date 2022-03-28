@@ -14,14 +14,15 @@ fn create_world(criterion: &mut Criterion) {
 }
 
 fn register_world_components(criterion: &mut Criterion) {
-    fn routine() {
-        let mut world = World::new();
+    fn routine(mut world: World) {
         world.register::<Position>();
         world.register::<Velocity>();
         world.register::<Mass>();
     }
 
-    criterion.bench_function("register world components", |bencher| bencher.iter(routine));
+    criterion.bench_function("register world components", |bencher| {
+        bencher.iter_batched(World::new, routine, BatchSize::SmallInput)
+    });
 }
 
 fn fill_world(criterion: &mut Criterion) {
@@ -34,7 +35,7 @@ fn fill_world(criterion: &mut Criterion) {
     }
 
     fn routine(mut world: World) {
-        let into_iter = (0..1_000_u16).map(|i| {
+        let into_iter = (0..10_000_u16).map(|i| {
             let f = f32::from(i);
             let velocity = Velocity {
                 dx: -f / 10.0,

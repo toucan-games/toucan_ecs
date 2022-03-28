@@ -4,9 +4,9 @@ pub(crate) use registry::Registry;
 
 mod fetch;
 pub mod marker;
+mod query;
 mod registry;
 mod type_id;
-mod viewable;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///
