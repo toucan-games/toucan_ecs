@@ -2,10 +2,11 @@ use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
 use as_any::Downcast;
+use atomic_refcell::AtomicRef;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
-use crate::component::view_one::ViewOne;
+use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Entry, Storage};
 use crate::entity::Entity;
 use crate::world::TypeIdHasher;
@@ -202,7 +203,7 @@ impl Registry {
             .for_each(|storage| storage.remove(entity))
     }
 
-    pub fn get<C>(&self, entity: Entity) -> Option<&C>
+    pub fn get<C>(&self, entity: Entity) -> Option<AtomicRef<C>>
     where
         C: Component,
     {
@@ -223,6 +224,13 @@ impl Registry {
         C: Component,
     {
         ViewOne::new(self)
+    }
+
+    pub fn view_one_mut<C>(&mut self) -> ViewOneMut<C>
+    where
+        C: Component,
+    {
+        ViewOneMut::new(self)
     }
 
     pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>

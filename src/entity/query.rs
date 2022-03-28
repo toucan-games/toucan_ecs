@@ -1,4 +1,4 @@
-use crate::world::Query;
+use crate::world::{Query, QueryShared};
 use crate::Entity;
 
 use super::fetch::FetchEntity;
@@ -6,3 +6,5 @@ use super::fetch::FetchEntity;
 impl<'data> Query<'data> for Entity {
     type Fetch = FetchEntity;
 }
+
+impl<'data> QueryShared<'data> for Entity {}

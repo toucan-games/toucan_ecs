@@ -45,5 +45,18 @@ fn view(criterion: &mut Criterion) {
     });
 }
 
-criterion_group!(view_group, view);
+fn view_mut(criterion: &mut Criterion) {
+    fn routine(mut world: World) {
+        let view = world.view_mut::<(&mut Position, Option<&mut Velocity>, &mut Mass)>();
+        view.for_each(|item| {
+            black_box(item);
+        });
+    }
+
+    criterion.bench_function("view mut world", |bencher| {
+        bencher.iter_batched(setup, routine, BatchSize::SmallInput)
+    });
+}
+
+criterion_group!(view_group, view, view_mut);
 criterion_main!(view_group);

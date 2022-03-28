@@ -13,6 +13,7 @@ edition = "2021"
 [dependencies]
 slotmap = "1.0.6"
 as-any = "0.3.0"
+atomic_refcell = "0.1.8"
 
 [build-dependencies]
 rustc_version = "0.4.0"

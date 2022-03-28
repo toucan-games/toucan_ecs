@@ -1,20 +1,20 @@
 use std::marker::PhantomData;
 
-use atomic_refcell::AtomicRef;
+use atomic_refcell::AtomicRefMut;
 
 use crate::resource::Resource;
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
-pub struct FetchRead<'data, R>
+pub struct FetchWrite<'data, R>
 where
     R: Resource,
 {
     world: &'data World,
-    _ph: PhantomData<&'data R>,
+    _ph: PhantomData<AtomicRefMut<'data, R>>,
 }
 
-impl<'data, R> TryFrom<&'data World> for FetchRead<'data, R>
+impl<'data, R> TryFrom<&'data World> for FetchWrite<'data, R>
 where
     R: Resource,
 {
@@ -28,14 +28,14 @@ where
     }
 }
 
-impl<'data, R> Fetch<'data> for FetchRead<'data, R>
+impl<'data, R> Fetch<'data> for FetchWrite<'data, R>
 where
     R: Resource,
 {
-    type Item = AtomicRef<'data, R>;
+    type Item = AtomicRefMut<'data, R>;
 
     fn fetch(&self, _: Entity) -> Result<Self::Item, FetchError> {
-        let resource = self.world.resources().get().ok_or(FetchError)?;
+        let resource = self.world.resources().get_im_mut().ok_or(FetchError)?;
         Ok(resource)
     }
 }

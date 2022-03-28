@@ -4,8 +4,8 @@
 pub(crate) use fetch::{Fetch, FetchError};
 pub(crate) use hash::TypeIdHasher;
 pub use impls::World;
-pub(crate) use query::{Query, QueryItem};
-pub use view::View;
+pub(crate) use query::{Query, QueryItem, QueryShared};
+pub use view::{View, ViewMut};
 
 mod fetch;
 mod hash;

@@ -5,7 +5,7 @@ pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
 pub(crate) use storage::{DefaultStorage, Storage};
 pub(crate) use type_id::ComponentTypeId;
-pub use view_one::ViewOne;
+pub use view_one::{ViewOne, ViewOneMut};
 
 mod entry;
 mod fetch;

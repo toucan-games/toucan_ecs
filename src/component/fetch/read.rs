@@ -1,3 +1,5 @@
+use atomic_refcell::AtomicRef;
+
 use crate::component::{Component, DefaultStorage};
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
@@ -26,7 +28,7 @@ impl<'data, C> Fetch<'data> for FetchRead<'data, C>
 where
     C: Component,
 {
-    type Item = &'data C;
+    type Item = AtomicRef<'data, C>;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
         self.storage.get(entity).ok_or(FetchError)
