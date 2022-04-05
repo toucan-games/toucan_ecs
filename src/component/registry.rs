@@ -5,7 +5,7 @@ use as_any::Downcast;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
-use crate::component::view_one::ViewOne;
+use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Entry, Storage};
 use crate::entity::Entity;
 use crate::world::TypeIdHasher;
@@ -225,6 +225,13 @@ impl Registry {
         ViewOne::new(self)
     }
 
+    pub fn view_one_mut<C>(&mut self) -> ViewOneMut<C>
+    where
+        C: Component,
+    {
+        ViewOneMut::new(self)
+    }
+
     pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
     where
         C: Component,
@@ -235,7 +242,7 @@ impl Registry {
         Some(storage)
     }
 
-    fn get_storage_mut<C>(&mut self) -> Option<&mut DefaultStorage<C>>
+    pub(super) fn get_storage_mut<C>(&mut self) -> Option<&mut DefaultStorage<C>>
     where
         C: Component,
     {

@@ -1,5 +1,7 @@
 //! Provides trait for resources and borrow types for them.
 
+use as_any::AsAny;
+
 pub(crate) use registry::Registry;
 
 mod fetch;
@@ -18,6 +20,6 @@ mod type_id;
 /// to share some state across entities and manage some resources.
 ///
 /// Storing and accessing resources can be useful to access unique data in systems.
-pub trait Resource: Send + Sync + 'static + ::as_any::AsAny {}
+pub trait Resource: Send + Sync + 'static + AsAny {}
 
 impl<T> Resource for T where T: Send + Sync + 'static {}

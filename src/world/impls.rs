@@ -1,4 +1,4 @@
-use crate::component::{Component, ComponentSet, Entry, Registry, ViewOne};
+use crate::component::{Component, ComponentSet, Entry, Registry, ViewOne, ViewOneMut};
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
@@ -736,7 +736,7 @@ impl World {
         self.resources.get_mut::<R>()
     }
 
-    /// Creates a [view][`ViewOne`] of the one component type.
+    /// Creates a [view][`ViewOne`] of the component type.
     ///
     /// This iterator will return [entities][`Entity`] and their shared borrows
     /// of components. Only entities that has that type of component will be returned.
@@ -761,6 +761,34 @@ impl World {
         C: Component,
     {
         self.registry.view_one::<C>()
+    }
+
+    /// Creates a [view][`ViewOneMut`] of the component type.
+    ///
+    /// This iterator will return [entities][`Entity`] and their unique borrows
+    /// of components. Only entities that has that type of component will be returned.
+    ///
+    /// More complex views can be constructed with [view_mut][`World::view_mut`] associated function.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::World;
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct Name(&'static str);
+    ///
+    /// let mut world = World::new();
+    ///
+    /// for component in world.view_one_mut::<Name>() {
+    ///     component.0 = "Hello, World!";
+    ///     println!("component: {:?}", *component)
+    /// }
+    /// ```
+    pub fn view_one_mut<C>(&mut self) -> ViewOneMut<C>
+    where
+        C: Component,
+    {
+        self.registry.view_one_mut::<C>()
     }
 
     /// Creates a [view][`View`] of the multiple component types.

@@ -1,3 +1,4 @@
+use slotmap::secondary::{Iter, IterMut};
 use slotmap::SecondaryMap;
 
 use crate::component::Component;
@@ -12,6 +13,19 @@ where
     C: Component,
 {
     components: SecondaryMap<Entity, C>,
+}
+
+impl<C> DefaultStorage<C>
+where
+    C: Component,
+{
+    pub fn iter(&self) -> Iter<Entity, C> {
+        self.components.iter()
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<Entity, C> {
+        self.components.iter_mut()
+    }
 }
 
 impl<C> DefaultStorage<C>

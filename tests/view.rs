@@ -17,6 +17,16 @@ fn view_one() {
 }
 
 #[test]
+fn view_one_mut() {
+    let mut world = utils::prepare_for_view();
+
+    for component in world.view_one_mut::<Position>() {
+        component.x += 10.0;
+        println!("component: {:?}", *component)
+    }
+}
+
+#[test]
 fn view() {
     let world = utils::prepare_for_view();
 
