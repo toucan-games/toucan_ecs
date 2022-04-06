@@ -46,7 +46,7 @@ fn test() {
     run_system(sum_two, (1, 2));
     run_system(sum_12, (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
 
-    let log_system = |b: &str| println!(r#"Message is "{}""#, b);
+    let log_system = |message: &str| println!(r#"Message is "{}""#, message);
     run_system(log_system, ("something happened",));
 
     struct StructSystem;

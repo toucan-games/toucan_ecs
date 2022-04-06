@@ -768,7 +768,10 @@ impl World {
     /// This iterator will return [entities][`Entity`] and their unique borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
-    /// More complex views can be constructed with [view_mut][`World::view_mut`] associated function.
+    /// There is no safe way to create an [iterator][`std::iter::Iterator`]
+    /// over multiple mutable references at a time.
+    /// Consider using [systems][`crate::system::System`]
+    /// to mutate multiple components attached to the entity.
     ///
     /// # Examples
     ///
