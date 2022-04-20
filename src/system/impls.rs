@@ -14,7 +14,7 @@ macro_rules! impl_system {
     ($($types:ident),*) => {
         impl<F, $($types),*> System<($($types,)*)> for F
         where
-            F: FnMut($($types,)*),
+            F: FnMut($($types,)*) + 'static,
         {
             #[allow(non_snake_case)]
             fn run(&mut self, args: ($($types,)*)) {
@@ -30,7 +30,7 @@ system!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12);
 
 impl<F> System<()> for F
 where
-    F: FnMut(),
+    F: FnMut() + 'static,
 {
     fn run(&mut self, _: ()) {
         self()
