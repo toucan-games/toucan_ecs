@@ -12,7 +12,7 @@ fn view_one() {
     let world = utils::prepare_for_view();
 
     for component in world.view_one::<Position>() {
-        println!("component: {:?}", *component)
+        println!("component: {:?}", component)
     }
 }
 
@@ -22,7 +22,7 @@ fn view_one_mut() {
 
     for component in world.view_one_mut::<Position>() {
         component.x += 10.0;
-        println!("component: {:?}", *component)
+        println!("component: {:?}", component)
     }
 }
 
@@ -34,7 +34,7 @@ fn view() {
     {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
-            entity, *position, *velocity, *mass,
+            entity, position, velocity, mass,
         )
     }
 }
@@ -49,7 +49,7 @@ fn complex_view() {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}",
             entity,
-            *position,
+            position,
             velocity.as_deref(),
         )
     }
@@ -74,7 +74,7 @@ fn complex_resource_view() {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, time: {}",
             entity,
-            *position,
+            position,
             velocity.as_deref(),
             time.elapsed_secs(),
         )

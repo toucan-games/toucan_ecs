@@ -1,6 +1,12 @@
+use std::marker::PhantomData;
+
+use holder::SystemHolder;
+
 use crate::World;
 
-use super::{System, SystemHolder};
+use super::System;
+
+mod holder;
 
 /// A schedule of systems for execution.
 ///
@@ -35,11 +41,12 @@ impl ScheduleBuilder {
     }
 
     /// Adds a system to the [schedule][`Schedule`].
-    pub fn system<S>(mut self, system: S) -> Self
+    pub fn system<S, Query>(mut self, system: S) -> Self
     where
-        S: System<()>,
+        S: System<Query>,
+        Query: 'static,
     {
-        self.systems.push(system.into());
+        self.systems.push((system, PhantomData::<Query>).into());
         self
     }
 

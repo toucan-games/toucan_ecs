@@ -1,15 +1,17 @@
+use std::marker::PhantomData;
+
 use crate::system::System;
 use crate::World;
 
 #[repr(transparent)]
 pub struct SystemHolder(Box<dyn Runnable>);
 
-impl<T> From<T> for SystemHolder
+impl<R> From<R> for SystemHolder
 where
-    T: System<()>,
+    R: Runnable,
 {
-    fn from(system: T) -> Self {
-        Self(Box::new(system))
+    fn from(runnable: R) -> Self {
+        Self(Box::new(runnable))
     }
 }
 
@@ -19,15 +21,17 @@ impl SystemHolder {
     }
 }
 
-trait Runnable {
+trait Runnable: 'static {
     fn run(&mut self, world: &mut World);
 }
 
-impl<T> Runnable for T
+impl<S, Query> Runnable for (S, PhantomData<Query>)
 where
-    T: System<()>,
+    S: System<Query>,
+    Query: 'static,
 {
     fn run(&mut self, _: &mut World) {
-        <Self as System<()>>::run(self, ())
+        let args = todo!();
+        self.0.run(args)
     }
 }

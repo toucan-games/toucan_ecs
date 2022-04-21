@@ -2,10 +2,8 @@
 
 use as_any::AsAny;
 
-use holder::SystemHolder;
 pub use schedule::{Schedule, ScheduleBuilder};
 
-mod holder;
 mod impls;
 mod schedule;
 
