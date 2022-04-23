@@ -1,3 +1,9 @@
+use super::Fetch;
+
 mod impls;
 
-pub trait Query<'data> {}
+pub type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
+
+pub trait Query<'data> {
+    type Fetch: Fetch<'data>;
+}

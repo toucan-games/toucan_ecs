@@ -1,17 +1,43 @@
 use crate::component::Component;
+#[cfg(feature = "resource")]
 use crate::resource::{marker::Resource as ResourceMarker, Resource};
+use crate::system::fetch::*;
 
 use super::*;
 
-impl<'data> Query<'data> for () {}
+impl<'data> Query<'data> for () {
+    type Fetch = ();
+}
 
-impl<'data, C> Query<'data> for &'data C where C: Component {}
+impl<'data, C> Query<'data> for &'data C
+where
+    C: Component,
+{
+    type Fetch = FetchRead<C>;
+}
 
-impl<'data, C> Query<'data> for &'data mut C where C: Component {}
+impl<'data, C> Query<'data> for &'data mut C
+where
+    C: Component,
+{
+    type Fetch = FetchWrite<C>;
+}
 
-impl<'data, R> Query<'data> for ResourceMarker<&'data R> where R: Resource {}
+#[cfg(feature = "resource")]
+impl<'data, R> Query<'data> for ResourceMarker<&'data R>
+where
+    R: Resource,
+{
+    type Fetch = FetchResourceRead<R>;
+}
 
-impl<'data, R> Query<'data> for ResourceMarker<&'data mut R> where R: Resource {}
+#[cfg(feature = "resource")]
+impl<'data, R> Query<'data> for ResourceMarker<&'data mut R>
+where
+    R: Resource,
+{
+    type Fetch = FetchResourceWrite<R>;
+}
 
 macro_rules! system_query {
     ($head:ident $(,)?) => {
@@ -28,9 +54,11 @@ macro_rules! impl_system_query {
         impl<'data, $($types),*> Query<'data> for ($($types,)*)
         where
             $($types: Query<'data>,)*
-        {}
+        {
+            type Fetch = ($($types::Fetch,)*);
+        }
     };
 }
 
 // `Query` implemented for functions with argument count of 12 and less
-system_query!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12);
+system_query!(A, B, C, D, E, F, G, H, I, J, K, L);

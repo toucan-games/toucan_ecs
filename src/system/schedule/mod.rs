@@ -46,7 +46,7 @@ impl ScheduleBuilder {
         S: System<'data, Q>,
         Q: Query<'data> + 'static,
     {
-        self.systems.push((system, PhantomData::<Q>).into());
+        self.systems.push((system, PhantomData).into());
         self
     }
 

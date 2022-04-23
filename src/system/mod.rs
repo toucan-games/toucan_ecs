@@ -2,9 +2,11 @@
 
 use as_any::AsAny;
 
-pub use query::Query;
+use fetch::Fetch;
+use query::Query;
 pub use schedule::{Schedule, ScheduleBuilder};
 
+mod fetch;
 mod impls;
 mod query;
 mod schedule;
