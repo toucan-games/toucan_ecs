@@ -4,7 +4,7 @@ use holder::SystemHolder;
 
 use crate::World;
 
-use super::System;
+use super::{Query, System};
 
 mod holder;
 
@@ -41,12 +41,12 @@ impl ScheduleBuilder {
     }
 
     /// Adds a system to the [schedule][`Schedule`].
-    pub fn system<S, Query>(mut self, system: S) -> Self
+    pub fn system<'data, S, Q>(mut self, system: S) -> Self
     where
-        S: System<Query>,
-        Query: 'static,
+        S: System<'data, Q>,
+        Q: Query<'data> + 'static,
     {
-        self.systems.push((system, PhantomData::<Query>).into());
+        self.systems.push((system, PhantomData::<Q>).into());
         self
     }
 

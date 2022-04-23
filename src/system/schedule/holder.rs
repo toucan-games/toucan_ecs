@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::system::System;
+use crate::system::{Query, System};
 use crate::World;
 
 #[repr(transparent)]
@@ -25,10 +25,10 @@ trait Runnable: 'static {
     fn run(&mut self, world: &mut World);
 }
 
-impl<S, Query> Runnable for (S, PhantomData<Query>)
+impl<'data, S, Q> Runnable for (S, PhantomData<Q>)
 where
-    S: System<Query>,
-    Query: 'static,
+    S: System<'data, Q>,
+    Q: Query<'data> + 'static,
 {
     fn run(&mut self, _: &mut World) {
         let args = todo!();

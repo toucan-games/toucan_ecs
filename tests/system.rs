@@ -1,4 +1,5 @@
 use components::{Mass, Position, Velocity};
+use toucan_ecs::resource::marker::Resource;
 use toucan_ecs::system::Schedule;
 
 mod components;
@@ -26,7 +27,7 @@ fn test() {
         .system(|| println!("Hello, World"))
         .system(|| println!("Result of sum is {}", 2 + 2))
         .system(component_system)
-        .system(|time: &Time| println!("Elapsed seconds are {}", time.elapsed_secs()))
+        .system(|time: Resource<&Time>| println!("Elapsed seconds are {}", time.elapsed_secs()))
         .build();
     schedule.run(&mut world);
 }
