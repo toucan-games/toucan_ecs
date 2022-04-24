@@ -1,15 +1,59 @@
 use std::any::Any;
+use std::marker::PhantomData;
+use std::ops::{Deref, DerefMut};
 
-use as_any::{AsAny, Downcast};
+use as_any::Downcast;
 
+use crate::component::{Component, StorageImpl};
 use crate::Entity;
 
 use super::Storage;
 
 #[repr(transparent)]
-pub struct StorageHolder(Box<dyn Holdable>);
+pub struct StorageHolder<C>
+where
+    C: Component,
+{
+    raw: RawStorageHolder,
+    _ph: PhantomData<C>,
+}
 
-impl StorageHolder {
+impl<C> From<RawStorageHolder> for StorageHolder<C>
+where
+    C: Component,
+{
+    fn from(raw: RawStorageHolder) -> Self {
+        Self {
+            raw,
+            _ph: PhantomData,
+        }
+    }
+}
+
+impl<C> Deref for StorageHolder<C>
+where
+    C: Component,
+{
+    type Target = StorageImpl<C>;
+
+    fn deref(&self) -> &Self::Target {
+        self.raw.downcast_ref().unwrap()
+    }
+}
+
+impl<C> DerefMut for StorageHolder<C>
+where
+    C: Component,
+{
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        self.raw.downcast_mut().unwrap()
+    }
+}
+
+#[repr(transparent)]
+pub struct RawStorageHolder(Box<dyn Holdable>);
+
+impl RawStorageHolder {
     pub fn remove(&mut self, entity: Entity) {
         self.0.remove(entity)
     }
@@ -37,7 +81,16 @@ impl StorageHolder {
     }
 }
 
-impl<T> From<T> for StorageHolder
+impl<C> From<StorageHolder<C>> for RawStorageHolder
+where
+    C: Component,
+{
+    fn from(holder: StorageHolder<C>) -> Self {
+        holder.raw
+    }
+}
+
+impl<T> From<T> for RawStorageHolder
 where
     T: Holdable,
 {

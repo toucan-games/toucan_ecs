@@ -4,7 +4,7 @@ use std::hash::BuildHasherDefault;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
-use crate::component::storage::StorageHolder;
+use crate::component::storage::{RawStorageHolder, StorageHolder};
 use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
 use crate::entity::Entity;
@@ -14,7 +14,7 @@ use crate::world::TypeIdHasher;
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
     extended_entities: Vec<Entity>,
-    storages: HashMap<ComponentTypeId, StorageHolder, BuildHasherDefault<TypeIdHasher>>,
+    storages: HashMap<ComponentTypeId, RawStorageHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
@@ -244,7 +244,24 @@ impl Registry {
         Some(storage)
     }
 
-    fn has_storage<C>(&self) -> bool
+    pub fn get_storage_holder<C>(&mut self) -> Option<StorageHolder<C>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.remove(&type_id)?;
+        Some(storage.into())
+    }
+
+    pub fn put_storage_holder<C>(&mut self, storage_holder: StorageHolder<C>)
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        self.storages.insert(type_id, storage_holder.into());
+    }
+
+    pub fn has_storage<C>(&self) -> bool
     where
         C: Component,
     {
@@ -261,7 +278,7 @@ impl Registry {
         self.storages.insert(type_id, storage.into());
     }
 
-    pub(crate) fn entities(&self) -> Keys<Entity, ()> {
+    pub fn entities(&self) -> Keys<Entity, ()> {
         self.entities.keys()
     }
 }

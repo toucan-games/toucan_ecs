@@ -1,4 +1,4 @@
-pub use holder::StorageHolder;
+pub use holder::{RawStorageHolder, StorageHolder};
 pub(super) use impls::ComponentKey;
 pub use impls::StorageImpl;
 pub use traits::Storage;

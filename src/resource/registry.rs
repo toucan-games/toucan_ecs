@@ -1,12 +1,9 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use as_any::Downcast;
-
 use crate::world::TypeIdHasher;
 
-use super::type_id::ResourceTypeId;
-use super::Resource;
+use super::{RawResourceHolder, Resource, ResourceHolder, ResourceTypeId};
 
 /// Storage of the resources - singletons in ECS.
 ///
@@ -16,7 +13,7 @@ use super::Resource;
 #[derive(Default)]
 #[repr(transparent)]
 pub struct Registry {
-    resources: HashMap<ResourceTypeId, Box<dyn Resource>, BuildHasherDefault<TypeIdHasher>>,
+    resources: HashMap<ResourceTypeId, RawResourceHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
@@ -33,7 +30,7 @@ impl Registry {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        self.resources.insert(type_id, Box::new(resource));
+        self.resources.insert(type_id, (resource,).into());
     }
 
     pub fn destroy<R>(&mut self)
@@ -58,7 +55,7 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
-        let resource = resource.as_ref().downcast_ref().expect("downcast error");
+        let resource = resource.downcast_ref().expect("downcast error");
         Some(resource)
     }
 
@@ -68,7 +65,24 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get_mut(&type_id)?;
-        let resource = resource.as_mut().downcast_mut().expect("downcast error");
+        let resource = resource.downcast_mut().expect("downcast error");
         Some(resource)
+    }
+
+    pub fn get_resource_holder<R>(&mut self) -> Option<ResourceHolder<R>>
+    where
+        R: Resource,
+    {
+        let type_id = ResourceTypeId::of::<R>();
+        let resource = self.resources.remove(&type_id)?;
+        Some(resource.into())
+    }
+
+    pub fn put_resource_holder<R>(&mut self, resource_holder: ResourceHolder<R>)
+    where
+        R: Resource,
+    {
+        let type_id = ResourceTypeId::of::<R>();
+        self.resources.insert(type_id, resource_holder.into());
     }
 }
