@@ -10,8 +10,7 @@ slotmap::new_key_type! {
     pub struct ComponentKey;
 }
 
-#[derive(Default)]
-pub struct DefaultStorage<C>
+pub struct StorageImpl<C>
 where
     C: Component,
 {
@@ -19,7 +18,7 @@ where
     mapping: SecondaryMap<Entity, ComponentKey>,
 }
 
-impl<C> DefaultStorage<C>
+impl<C> StorageImpl<C>
 where
     C: Component,
 {
@@ -32,46 +31,48 @@ where
     }
 }
 
-impl<C> DefaultStorage<C>
+impl<C> Default for StorageImpl<C>
 where
     C: Component,
 {
-    pub fn new() -> Self {
+    fn default() -> Self {
         Self {
             components: DenseSlotMap::with_key(),
             mapping: SecondaryMap::new(),
         }
     }
+}
 
-    pub fn attach(&mut self, entity: Entity, component: C) {
+impl<C> Storage for StorageImpl<C>
+where
+    C: Component,
+{
+    type Item = C;
+
+    fn attach(&mut self, entity: Entity, component: Self::Item) {
         let component = self.components.insert(component);
         self.mapping.insert(entity, component);
     }
 
-    pub fn get(&self, entity: Entity) -> Option<&C> {
+    fn attached(&self, entity: Entity) -> bool {
+        self.mapping.contains_key(entity)
+    }
+
+    fn get(&self, entity: Entity) -> Option<&Self::Item> {
         let key = self.mapping.get(entity)?;
         self.components.get(*key)
     }
 
-    pub fn get_mut(&mut self, entity: Entity) -> Option<&mut C> {
+    fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> {
         let key = self.mapping.get(entity)?;
         self.components.get_mut(*key)
     }
-}
 
-impl<C> Storage for DefaultStorage<C>
-where
-    C: Component,
-{
     fn remove(&mut self, entity: Entity) {
         let component = self.mapping.remove(entity);
         if let Some(component) = component {
             self.components.remove(component);
         }
-    }
-
-    fn attached(&self, entity: Entity) -> bool {
-        self.mapping.contains_key(entity)
     }
 
     fn clear(&mut self) {

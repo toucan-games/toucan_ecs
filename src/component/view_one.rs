@@ -3,7 +3,7 @@ use std::option::IntoIter;
 
 use slotmap::dense::{Iter, IterMut};
 
-use crate::component::{storage::ComponentKey, Component, DefaultStorage, Registry};
+use crate::component::{storage::ComponentKey, Component, Registry, StorageImpl};
 
 /// Iterator which returns shared borrows of components.
 ///
@@ -22,7 +22,7 @@ where
     pub(super) fn new(registry: &'data Registry) -> Self {
         let iter = registry
             .get_storage()
-            .map(DefaultStorage::iter_items)
+            .map(StorageImpl::iter_items)
             .into_iter()
             .flatten();
         Self { iter }
@@ -57,7 +57,7 @@ where
     pub(super) fn new(registry: &'data mut Registry) -> Self {
         let iter = registry
             .get_storage_mut()
-            .map(DefaultStorage::iter_items_mut)
+            .map(StorageImpl::iter_items_mut)
             .into_iter()
             .flatten();
         Self { iter }

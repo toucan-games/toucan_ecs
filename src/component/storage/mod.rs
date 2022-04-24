@@ -1,6 +1,8 @@
-pub(super) use default::ComponentKey;
-pub use default::DefaultStorage;
+pub use holder::StorageHolder;
+pub(super) use impls::ComponentKey;
+pub use impls::StorageImpl;
 pub use traits::Storage;
 
-mod default;
+mod holder;
+mod impls;
 mod traits;

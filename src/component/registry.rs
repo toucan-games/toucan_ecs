@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use as_any::Downcast;
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
+use crate::component::storage::StorageHolder;
 use crate::component::view_one::{ViewOne, ViewOneMut};
-use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Entry, Storage};
+use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
 use crate::entity::Entity;
 use crate::world::TypeIdHasher;
 
@@ -14,7 +14,7 @@ use crate::world::TypeIdHasher;
 pub struct Registry {
     entities: DenseSlotMap<Entity, ()>,
     extended_entities: Vec<Entity>,
-    storages: HashMap<ComponentTypeId, Box<dyn Storage>, BuildHasherDefault<TypeIdHasher>>,
+    storages: HashMap<ComponentTypeId, StorageHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
@@ -232,23 +232,23 @@ impl Registry {
         ViewOneMut::new(self)
     }
 
-    pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
+    pub(super) fn get_storage<C>(&self) -> Option<&StorageImpl<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        let storage = storage.as_ref().downcast_ref().expect("downcast error");
+        let storage = storage.downcast_ref().expect("downcast error");
         Some(storage)
     }
 
-    pub(super) fn get_storage_mut<C>(&mut self) -> Option<&mut DefaultStorage<C>>
+    pub(super) fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        let storage = storage.as_mut().downcast_mut().expect("downcast error");
+        let storage = storage.downcast_mut().expect("downcast error");
         Some(storage)
     }
 
@@ -265,8 +265,8 @@ impl Registry {
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let storage = DefaultStorage::<C>::new();
-        self.storages.insert(type_id, Box::new(storage));
+        let storage = StorageImpl::<C>::default();
+        self.storages.insert(type_id, storage.into());
     }
 
     pub(crate) fn entities(&self) -> Keys<Entity, ()> {

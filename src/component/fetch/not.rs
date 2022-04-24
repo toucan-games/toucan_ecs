@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::marker::Not;
-use crate::component::{Component, DefaultStorage};
+use crate::component::{Component, Storage, StorageImpl};
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
@@ -9,7 +9,7 @@ pub struct FetchNot<'data, C>
 where
     C: Component,
 {
-    storage: Option<&'data DefaultStorage<C>>,
+    storage: Option<&'data StorageImpl<C>>,
 }
 
 impl<'data, C> TryFrom<&'data World> for FetchNot<'data, C>

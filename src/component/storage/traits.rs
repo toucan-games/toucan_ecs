@@ -1,11 +1,18 @@
-use as_any::AsAny;
+use crate::component::Component;
+use crate::Entity;
 
-use crate::entity::Entity;
+pub trait Storage: Default + Send + Sync + 'static {
+    type Item: Component;
 
-pub trait Storage: Send + Sync + 'static + AsAny {
-    fn remove(&mut self, entity: Entity);
+    fn attach(&mut self, entity: Entity, component: Self::Item);
 
     fn attached(&self, entity: Entity) -> bool;
+
+    fn get(&self, entity: Entity) -> Option<&Self::Item>;
+
+    fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item>;
+
+    fn remove(&mut self, entity: Entity);
 
     fn clear(&mut self);
 }
