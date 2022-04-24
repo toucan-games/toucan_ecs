@@ -2,6 +2,7 @@ use crate::component::{Component, Storage, StorageImpl};
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
+#[repr(transparent)]
 pub struct FetchRead<'data, C>
 where
     C: Component,
@@ -17,7 +18,7 @@ where
 
     // noinspection DuplicatedCode
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
-        let storage = world.registry().get_storage().ok_or(FetchError)?;
+        let storage = world.components().get_storage().ok_or(FetchError)?;
         Ok(Self { storage })
     }
 }

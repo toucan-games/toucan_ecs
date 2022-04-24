@@ -21,7 +21,7 @@ where
     Q: Query<'data>,
 {
     pub(super) fn new(world: &'data World) -> Self {
-        let entities = world.registry().entities();
+        let entities = world.components().entities();
         let fetch = Q::Fetch::try_from(world).ok();
         Self { entities, fetch }
     }

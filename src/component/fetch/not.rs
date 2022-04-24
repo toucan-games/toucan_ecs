@@ -5,6 +5,7 @@ use crate::component::{Component, Storage, StorageImpl};
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
+#[repr(transparent)]
 pub struct FetchNot<'data, C>
 where
     C: Component,
@@ -20,7 +21,7 @@ where
 
     // noinspection DuplicatedCode
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
-        let storage = world.registry().get_storage();
+        let storage = world.components().get_storage();
         Ok(Self { storage })
     }
 }

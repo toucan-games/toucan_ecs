@@ -18,14 +18,6 @@ pub struct Registry {
 }
 
 impl Registry {
-    pub fn new() -> Self {
-        Self {
-            entities: DenseSlotMap::with_key(),
-            extended_entities: Vec::new(),
-            storages: HashMap::default(),
-        }
-    }
-
     pub fn create(&mut self) -> Entity {
         self.entities.insert(())
     }

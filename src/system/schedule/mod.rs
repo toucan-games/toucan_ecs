@@ -12,6 +12,7 @@ mod holder;
 ///
 /// This struct is used to run systems one by one in expected order
 /// which is defined by sequential calls of [`ScheduleBuilder::system`] function.
+#[repr(transparent)]
 pub struct Schedule {
     systems: Vec<SystemHolder>,
 }

@@ -6,6 +6,7 @@ use crate::Entity;
 
 use super::Storage;
 
+#[repr(transparent)]
 pub struct StorageHolder(Box<dyn Holdable>);
 
 impl StorageHolder {

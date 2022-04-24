@@ -4,6 +4,7 @@ use std::ops::{Deref, DerefMut};
 
 /// Marker for retrieving shared/unique borrow of resource from the world.
 /// It must be used in query to be retrieved.
+#[repr(transparent)]
 pub struct Resource<R> {
     resource: R,
 }

@@ -8,6 +8,7 @@ use crate::component::{storage::ComponentKey, Component, Registry, StorageImpl};
 /// Iterator which returns shared borrows of components.
 ///
 /// Only entities that has generic component type will be returned.
+#[repr(transparent)]
 pub struct ViewOne<'data, C>
 where
     C: Component,
@@ -43,6 +44,7 @@ where
 /// Iterator which returns unique borrows of components.
 ///
 /// Only entities that has generic component type will be returned.
+#[repr(transparent)]
 pub struct ViewOneMut<'data, C>
 where
     C: Component,

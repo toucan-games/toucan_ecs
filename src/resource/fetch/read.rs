@@ -4,6 +4,7 @@ use crate::resource::Resource;
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
+#[repr(transparent)]
 pub struct FetchRead<'data, R>
 where
     R: Resource,

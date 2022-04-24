@@ -14,17 +14,12 @@ use super::Resource;
 /// resources, get resources [immutably][`ResourceStorage::get`]
 /// or [mutably][`ResourceStorage::get_mut`].
 #[derive(Default)]
+#[repr(transparent)]
 pub struct Registry {
     resources: HashMap<ResourceTypeId, Box<dyn Resource>, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
-    pub fn new() -> Self {
-        Self {
-            resources: HashMap::default(),
-        }
-    }
-
     pub fn is_empty(&self) -> bool {
         self.resources.is_empty()
     }
