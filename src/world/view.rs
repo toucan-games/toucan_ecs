@@ -1,6 +1,4 @@
-use slotmap::dense::Keys;
-
-use crate::{Entity, World};
+use crate::{entity::registry::Iter, World};
 
 use super::{Fetch, Query, QueryItem};
 
@@ -12,7 +10,7 @@ pub struct View<'data, Q>
 where
     Q: Query<'data>,
 {
-    entities: Keys<'data, Entity, ()>,
+    entities: Iter<'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -22,7 +20,7 @@ where
 {
     pub(super) fn new(world: &'data World) -> Self {
         let entities = world.components().entities();
-        let fetch = Q::Fetch::try_from(world).ok();
+        let fetch = world.try_into().ok();
         Self { entities, fetch }
     }
 }

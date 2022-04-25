@@ -1,25 +1,23 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use slotmap::dense::Keys;
-use slotmap::DenseSlotMap;
-
 use crate::component::storage::{RawStorageHolder, StorageHolder};
 use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
+use crate::entity::registry::{Iter, Registry as EntityRegistry};
 use crate::entity::Entity;
 use crate::world::TypeIdHasher;
 
 #[derive(Default)]
 pub struct Registry {
-    entities: DenseSlotMap<Entity, ()>,
+    entities: EntityRegistry,
     extended_entities: Vec<Entity>,
     storages: HashMap<ComponentTypeId, RawStorageHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
     pub fn create(&mut self) -> Entity {
-        self.entities.insert(())
+        self.entities.create()
     }
 
     pub fn create_with_one<C>(&mut self, component: C) -> Entity
@@ -103,12 +101,12 @@ impl Registry {
     }
 
     pub fn contains(&self, entity: Entity) -> bool {
-        self.entities.contains_key(entity)
+        self.entities.contains(entity)
     }
 
     pub fn destroy(&mut self, entity: Entity) {
         self.remove_all(entity);
-        self.entities.remove(entity);
+        self.entities.destroy(entity);
     }
 
     pub fn is_empty(&self) -> bool {
@@ -278,7 +276,7 @@ impl Registry {
         self.storages.insert(type_id, storage.into());
     }
 
-    pub fn entities(&self) -> Keys<Entity, ()> {
-        self.entities.keys()
+    pub fn entities(&self) -> Iter {
+        self.entities.iter()
     }
 }
