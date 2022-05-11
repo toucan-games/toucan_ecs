@@ -1,6 +1,8 @@
+use std::marker::PhantomData;
+
 use crate::{entity::registry::Iter, World};
 
-use super::{Fetch, Query, QueryItem};
+use super::{Fetch, Query, QueryItem, QueryMut, QueryMutItem};
 
 /// Iterator which returns [entities][`Entity`] and their shared borrows of components.
 ///
@@ -41,5 +43,36 @@ where
                 Err(_) => continue,
             }
         }
+    }
+}
+
+pub struct ViewMut<'data, Q>
+where
+    Q: QueryMut<'data>,
+{
+    world: &'data mut World,
+    _ph: PhantomData<*const Q>,
+}
+
+impl<'data, Q> ViewMut<'data, Q>
+where
+    Q: QueryMut<'data>,
+{
+    pub(super) fn new(world: &'data mut World) -> Self {
+        Self {
+            world,
+            _ph: PhantomData,
+        }
+    }
+}
+
+impl<'data, Q> Iterator for ViewMut<'data, Q>
+where
+    Q: QueryMut<'data>,
+{
+    type Item = QueryMutItem<'data, Q>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        todo!()
     }
 }

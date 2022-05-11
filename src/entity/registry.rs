@@ -1,3 +1,5 @@
+use std::iter::FusedIterator;
+
 use slotmap::dense::Keys;
 use slotmap::DenseSlotMap;
 
@@ -43,3 +45,7 @@ impl<'a> Iterator for Iter<'a> {
         self.0.next()
     }
 }
+
+impl<'a> FusedIterator for Iter<'a> {}
+
+impl<'a> ExactSizeIterator for Iter<'a> {}

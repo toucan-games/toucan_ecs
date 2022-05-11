@@ -1,5 +1,4 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::resource::marker::Resource;
 use toucan_ecs::system::Schedule;
 
 mod components;
@@ -19,6 +18,7 @@ fn component_system(position: &mut Position, velocity: &Velocity, mass: &Mass) {
 #[cfg(feature = "resource")]
 fn test() {
     use resources::Time;
+    use toucan_ecs::resource::marker::Resource;
 
     let mut world = utils::prepare_for_view();
     world.create_resource(Time::new());
