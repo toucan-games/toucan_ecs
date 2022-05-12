@@ -824,6 +824,31 @@ impl World {
         View::new(self)
     }
 
+    /// Creates a [view][`ViewMut`] of the multiple component types.
+    ///
+    /// This iterator will return [entities][`Entity`] and their shared OR unique
+    /// borrows of components.
+    ///
+    /// View will be constructed from the query which is determined by the generic type.
+    /// Only entities that satisfies the query will be returned.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::World;
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct Name(&'static str);
+    ///
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct ID(u32);
+    ///
+    /// let mut world = World::new();
+    ///
+    /// for (name, mut id) in world.view_mut::<(Option<&Name>, &mut ID)>() {
+    ///     id.0 += 10;
+    ///     println!("name: {:?}, id: {:?}", name.as_deref(), id)
+    /// }
+    /// ```
     pub fn view_mut<'data, Q>(&'data mut self) -> ViewMut<'data, Q>
     where
         Q: QueryMut<'data>,

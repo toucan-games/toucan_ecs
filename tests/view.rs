@@ -148,23 +148,22 @@ fn complex_resource_view_mut() {
     type Query<'data> = (
         Entity,
         &'data mut Position,
-        Option<&'data mut Velocity>,
-        Not<'data, Mass>,
+        Not<'data, Velocity>,
+        Option<&'data mut Mass>,
         Resource<&'data mut Time>,
     );
 
-    for (entity, position, mut velocity, _, time) in world.view_mut::<Query>() {
-        position.x += 10.0;
-        match velocity.as_deref_mut() {
-            Some(velocity) => velocity.dx += 10.0,
-            None => {}
+    for (entity, position, _, mut mass, time) in world.view_mut::<Query>() {
+        position.x -= 10.0;
+        if let Some(mass) = mass.as_deref_mut() {
+            mass.0 += 1.0;
         }
         time.reset();
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, time: {}",
+            "entity: {:?}, position: {:?}, mass: {:?}, time: {}",
             entity,
             position,
-            velocity.as_deref(),
+            mass.as_deref(),
             time.elapsed_secs(),
         )
     }

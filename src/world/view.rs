@@ -4,7 +4,7 @@ use crate::{entity::registry::Iter, World};
 
 use super::{Fetch, Query, QueryItem, QueryMut, QueryMutItem};
 
-/// Iterator which returns [entities][`Entity`] and their shared borrows of components.
+/// Iterator which returns shared borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfies the query will be returned.
@@ -46,6 +46,10 @@ where
     }
 }
 
+/// Iterator which returns shared OR unique borrows of components.
+///
+/// It will be constructed from the query which is determined by the generic type.
+/// Only entities that satisfies the query will be returned.
 pub struct ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,

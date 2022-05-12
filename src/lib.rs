@@ -7,7 +7,7 @@
 //! - attach, get or remove components from the entity;
 //! - use [entry][`crate::component::Entry`] of the entity to modify it;
 //! - view components of different types;
-//! - view components [immutably][`World::view`] or [mutably][`todo`].
+//! - view components [immutably][`World::view`] or [mutably][`World::view_mut`].
 //!
 //! For now library provides nothing for systems (are responsible for logic).
 //! You are free to create your own system!
@@ -88,8 +88,11 @@
 //!     }
 //! }
 //!
-//! // Get all entities which have `Position` and COULD have `Mass` components
-//! todo!("where is mutable view?")
+//! // Get all entities which have `Position` and may have `Mass` components
+//! for (_, mut position, mass) in world.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
+//!     position.x += 1.0;
+//!     println!("position is {:?}, mass is {:?}", position, mass.as_deref());
+//! }
 //! ```
 
 #![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_auto_cfg))]
