@@ -88,10 +88,10 @@
 //!     }
 //! }
 //!
-//! // Get all entities which have `Position` and COULD have `Mass` components
+//! // Get all entities which have `Position` and may have `Mass` components
 //! for (_, mut position, mass) in world.view_mut::<(Entity, &mut Position, Option<&Mass>)>() {
 //!     position.x += 1.0;
-//!     println!("position is {:?}, mass is {:?}", *position, mass.as_deref());
+//!     println!("position is {:?}, mass is {:?}", position, mass.as_deref());
 //! }
 //! ```
 
@@ -107,4 +107,5 @@ pub mod component;
 pub mod entity;
 #[cfg(feature = "resource")]
 pub mod resource;
+pub mod system;
 pub mod world;

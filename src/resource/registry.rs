@@ -1,13 +1,9 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use as_any::Downcast;
-use atomic_refcell::{AtomicRef, AtomicRefCell, AtomicRefMut};
-
 use crate::world::TypeIdHasher;
 
-use super::type_id::ResourceTypeId;
-use super::Resource;
+use super::{RawResourceHolder, Resource, ResourceHolder, ResourceTypeId};
 
 /// Storage of the resources - singletons in ECS.
 ///
@@ -15,18 +11,12 @@ use super::Resource;
 /// resources, get resources [immutably][`ResourceStorage::get`]
 /// or [mutably][`ResourceStorage::get_mut`].
 #[derive(Default)]
+#[repr(transparent)]
 pub struct Registry {
-    resources:
-        HashMap<ResourceTypeId, AtomicRefCell<Box<dyn Resource>>, BuildHasherDefault<TypeIdHasher>>,
+    resources: HashMap<ResourceTypeId, RawResourceHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
-    pub fn new() -> Self {
-        Self {
-            resources: HashMap::default(),
-        }
-    }
-
     pub fn is_empty(&self) -> bool {
         self.resources.is_empty()
     }
@@ -40,8 +30,7 @@ impl Registry {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        self.resources
-            .insert(type_id, AtomicRefCell::new(Box::new(resource)));
+        self.resources.insert(type_id, (resource,).into());
     }
 
     pub fn destroy<R>(&mut self)
@@ -60,27 +49,13 @@ impl Registry {
         self.resources.contains_key(&type_id)
     }
 
-    pub fn get<R>(&self) -> Option<AtomicRef<R>>
+    pub fn get<R>(&self) -> Option<&R>
     where
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        let resource = self.resources.get(&type_id)?.borrow();
-        let resource = AtomicRef::map(resource, |resource| {
-            resource.as_ref().downcast_ref().expect("downcast error")
-        });
-        Some(resource)
-    }
-
-    pub fn get_im_mut<R>(&self) -> Option<AtomicRefMut<R>>
-    where
-        R: Resource,
-    {
-        let type_id = ResourceTypeId::of::<R>();
-        let resource = self.resources.get(&type_id)?.borrow_mut();
-        let resource = AtomicRefMut::map(resource, |resource| {
-            resource.as_mut().downcast_mut().expect("downcast error")
-        });
+        let resource = self.resources.get(&type_id)?;
+        let resource = resource.downcast_ref().expect("downcast error");
         Some(resource)
     }
 
@@ -89,8 +64,25 @@ impl Registry {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        let resource = self.resources.get_mut(&type_id)?.get_mut();
-        let resource = resource.as_mut().downcast_mut().expect("downcast error");
+        let resource = self.resources.get_mut(&type_id)?;
+        let resource = resource.downcast_mut().expect("downcast error");
         Some(resource)
+    }
+
+    pub fn get_resource_holder<R>(&mut self) -> Option<ResourceHolder<R>>
+    where
+        R: Resource,
+    {
+        let type_id = ResourceTypeId::of::<R>();
+        let resource = self.resources.remove(&type_id)?;
+        Some(resource.into())
+    }
+
+    pub fn put_resource_holder<R>(&mut self, resource_holder: ResourceHolder<R>)
+    where
+        R: Resource,
+    {
+        let type_id = ResourceTypeId::of::<R>();
+        self.resources.insert(type_id, resource_holder.into());
     }
 }

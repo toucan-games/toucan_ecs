@@ -1,34 +1,23 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use as_any::Downcast;
-use atomic_refcell::AtomicRef;
-use slotmap::dense::Keys;
-use slotmap::DenseSlotMap;
-
+use crate::component::storage::{RawStorageHolder, StorageHolder};
 use crate::component::view_one::{ViewOne, ViewOneMut};
-use crate::component::{Component, ComponentSet, ComponentTypeId, DefaultStorage, Entry, Storage};
+use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
+use crate::entity::registry::{Iter, Registry as EntityRegistry};
 use crate::entity::Entity;
 use crate::world::TypeIdHasher;
 
 #[derive(Default)]
 pub struct Registry {
-    entities: DenseSlotMap<Entity, ()>,
+    entities: EntityRegistry,
     extended_entities: Vec<Entity>,
-    storages: HashMap<ComponentTypeId, Box<dyn Storage>, BuildHasherDefault<TypeIdHasher>>,
+    storages: HashMap<ComponentTypeId, RawStorageHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
-    pub fn new() -> Self {
-        Self {
-            entities: DenseSlotMap::with_key(),
-            extended_entities: Vec::new(),
-            storages: HashMap::default(),
-        }
-    }
-
     pub fn create(&mut self) -> Entity {
-        self.entities.insert(())
+        self.entities.create()
     }
 
     pub fn create_with_one<C>(&mut self, component: C) -> Entity
@@ -112,12 +101,12 @@ impl Registry {
     }
 
     pub fn contains(&self, entity: Entity) -> bool {
-        self.entities.contains_key(entity)
+        self.entities.contains(entity)
     }
 
     pub fn destroy(&mut self, entity: Entity) {
         self.remove_all(entity);
-        self.entities.remove(entity);
+        self.entities.destroy(entity);
     }
 
     pub fn is_empty(&self) -> bool {
@@ -203,7 +192,7 @@ impl Registry {
             .for_each(|storage| storage.remove(entity))
     }
 
-    pub fn get<C>(&self, entity: Entity) -> Option<AtomicRef<C>>
+    pub fn get<C>(&self, entity: Entity) -> Option<&C>
     where
         C: Component,
     {
@@ -233,27 +222,44 @@ impl Registry {
         ViewOneMut::new(self)
     }
 
-    pub(super) fn get_storage<C>(&self) -> Option<&DefaultStorage<C>>
+    pub(super) fn get_storage<C>(&self) -> Option<&StorageImpl<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        let storage = storage.as_ref().downcast_ref().expect("downcast error");
+        let storage = storage.downcast_ref().expect("downcast error");
         Some(storage)
     }
 
-    fn get_storage_mut<C>(&mut self) -> Option<&mut DefaultStorage<C>>
+    pub(super) fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        let storage = storage.as_mut().downcast_mut().expect("downcast error");
+        let storage = storage.downcast_mut().expect("downcast error");
         Some(storage)
     }
 
-    fn has_storage<C>(&self) -> bool
+    pub fn get_storage_holder<C>(&mut self) -> Option<StorageHolder<C>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.remove(&type_id)?;
+        Some(storage.into())
+    }
+
+    pub fn put_storage_holder<C>(&mut self, storage_holder: StorageHolder<C>)
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        self.storages.insert(type_id, storage_holder.into());
+    }
+
+    pub fn has_storage<C>(&self) -> bool
     where
         C: Component,
     {
@@ -266,11 +272,11 @@ impl Registry {
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let storage = DefaultStorage::<C>::new();
-        self.storages.insert(type_id, Box::new(storage));
+        let storage = StorageImpl::<C>::default();
+        self.storages.insert(type_id, storage.into());
     }
 
-    pub(crate) fn entities(&self) -> Keys<Entity, ()> {
-        self.entities.keys()
+    pub fn entities(&self) -> Iter {
+        self.entities.iter()
     }
 }

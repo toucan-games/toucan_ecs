@@ -41,3 +41,27 @@ macro_rules! impl_fetch {
 
 // `Fetch` implemented for tuples of size 12 and less
 fetch!(A, B, C, D, E, F, G, H, I, J, K, L);
+
+macro_rules! fetch_mut {
+    ($head:ident $(,)?) => {
+        impl_fetch_mut!($head);
+    };
+    ($head:ident, $($tail:ident),* $(,)?) => {
+        impl_fetch_mut!($head, $($tail),*);
+        fetch_mut!($($tail),*);
+    };
+}
+
+macro_rules! impl_fetch_mut {
+    ($($types:ident),*) => {
+        impl<'data, $($types),*> FetchMut<'data> for ($($types,)*)
+        where
+            $($types: FetchMut<'data>,)*
+        {
+            type Item = ($($types::Item,)*);
+        }
+    };
+}
+
+// `FetchMut` implemented for tuples of size 12 and less
+fetch_mut!(A, B, C, D, E, F, G, H, I, J, K, L);

@@ -1,18 +1,19 @@
-use atomic_refcell::{AtomicRef, AtomicRefMut};
-use slotmap::dense::Keys;
+use std::iter::Flatten;
+use std::option::IntoIter;
 
-use crate::component::{Component, DefaultStorage, Registry};
-use crate::Entity;
+use slotmap::dense::{Iter, IterMut};
 
-/// Iterator which returns [entities][`Entity`] and their shared borrows of components.
+use crate::component::{storage::ComponentKey, Component, Registry, StorageImpl};
+
+/// Iterator which returns shared borrows of components.
 ///
 /// Only entities that has generic component type will be returned.
+#[repr(transparent)]
 pub struct ViewOne<'data, C>
 where
     C: Component,
 {
-    entities: Keys<'data, Entity, ()>,
-    storage: Option<&'data DefaultStorage<C>>,
+    iter: Flatten<IntoIter<Iter<'data, ComponentKey, C>>>,
 }
 
 impl<'data, C> ViewOne<'data, C>
@@ -20,9 +21,12 @@ where
     C: Component,
 {
     pub(super) fn new(registry: &'data Registry) -> Self {
-        let entities = registry.entities();
-        let storage = registry.get_storage();
-        Self { entities, storage }
+        let iter = registry
+            .get_storage()
+            .map(StorageImpl::iter_items)
+            .into_iter()
+            .flatten();
+        Self { iter }
     }
 }
 
@@ -30,39 +34,35 @@ impl<'data, C> Iterator for ViewOne<'data, C>
 where
     C: Component,
 {
-    type Item = AtomicRef<'data, C>;
+    type Item = &'data C;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let storage = self.storage?;
-        loop {
-            let entity = self.entities.next()?;
-            if let Some(component) = storage.get(entity) {
-                return Some(component);
-            }
-        }
+        self.iter.next().map(|tuple| tuple.1)
     }
 }
 
-/// Iterator which returns [entities][`Entity`] and their unique borrows of components.
+/// Iterator which returns unique borrows of components.
 ///
 /// Only entities that has generic component type will be returned.
+#[repr(transparent)]
 pub struct ViewOneMut<'data, C>
 where
     C: Component,
 {
-    entities: Keys<'data, Entity, ()>,
-    storage: Option<&'data DefaultStorage<C>>,
+    iter: Flatten<IntoIter<IterMut<'data, ComponentKey, C>>>,
 }
 
 impl<'data, C> ViewOneMut<'data, C>
 where
     C: Component,
 {
-    // noinspection DuplicatedCode
-    pub(in crate::component) fn new(registry: &'data Registry) -> Self {
-        let entities = registry.entities();
-        let storage = registry.get_storage();
-        Self { entities, storage }
+    pub(super) fn new(registry: &'data mut Registry) -> Self {
+        let iter = registry
+            .get_storage_mut()
+            .map(StorageImpl::iter_items_mut)
+            .into_iter()
+            .flatten();
+        Self { iter }
     }
 }
 
@@ -70,15 +70,9 @@ impl<'data, C> Iterator for ViewOneMut<'data, C>
 where
     C: Component,
 {
-    type Item = AtomicRefMut<'data, C>;
+    type Item = &'data mut C;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let storage = self.storage?;
-        loop {
-            let entity = self.entities.next()?;
-            if let Some(component) = storage.get_im_mut(entity) {
-                return Some(component);
-            }
-        }
+        self.iter.next().map(|tuple| tuple.1)
     }
 }

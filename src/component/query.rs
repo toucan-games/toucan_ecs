@@ -1,6 +1,9 @@
-use crate::world::{Query, QueryShared};
+use crate::component::fetch::{
+    FetchNotMut, FetchOptionReadMut, FetchOptionWriteMut, FetchReadMut, FetchWriteMut,
+};
+use crate::world::{Query, QueryMut};
 
-use super::fetch::{FetchNot, FetchOptionRead, FetchOptionWrite, FetchRead, FetchWrite};
+use super::fetch::{FetchNot, FetchOptionRead, FetchRead};
 use super::marker::Not;
 use super::Component;
 
@@ -11,29 +14,11 @@ where
     type Fetch = FetchRead<'data, C>;
 }
 
-impl<'data, C> QueryShared<'data> for &'data C where C: Component {}
-
-impl<'data, C> Query<'data> for &'data mut C
-where
-    C: Component,
-{
-    type Fetch = FetchWrite<'data, C>;
-}
-
 impl<'data, C> Query<'data> for Option<&'data C>
 where
     C: Component,
 {
     type Fetch = FetchOptionRead<'data, C>;
-}
-
-impl<'data, C> QueryShared<'data> for Option<&'data C> where C: Component {}
-
-impl<'data, C> Query<'data> for Option<&'data mut C>
-where
-    C: Component,
-{
-    type Fetch = FetchOptionWrite<'data, C>;
 }
 
 impl<'data, C> Query<'data> for Not<'data, C>
@@ -43,4 +28,37 @@ where
     type Fetch = FetchNot<'data, C>;
 }
 
-impl<'data, C> QueryShared<'data> for Not<'data, C> where C: Component {}
+impl<'data, C> QueryMut<'data> for &'data C
+where
+    C: Component,
+{
+    type Fetch = FetchReadMut<'data, C>;
+}
+
+impl<'data, C> QueryMut<'data> for &'data mut C
+where
+    C: Component,
+{
+    type Fetch = FetchWriteMut<'data, C>;
+}
+
+impl<'data, C> QueryMut<'data> for Option<&'data C>
+where
+    C: Component,
+{
+    type Fetch = FetchOptionReadMut<'data, C>;
+}
+
+impl<'data, C> QueryMut<'data> for Option<&'data mut C>
+where
+    C: Component,
+{
+    type Fetch = FetchOptionWriteMut<'data, C>;
+}
+
+impl<'data, C> QueryMut<'data> for Not<'data, C>
+where
+    C: Component,
+{
+    type Fetch = FetchNotMut<'data, C>;
+}

@@ -1,40 +1,38 @@
-use slotmap::dense::Keys;
+use std::marker::PhantomData;
 
-use crate::{Entity, World};
+use crate::{entity::registry::Iter, World};
 
-use super::{Fetch, Query, QueryItem, QueryShared};
+use super::{Fetch, Query, QueryItem, QueryMut, QueryMutItem};
 
-/// Iterator which returns [entities][`Entity`] and their shared borrows of components.
+/// Iterator which returns shared borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfies the query will be returned.
 pub struct View<'data, Q>
 where
-    Q: QueryShared<'data>,
+    Q: Query<'data>,
 {
-    entities: Keys<'data, Entity, ()>,
+    entities: Iter<'data>,
     fetch: Option<Q::Fetch>,
 }
 
 impl<'data, Q> View<'data, Q>
 where
-    Q: QueryShared<'data>,
+    Q: Query<'data>,
 {
-    // noinspection DuplicatedCode
     pub(super) fn new(world: &'data World) -> Self {
-        let entities = world.registry().entities();
-        let fetch = Q::Fetch::try_from(world).ok();
+        let entities = world.components().entities();
+        let fetch = world.try_into().ok();
         Self { entities, fetch }
     }
 }
 
 impl<'data, Q> Iterator for View<'data, Q>
 where
-    Q: QueryShared<'data>,
+    Q: Query<'data>,
 {
     type Item = QueryItem<'data, Q>;
 
-    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
         let fetch = self.fetch.as_ref()?;
         loop {
@@ -48,46 +46,37 @@ where
     }
 }
 
-/// Iterator which returns [entities][`Entity`] and their shared OR unique borrows of components.
+/// Iterator which returns shared OR unique borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfies the query will be returned.
 pub struct ViewMut<'data, Q>
 where
-    Q: Query<'data>,
+    Q: QueryMut<'data>,
 {
-    entities: Keys<'data, Entity, ()>,
-    fetch: Option<Q::Fetch>,
+    world: &'data mut World,
+    _ph: PhantomData<*const Q>,
 }
 
 impl<'data, Q> ViewMut<'data, Q>
 where
-    Q: Query<'data>,
+    Q: QueryMut<'data>,
 {
-    // noinspection DuplicatedCode
-    pub(super) fn new(world: &'data World) -> Self {
-        let entities = world.registry().entities();
-        let fetch = Q::Fetch::try_from(world).ok();
-        Self { entities, fetch }
+    pub(super) fn new(world: &'data mut World) -> Self {
+        Self {
+            world,
+            _ph: PhantomData,
+        }
     }
 }
 
 impl<'data, Q> Iterator for ViewMut<'data, Q>
 where
-    Q: Query<'data>,
+    Q: QueryMut<'data>,
 {
-    type Item = QueryItem<'data, Q>;
+    type Item = QueryMutItem<'data, Q>;
 
-    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
-        let fetch = self.fetch.as_ref()?;
-        loop {
-            let entity = self.entities.next()?;
-            let result = fetch.fetch(entity);
-            match result {
-                Ok(item) => return Some(item),
-                Err(_) => continue,
-            }
-        }
+        todo!()
     }
 }

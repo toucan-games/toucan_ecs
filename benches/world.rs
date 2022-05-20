@@ -35,7 +35,7 @@ fn fill_world(criterion: &mut Criterion) {
     }
 
     fn routine(mut world: World) {
-        let into_iter = (0..10_000_u16).map(|i| {
+        let into_iter = (0..1_000_u16).map(|i| {
             let f = f32::from(i);
             let velocity = Velocity {
                 dx: -f / 10.0,

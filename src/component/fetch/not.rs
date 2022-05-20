@@ -1,15 +1,16 @@
 use std::marker::PhantomData;
 
 use crate::component::marker::Not;
-use crate::component::{Component, DefaultStorage};
+use crate::component::{Component, Storage, StorageImpl};
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
+#[repr(transparent)]
 pub struct FetchNot<'data, C>
 where
     C: Component,
 {
-    storage: Option<&'data DefaultStorage<C>>,
+    storage: Option<&'data StorageImpl<C>>,
 }
 
 impl<'data, C> TryFrom<&'data World> for FetchNot<'data, C>
@@ -20,7 +21,7 @@ where
 
     // noinspection DuplicatedCode
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
-        let storage = world.registry().get_storage();
+        let storage = world.components().get_storage();
         Ok(Self { storage })
     }
 }

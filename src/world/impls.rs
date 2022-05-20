@@ -1,11 +1,9 @@
-use atomic_refcell::AtomicRef;
-
 use crate::component::{Component, ComponentSet, Entry, Registry, ViewOne, ViewOneMut};
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 
-use super::{Query, QueryShared, View, ViewMut};
+use super::{Query, QueryMut, View, ViewMut};
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
@@ -16,7 +14,7 @@ use super::{Query, QueryShared, View, ViewMut};
 /// view each component separately or group of components together.
 #[derive(Default)]
 pub struct World {
-    registry: Registry,
+    components: Registry,
     #[cfg(feature = "resource")]
     resources: ResourceRegistry,
 }
@@ -32,9 +30,9 @@ impl World {
     /// ```
     pub fn new() -> Self {
         Self {
-            registry: Registry::new(),
+            components: Registry::default(),
             #[cfg(feature = "resource")]
-            resources: ResourceRegistry::new(),
+            resources: ResourceRegistry::default(),
         }
     }
 
@@ -54,7 +52,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn create(&mut self) -> Entity {
-        self.registry.create()
+        self.components.create()
     }
 
     /// Creates new resource and stores it in the world.
@@ -101,7 +99,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.create_with_one(component)
+        self.components.create_with_one(component)
     }
 
     /// Creates new entity with set of components attached to it.
@@ -127,7 +125,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.registry.create_with(set)
+        self.components.create_with(set)
     }
 
     /// Creates new [entry][`Entry`] for the newly created entity.
@@ -144,7 +142,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn create_entry(&mut self) -> Entry {
-        self.registry.create_entry()
+        self.components.create_entry()
     }
 
     /// Creates [entry][`Entry`] for the newly created entity with one component attached to it.
@@ -169,7 +167,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.create_entry_with_one(component)
+        self.components.create_entry_with_one(component)
     }
 
     /// Creates [entry][`Entry`] for the newly created entity with set of components attached to it.
@@ -197,7 +195,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.registry.create_entry_with(set)
+        self.components.create_entry_with(set)
     }
 
     /// Create [entry][`Entry`] for the provided entity.
@@ -217,7 +215,7 @@ impl World {
     /// assert!(world.entry(entity).is_none());
     /// ```
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
-        self.registry.entry(entity)
+        self.components.entry(entity)
     }
 
     /// Extends world with provided count of newly created entities.
@@ -233,7 +231,7 @@ impl World {
     /// assert_eq!(entities.len(), 10);
     /// ```
     pub fn extend(&mut self, count: u32) -> &[Entity] {
-        self.registry.extend(count)
+        self.components.extend(count)
     }
 
     /// Extends world with collection of components to the newly created entities.
@@ -256,7 +254,7 @@ impl World {
         I: IntoIterator<Item = C>,
         C: Component,
     {
-        self.registry.extend_with_one(into_iter)
+        self.components.extend_with_one(into_iter)
     }
 
     // noinspection SpellCheckingInspection
@@ -288,7 +286,7 @@ impl World {
         I: IntoIterator<Item = S>,
         S: ComponentSet,
     {
-        self.registry.extend_with(into_iter)
+        self.components.extend_with(into_iter)
     }
 
     /// Returns `true` if the world contains the entity.
@@ -306,7 +304,7 @@ impl World {
     /// assert!(!world.contains(entity));
     /// ```
     pub fn contains(&self, entity: Entity) -> bool {
-        self.registry.contains(entity)
+        self.components.contains(entity)
     }
 
     /// Returns `true` if the world has resource of generic type.
@@ -343,7 +341,7 @@ impl World {
     /// assert!(!world.contains(entity));
     /// ```
     pub fn destroy(&mut self, entity: Entity) {
-        self.registry.destroy(entity)
+        self.components.destroy(entity)
     }
 
     /// Destroys the resource of generic type and removes it from the world.
@@ -387,13 +385,13 @@ impl World {
     #[cfg(feature = "resource")]
     #[inline(always)]
     fn cfg_is_empty(&self) -> bool {
-        self.registry.is_empty() && self.resources.is_empty()
+        self.components.is_empty() && self.resources.is_empty()
     }
 
     #[cfg(not(feature = "resource"))]
     #[inline(always)]
     fn cfg_is_empty(&self) -> bool {
-        self.registry.is_empty()
+        self.components.is_empty()
     }
 
     /// Clears this world, destroying all resources, all entities and their data.
@@ -411,7 +409,7 @@ impl World {
     /// assert!(world.is_empty());
     /// ```
     pub fn clear(&mut self) {
-        self.registry.clear();
+        self.components.clear();
         #[cfg(feature = "resource")]
         self.resources.clear();
     }
@@ -433,7 +431,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.register::<C>();
+        self.components.register::<C>();
     }
 
     /// Attaches exactly one component to the entity.
@@ -458,7 +456,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.attach_one(entity, component)
+        self.components.attach_one(entity, component)
     }
 
     /// Attaches set of components to the entity.
@@ -486,7 +484,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.registry.attach(entity, set)
+        self.components.attach(entity, set)
     }
 
     /// Returns `true` if component of generic type is attached to the entity.
@@ -513,7 +511,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.attached_one::<C>(entity)
+        self.components.attached_one::<C>(entity)
     }
 
     /// Returns `true` if components in the generic set type are attached to the entity.
@@ -543,7 +541,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.registry.attached::<S>(entity)
+        self.components.attached::<S>(entity)
     }
 
     /// Returns `true` if the entity does not exist or does not contain any data attached to it.
@@ -558,7 +556,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn is_entity_empty(&self, entity: Entity) -> bool {
-        self.registry.is_entity_empty(entity)
+        self.components.is_entity_empty(entity)
     }
 
     /// Removes component of one type from the entity.
@@ -585,7 +583,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.remove_one::<C>(entity);
+        self.components.remove_one::<C>(entity);
     }
 
     /// Removes components of multiple types from the entity.
@@ -613,7 +611,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.registry.remove::<S>(entity);
+        self.components.remove::<S>(entity);
     }
 
     /// Removes all attached components from the entity.
@@ -640,7 +638,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn remove_all(&mut self, entity: Entity) {
-        self.registry.remove_all(entity);
+        self.components.remove_all(entity);
     }
 
     /// Retrieves the shared borrow for the component of one type attached to the entity.
@@ -659,11 +657,11 @@ impl World {
     /// let name = world.get::<Name>(entity).unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&self, entity: Entity) -> Option<AtomicRef<C>>
+    pub fn get<C>(&self, entity: Entity) -> Option<&C>
     where
         C: Component,
     {
-        self.registry.get::<C>(entity)
+        self.components.get::<C>(entity)
     }
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
@@ -688,7 +686,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.get_mut::<C>(entity)
+        self.components.get_mut::<C>(entity)
     }
 
     /// Retrieves the shared borrow of the generic resource type.
@@ -707,7 +705,7 @@ impl World {
     /// assert_eq!(*resource, Resource(42));
     /// ```
     #[cfg(feature = "resource")]
-    pub fn get_resource<R>(&self) -> Option<AtomicRef<R>>
+    pub fn get_resource<R>(&self) -> Option<&R>
     where
         R: Resource,
     {
@@ -738,7 +736,7 @@ impl World {
         self.resources.get_mut::<R>()
     }
 
-    /// Creates a [view][`ViewOne`] of the one component type.
+    /// Creates a [view][`ViewOne`] of the component type.
     ///
     /// This iterator will return [entities][`Entity`] and their shared borrows
     /// of components. Only entities that has that type of component will be returned.
@@ -762,15 +760,18 @@ impl World {
     where
         C: Component,
     {
-        self.registry.view_one::<C>()
+        self.components.view_one::<C>()
     }
 
-    /// Creates a [view][`ViewOneMut`] of the one component type.
+    /// Creates a [view][`ViewOneMut`] of the component type.
     ///
     /// This iterator will return [entities][`Entity`] and their unique borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
-    /// More complex views can be constructed with [view][`World::view`] associated function.
+    /// There is no safe way to create an [iterator][`std::iter::Iterator`]
+    /// over multiple mutable references at a time.
+    /// Consider using [systems][`crate::system::System`]
+    /// to mutate multiple components attached to the entity.
     ///
     /// # Examples
     ///
@@ -781,8 +782,8 @@ impl World {
     ///
     /// let mut world = World::new();
     ///
-    /// for mut component in world.view_one_mut::<Name>() {
-    ///     component.0 = "Привет, Мир";
+    /// for component in world.view_one_mut::<Name>() {
+    ///     component.0 = "Hello, World!";
     ///     println!("component: {:?}", *component)
     /// }
     /// ```
@@ -790,7 +791,7 @@ impl World {
     where
         C: Component,
     {
-        self.registry.view_one_mut::<C>()
+        self.components.view_one_mut::<C>()
     }
 
     /// Creates a [view][`View`] of the multiple component types.
@@ -818,7 +819,7 @@ impl World {
     /// ```
     pub fn view<'data, Q>(&'data self) -> View<'data, Q>
     where
-        Q: QueryShared<'data>,
+        Q: Query<'data>,
     {
         View::new(self)
     }
@@ -845,18 +846,18 @@ impl World {
     ///
     /// for (name, mut id) in world.view_mut::<(Option<&Name>, &mut ID)>() {
     ///     id.0 += 10;
-    ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
+    ///     println!("name: {:?}, id: {:?}", name.as_deref(), id)
     /// }
     /// ```
     pub fn view_mut<'data, Q>(&'data mut self) -> ViewMut<'data, Q>
     where
-        Q: Query<'data>,
+        Q: QueryMut<'data>,
     {
         ViewMut::new(self)
     }
 
-    pub(crate) fn registry(&self) -> &Registry {
-        &self.registry
+    pub(crate) fn components(&self) -> &Registry {
+        &self.components
     }
 
     #[cfg(feature = "resource")]

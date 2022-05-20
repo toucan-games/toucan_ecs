@@ -2,6 +2,7 @@
 
 mod fetch;
 mod query;
+pub(crate) mod registry;
 
 slotmap::new_key_type! {
     /// Unique handle of the entity in ECS.

@@ -1,14 +1,13 @@
-use atomic_refcell::AtomicRef;
-
-use crate::component::{Component, DefaultStorage};
+use crate::component::{Component, Storage, StorageImpl};
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
 
+#[repr(transparent)]
 pub struct FetchRead<'data, C>
 where
     C: Component,
 {
-    storage: &'data DefaultStorage<C>,
+    storage: &'data StorageImpl<C>,
 }
 
 impl<'data, C> TryFrom<&'data World> for FetchRead<'data, C>
@@ -19,7 +18,7 @@ where
 
     // noinspection DuplicatedCode
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
-        let storage = world.registry().get_storage().ok_or(FetchError)?;
+        let storage = world.components().get_storage().ok_or(FetchError)?;
         Ok(Self { storage })
     }
 }
@@ -28,7 +27,7 @@ impl<'data, C> Fetch<'data> for FetchRead<'data, C>
 where
     C: Component,
 {
-    type Item = AtomicRef<'data, C>;
+    type Item = &'data C;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
         self.storage.get(entity).ok_or(FetchError)
