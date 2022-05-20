@@ -1,7 +1,5 @@
 use std::marker::PhantomData;
 
-use atomic_refcell::AtomicRef;
-
 use crate::resource::Resource;
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
@@ -33,7 +31,7 @@ impl<'data, R> Fetch<'data> for FetchRead<'data, R>
 where
     R: Resource,
 {
-    type Item = AtomicRef<'data, R>;
+    type Item = &'data R;
 
     fn fetch(&self, _: Entity) -> Result<Self::Item, FetchError> {
         let resource = self.world.resources().get().ok_or(FetchError)?;

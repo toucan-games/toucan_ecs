@@ -11,9 +11,9 @@ mod utils;
 fn view_one_mut() {
     let mut world = utils::prepare_for_view();
 
-    for mut component in world.view_one_mut::<Position>() {
+    for component in world.view_one_mut::<Position>() {
         component.x -= 10.0;
-        println!("component: {:?}", *component)
+        println!("component: {:?}", component)
     }
 }
 
@@ -21,14 +21,19 @@ fn view_one_mut() {
 fn view_mut() {
     let mut world = utils::prepare_for_view();
 
-    for (entity, mut position, velocity, mut mass) in
-        world.view_mut::<(Entity, &mut Position, &Velocity, &mut Mass)>()
-    {
-        position.x -= 10.0;
+    type Query<'data> = (
+        Entity,
+        &'data mut Position,
+        &'data Velocity,
+        &'data mut Mass,
+    );
+
+    for (entity, position, velocity, mass) in world.view_mut::<Query>() {
+        position.x += 10.0;
         mass.0 += 1.0;
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
-            entity, *position, *velocity, *mass,
+            entity, position, velocity, mass,
         )
     }
 }
@@ -37,18 +42,23 @@ fn view_mut() {
 fn complex_view_mut() {
     let mut world = utils::prepare_for_complex_view();
 
-    for (entity, mut position, _, mut mass) in
-        world.view_mut::<(Entity, &mut Position, Not<Velocity>, Option<&mut Mass>)>()
-    {
-        position.x -= 10.0;
-        if let Some(ref mut mass) = mass {
-            mass.0 += 1.0;
+    type Query<'data> = (
+        Entity,
+        &'data mut Position,
+        Option<&'data mut Velocity>,
+        Not<'data, Mass>,
+    );
+
+    for (entity, position, mut velocity, _) in world.view_mut::<Query>() {
+        position.y -= 10.0;
+        if let Some(velocity) = velocity.as_deref_mut() {
+            velocity.dx += 10.0;
         }
         println!(
-            "entity: {:?}, position: {:?}, mass: {:?}",
+            "entity: {:?}, position: {:?}, velocity: {:?}",
             entity,
-            *position,
-            mass.as_deref(),
+            position,
+            velocity.as_deref(),
         )
     }
 }
@@ -62,22 +72,24 @@ fn complex_resource_view_mut() {
     let mut world = utils::prepare_for_complex_view();
     world.create_resource(Time::new());
 
-    for (entity, mut position, _, mut mass, mut time) in world.view_mut::<(
+    type Query<'data> = (
         Entity,
-        &mut Position,
-        Not<Velocity>,
-        Option<&mut Mass>,
-        Resource<&mut Time>,
-    )>() {
+        &'data mut Position,
+        Not<'data, Velocity>,
+        Option<&'data mut Mass>,
+        Resource<&'data mut Time>,
+    );
+
+    for (entity, position, _, mut mass, time) in world.view_mut::<Query>() {
         position.x -= 10.0;
-        if let Some(ref mut mass) = mass {
+        if let Some(mass) = mass.as_deref_mut() {
             mass.0 += 1.0;
         }
         time.reset();
         println!(
             "entity: {:?}, position: {:?}, mass: {:?}, time: {}",
             entity,
-            *position,
+            position,
             mass.as_deref(),
             time.elapsed_secs(),
         )

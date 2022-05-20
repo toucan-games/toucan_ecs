@@ -1,5 +1,3 @@
-use atomic_refcell::AtomicRef;
-
 use crate::component::{Component, ComponentSet, Registry};
 use crate::entity::Entity;
 
@@ -281,7 +279,7 @@ impl<'r> Entry<'r> {
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&'r self) -> Option<AtomicRef<'r, C>>
+    pub fn get<C>(&'r self) -> Option<&'r C>
     where
         C: Component,
     {
