@@ -752,7 +752,7 @@ impl World {
     ///
     /// let world = World::new();
     ///
-    /// for component in world.view_one::<Name>() {
+    /// for (_, component) in world.view_one::<Name>() {
     ///     println!("component: {:?}", *component)
     /// }
     /// ```
@@ -782,7 +782,7 @@ impl World {
     ///
     /// let mut world = World::new();
     ///
-    /// for component in world.view_one_mut::<Name>() {
+    /// for (_, component) in world.view_one_mut::<Name>() {
     ///     component.0 = "Hello, World!";
     ///     println!("component: {:?}", *component)
     /// }

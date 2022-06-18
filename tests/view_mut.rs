@@ -11,7 +11,7 @@ mod utils;
 fn view_one_mut() {
     let mut world = utils::prepare_for_view();
 
-    for component in world.view_one_mut::<Position>() {
+    for (_, component) in world.view_one_mut::<Position>() {
         component.x -= 10.0;
         println!("component: {:?}", component)
     }

@@ -1,6 +1,5 @@
 pub use holder::{RawStorageHolder, StorageHolder};
-pub(super) use impls::ComponentKey;
-pub use impls::StorageImpl;
+pub use impls::{Iter, IterMut, StorageImpl};
 pub use traits::Storage;
 
 mod holder;
