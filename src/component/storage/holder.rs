@@ -14,17 +14,17 @@ pub struct StorageHolder<C>
 where
     C: Component,
 {
-    raw: RawStorageHolder,
+    erased: ErasedStorageHolder,
     _ph: PhantomData<C>,
 }
 
-impl<C> From<RawStorageHolder> for StorageHolder<C>
+impl<C> From<ErasedStorageHolder> for StorageHolder<C>
 where
     C: Component,
 {
-    fn from(raw: RawStorageHolder) -> Self {
+    fn from(erased: ErasedStorageHolder) -> Self {
         Self {
-            raw,
+            erased,
             _ph: PhantomData,
         }
     }
@@ -37,7 +37,7 @@ where
     type Target = StorageImpl<C>;
 
     fn deref(&self) -> &Self::Target {
-        self.raw.downcast_ref().unwrap()
+        self.erased.downcast_ref().unwrap()
     }
 }
 
@@ -46,14 +46,14 @@ where
     C: Component,
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        self.raw.downcast_mut().unwrap()
+        self.erased.downcast_mut().unwrap()
     }
 }
 
 #[repr(transparent)]
-pub struct RawStorageHolder(Box<dyn Holdable>);
+pub struct ErasedStorageHolder(Box<dyn Holdable>);
 
-impl RawStorageHolder {
+impl ErasedStorageHolder {
     pub fn remove(&mut self, entity: Entity) {
         self.0.remove(entity)
     }
@@ -81,18 +81,18 @@ impl RawStorageHolder {
     }
 }
 
-impl<C> From<StorageHolder<C>> for RawStorageHolder
+impl<C> From<StorageHolder<C>> for ErasedStorageHolder
 where
     C: Component,
 {
     fn from(holder: StorageHolder<C>) -> Self {
-        holder.raw
+        holder.erased
     }
 }
 
-impl<T> From<T> for RawStorageHolder
+impl<T> From<T> for ErasedStorageHolder
 where
-    T: Holdable,
+    T: Storage,
 {
     fn from(storage: T) -> Self {
         Self(Box::new(storage))

@@ -3,7 +3,7 @@ use std::hash::BuildHasherDefault;
 
 use crate::world::TypeIdHasher;
 
-use super::{RawResourceHolder, Resource, ResourceHolder, ResourceTypeId};
+use super::{ErasedResourceHolder, Resource, ResourceHolder, ResourceTypeId};
 
 /// Storage of the resources - singletons in ECS.
 ///
@@ -13,7 +13,7 @@ use super::{RawResourceHolder, Resource, ResourceHolder, ResourceTypeId};
 #[derive(Default)]
 #[repr(transparent)]
 pub struct Registry {
-    resources: HashMap<ResourceTypeId, RawResourceHolder, BuildHasherDefault<TypeIdHasher>>,
+    resources: HashMap<ResourceTypeId, ErasedResourceHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {

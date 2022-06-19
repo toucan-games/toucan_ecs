@@ -1,6 +1,6 @@
 //! Provides trait for resources and borrow types for them.
 
-use holder::RawResourceHolder;
+use holder::ErasedResourceHolder;
 pub(crate) use holder::ResourceHolder;
 pub(crate) use registry::Registry;
 use type_id::ResourceTypeId;

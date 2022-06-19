@@ -11,7 +11,7 @@ pub struct ResourceHolder<R>
 where
     R: Resource,
 {
-    raw: RawResourceHolder,
+    erased: ErasedResourceHolder,
     _ph: PhantomData<R>,
 }
 
@@ -20,7 +20,7 @@ where
     R: Resource,
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        self.raw.downcast_mut().unwrap()
+        self.erased.downcast_mut().unwrap()
     }
 }
 
@@ -31,26 +31,26 @@ where
     type Target = R;
 
     fn deref(&self) -> &Self::Target {
-        self.raw.downcast_ref().unwrap()
+        self.erased.downcast_ref().unwrap()
     }
 }
 
-impl<R> From<RawResourceHolder> for ResourceHolder<R>
+impl<R> From<ErasedResourceHolder> for ResourceHolder<R>
 where
     R: Resource,
 {
-    fn from(raw: RawResourceHolder) -> Self {
+    fn from(erased: ErasedResourceHolder) -> Self {
         Self {
-            raw,
+            erased,
             _ph: PhantomData,
         }
     }
 }
 
 #[repr(transparent)]
-pub struct RawResourceHolder(Box<dyn Holdable>);
+pub struct ErasedResourceHolder(Box<dyn Holdable>);
 
-impl RawResourceHolder {
+impl ErasedResourceHolder {
     pub fn downcast_ref<R>(&self) -> Option<&R>
     where
         R: Resource,
@@ -66,18 +66,18 @@ impl RawResourceHolder {
     }
 }
 
-impl<R> From<ResourceHolder<R>> for RawResourceHolder
+impl<R> From<ResourceHolder<R>> for ErasedResourceHolder
 where
     R: Resource,
 {
     fn from(holder: ResourceHolder<R>) -> Self {
-        holder.raw
+        holder.erased
     }
 }
 
-impl<T> From<(T,)> for RawResourceHolder
+impl<T> From<(T,)> for ErasedResourceHolder
 where
-    T: Holdable,
+    T: Resource,
 {
     fn from(resource: (T,)) -> Self {
         Self(Box::new(resource.0))

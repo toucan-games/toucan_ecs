@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use crate::component::storage::{RawStorageHolder, StorageHolder};
+use crate::component::storage::{ErasedStorageHolder, StorageHolder};
 use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
 use crate::entity::registry::{Iter, Registry as EntityRegistry};
@@ -12,7 +12,7 @@ use crate::world::TypeIdHasher;
 pub struct Registry {
     entities: EntityRegistry,
     extended_entities: Vec<Entity>,
-    storages: HashMap<ComponentTypeId, RawStorageHolder, BuildHasherDefault<TypeIdHasher>>,
+    storages: HashMap<ComponentTypeId, ErasedStorageHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {

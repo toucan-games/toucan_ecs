@@ -1,4 +1,4 @@
-pub use holder::{RawStorageHolder, StorageHolder};
+pub use holder::{ErasedStorageHolder, StorageHolder};
 pub use impls::{Iter, IterMut, StorageImpl};
 pub use traits::Storage;
 
