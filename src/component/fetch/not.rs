@@ -32,6 +32,7 @@ where
 {
     type Item = Not<'data, C>;
 
+    // noinspection DuplicatedCode
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
         match self.storage {
             None => Ok(Not(PhantomData)),

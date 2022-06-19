@@ -54,11 +54,29 @@ macro_rules! fetch_mut {
 
 macro_rules! impl_fetch_mut {
     ($($types:ident),*) => {
+        impl<'data, $($types),*> TryFrom<&'data mut World> for ($($types,)*)
+        where
+            $($types: FetchMut<'data>,)*
+        {
+            type Error = FetchError;
+
+            fn try_from(world: &'data mut World) -> Result<Self, Self::Error> {
+                todo!() // todo
+            }
+        }
+
         impl<'data, $($types),*> FetchMut<'data> for ($($types,)*)
         where
             $($types: FetchMut<'data>,)*
         {
             type Item = ($($types::Item,)*);
+
+            #[allow(non_snake_case)]
+            fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+                let ($($types,)*) = self;
+                $(let $types = $types.fetch_mut(entity)?;)*
+                Ok(($($types,)*))
+            }
         }
     };
 }

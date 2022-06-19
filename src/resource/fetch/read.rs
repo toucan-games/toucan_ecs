@@ -1,5 +1,3 @@
-use std::marker::PhantomData;
-
 use crate::resource::Resource;
 use crate::world::{Fetch, FetchError};
 use crate::{Entity, World};
@@ -9,8 +7,7 @@ pub struct FetchRead<'data, R>
 where
     R: Resource,
 {
-    world: &'data World,
-    _ph: PhantomData<&'data R>,
+    resource: &'data R,
 }
 
 impl<'data, R> TryFrom<&'data World> for FetchRead<'data, R>
@@ -20,10 +17,8 @@ where
     type Error = FetchError;
 
     fn try_from(world: &'data World) -> Result<Self, Self::Error> {
-        Ok(Self {
-            world,
-            _ph: PhantomData,
-        })
+        let resource = world.resources().get().ok_or(FetchError)?;
+        Ok(Self { resource })
     }
 }
 
@@ -34,7 +29,6 @@ where
     type Item = &'data R;
 
     fn fetch(&self, _: Entity) -> Result<Self::Item, FetchError> {
-        let resource = self.world.resources().get().ok_or(FetchError)?;
-        Ok(resource)
+        Ok(self.resource)
     }
 }

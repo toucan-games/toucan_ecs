@@ -21,6 +21,18 @@ impl<'data> Fetch<'data> for FetchEntity {
     }
 }
 
+impl<'data> TryFrom<&'data mut World> for FetchEntity {
+    type Error = FetchError;
+
+    fn try_from(_: &'data mut World) -> Result<Self, Self::Error> {
+        Ok(Self(PhantomData))
+    }
+}
+
 impl<'data> FetchMut<'data> for FetchEntity {
     type Item = Entity;
+
+    fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+        Ok(entity)
+    }
 }

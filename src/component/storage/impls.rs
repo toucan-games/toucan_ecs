@@ -106,6 +106,7 @@ where
 {
     type Item = (Entity, &'data C);
 
+    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
         self.iter
             .next()
@@ -127,6 +128,7 @@ where
 {
     type Item = (Entity, &'data mut C);
 
+    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
         self.iter
             .next()

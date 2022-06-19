@@ -69,7 +69,7 @@ impl Registry {
         Some(resource)
     }
 
-    pub fn get_resource_holder<R>(&mut self) -> Option<ResourceHolder<R>>
+    pub fn get_holder<R>(&mut self) -> Option<ResourceHolder<R>>
     where
         R: Resource,
     {
@@ -78,7 +78,7 @@ impl Registry {
         Some(resource.into())
     }
 
-    pub fn put_resource_holder<R>(&mut self, resource_holder: ResourceHolder<R>)
+    pub fn put_holder<R>(&mut self, resource_holder: ResourceHolder<R>)
     where
         R: Resource,
     {

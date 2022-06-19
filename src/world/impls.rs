@@ -860,8 +860,17 @@ impl World {
         &self.components
     }
 
+    pub(crate) fn components_mut(&mut self) -> &mut Registry {
+        &mut self.components
+    }
+
     #[cfg(feature = "resource")]
     pub(crate) fn resources(&self) -> &ResourceRegistry {
         &self.resources
+    }
+
+    #[cfg(feature = "resource")]
+    pub(crate) fn resources_mut(&mut self) -> &mut ResourceRegistry {
+        &mut self.resources
     }
 }
