@@ -19,8 +19,10 @@ where
 {
     type Error = FetchError;
 
+    // noinspection DuplicatedCode
     fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
-        let storage = world.components().get_storage();
+        // SAFETY: must be checked by the caller.
+        let storage = unsafe { world.components() }.get_storage();
         Ok(Self { storage })
     }
 }
@@ -32,7 +34,7 @@ where
     type Item = Not<'data, C>;
 
     // noinspection DuplicatedCode
-    fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+    unsafe fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
         match self.storage {
             None => Ok(Not(PhantomData)),
             Some(storage) => {

@@ -2,7 +2,7 @@ use std::any::TypeId;
 
 use multimap::MultiMap;
 
-use crate::world::{Query, QueryMut, SoundnessChecked};
+use crate::world::{Query, QueryMut, SoundnessCheck};
 
 use super::fetch::{FetchRead, FetchReadMut, FetchWriteMut};
 use super::marker::Resource as ResourceMarker;
@@ -15,7 +15,7 @@ where
     type Fetch = FetchRead<'data, R>;
 }
 
-impl<'data, R> SoundnessChecked for ResourceMarker<&'data R>
+impl<'data, R> SoundnessCheck for ResourceMarker<&'data R>
 where
     R: Resource,
 {
@@ -33,7 +33,7 @@ where
     type Fetch = FetchReadMut<'data, R>;
 }
 
-impl<'data, R> SoundnessChecked for ResourceMarker<&'data mut R>
+impl<'data, R> SoundnessCheck for ResourceMarker<&'data mut R>
 where
     R: Resource,
 {

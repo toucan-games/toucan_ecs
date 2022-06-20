@@ -5,7 +5,7 @@ use multimap::MultiMap;
 use crate::component::fetch::{
     FetchNotMut, FetchOptionReadMut, FetchOptionWriteMut, FetchReadMut, FetchWriteMut,
 };
-use crate::world::{Query, QueryMut, SoundnessChecked};
+use crate::world::{Query, QueryMut, SoundnessCheck};
 
 use super::fetch::{FetchNot, FetchOptionRead, FetchRead};
 use super::marker::Not;
@@ -32,7 +32,7 @@ where
     type Fetch = FetchNot<'data, C>;
 }
 
-impl<'data, C> SoundnessChecked for &'data C
+impl<'data, C> SoundnessCheck for &'data C
 where
     C: Component,
 {
@@ -50,7 +50,7 @@ where
     type Fetch = FetchReadMut<'data, C>;
 }
 
-impl<'data, C> SoundnessChecked for &'data mut C
+impl<'data, C> SoundnessCheck for &'data mut C
 where
     C: Component,
 {
@@ -68,7 +68,7 @@ where
     type Fetch = FetchWriteMut<'data, C>;
 }
 
-impl<'data, C> SoundnessChecked for Option<&'data C>
+impl<'data, C> SoundnessCheck for Option<&'data C>
 where
     C: Component,
 {
@@ -86,7 +86,7 @@ where
     type Fetch = FetchOptionReadMut<'data, C>;
 }
 
-impl<'data, C> SoundnessChecked for Option<&'data mut C>
+impl<'data, C> SoundnessCheck for Option<&'data mut C>
 where
     C: Component,
 {
@@ -104,7 +104,7 @@ where
     type Fetch = FetchOptionWriteMut<'data, C>;
 }
 
-impl<'data, C> SoundnessChecked for Not<'data, C>
+impl<'data, C> SoundnessCheck for Not<'data, C>
 where
     C: Component,
 {

@@ -36,7 +36,7 @@ macro_rules! query_mut {
 
 macro_rules! impl_query_mut {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> SoundnessChecked for ($($types,)*)
+        impl<'data, $($types),*> SoundnessCheck for ($($types,)*)
         where
             $($types: QueryMut<'data>,)*
         {

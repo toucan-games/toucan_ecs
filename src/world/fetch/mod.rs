@@ -16,5 +16,9 @@ pub trait Fetch<'data>: TryFrom<&'data World, Error = FetchError> + 'data {
 pub trait FetchMut<'data>: TryFrom<WorldDataMut<'data>, Error = FetchError> + 'data {
     type Item: Send + Sync + 'data;
 
-    fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError>;
+    /// # Safety
+    ///
+    /// This function should be called if and only if mutability soundness was checked
+    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    unsafe fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError>;
 }

@@ -96,6 +96,8 @@
 #![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_auto_cfg))]
 #![warn(missing_docs)]
 #![warn(clippy::disallowed_types)]
+#![warn(clippy::undocumented_unsafe_blocks)]
+#![warn(clippy::missing_safety_doc)]
 
 pub use entity::Entity;
 pub use world::World;

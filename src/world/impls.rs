@@ -7,7 +7,7 @@ use crate::entity::{Entity, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 
-use super::{Query, QueryMut, View, ViewMut};
+use super::{CheckedQuery, Query, QueryMut, View, ViewMut};
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
@@ -857,7 +857,7 @@ impl World {
     where
         Q: QueryMut<'data>,
     {
-        ViewMut::new(self)
+        ViewMut::new(self, CheckedQuery::new())
     }
 
     pub(crate) fn components(&self) -> &ComponentRegistry {
@@ -915,21 +915,37 @@ pub struct WorldDataMut<'data> {
 }
 
 impl<'data> WorldDataMut<'data> {
-    pub fn components(self) -> &'data StorageMap {
-        unsafe { &*self.components }
+    /// # Safety
+    ///
+    /// This function should be called if and only if mutability soundness was checked
+    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    pub unsafe fn components(self) -> &'data StorageMap {
+        &*self.components
     }
 
-    pub fn components_mut(self) -> &'data mut StorageMap {
-        unsafe { &mut *self.components }
+    /// # Safety
+    ///
+    /// This function should be called if and only if mutability soundness was checked
+    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    pub unsafe fn components_mut(self) -> &'data mut StorageMap {
+        &mut *self.components
     }
 
+    /// # Safety
+    ///
+    /// This function should be called if and only if mutability soundness was checked
+    /// by [`check_soundness`][`super::query::check_soundness`] function.
     #[cfg(feature = "resource")]
-    pub fn resources(self) -> &'data ResourceRegistry {
-        unsafe { &*self.resources }
+    pub unsafe fn resources(self) -> &'data ResourceRegistry {
+        &*self.resources
     }
 
+    /// # Safety
+    ///
+    /// This function should be called if and only if mutability soundness was checked
+    /// by [`check_soundness`][`super::query::check_soundness`] function.
     #[cfg(feature = "resource")]
-    pub fn resources_mut(self) -> &'data mut ResourceRegistry {
-        unsafe { &mut *self.resources }
+    pub unsafe fn resources_mut(self) -> &'data mut ResourceRegistry {
+        &mut *self.resources
     }
 }

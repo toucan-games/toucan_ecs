@@ -1,9 +1,9 @@
 use std::mem::transmute;
 
+use crate::world::query::CheckedQuery;
 use crate::world::FetchMut;
 use crate::{entity::Iter, World};
 
-use super::query::check_soundness;
 use super::{Fetch, Query, QueryItem, QueryMut, QueryMutItem};
 
 /// Iterator which returns shared borrows of components.
@@ -64,8 +64,7 @@ impl<'data, Q> ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    pub(super) fn new(world: &'data mut World) -> Self {
-        check_soundness::<Q>();
+    pub(super) fn new(world: &'data mut World, _: CheckedQuery<'data, Q>) -> Self {
         let (entities, data) = world.split_mut();
         let entities = entities.iter();
         let fetch = data.try_into().ok();
@@ -82,10 +81,11 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let entity = self.entities.next()?;
-            let fetch =
-                // no GATs?
-                unsafe { transmute::<_, &'data mut Q::Fetch>(self.fetch.as_mut()?) };
-            let result = fetch.fetch_mut(entity);
+            // SAFETY: was checked at struct creation.
+            // No GATs?
+            let fetch = unsafe { transmute::<_, &'data mut Q::Fetch>(self.fetch.as_mut()?) };
+            // SAFETY: was checked at struct creation.
+            let result = unsafe { fetch.fetch_mut(entity) };
             match result {
                 Ok(item) => return Some(item),
                 Err(_) => continue,

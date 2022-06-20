@@ -1,15 +1,33 @@
 use std::any::TypeId;
+use std::marker::PhantomData;
 
 use multimap::MultiMap;
 
-pub trait SoundnessChecked {
+pub trait SoundnessCheck {
     const MUTABLE: bool;
     fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>);
 }
 
+pub struct SoundnessChecked<T>
+where
+    T: SoundnessCheck,
+{
+    _ph: PhantomData<*const T>,
+}
+
+impl<T> Default for SoundnessChecked<T>
+where
+    T: SoundnessCheck,
+{
+    fn default() -> Self {
+        check_soundness::<T>();
+        Self { _ph: PhantomData }
+    }
+}
+
 pub fn check_soundness<T>()
 where
-    T: SoundnessChecked,
+    T: SoundnessCheck,
 {
     let mut multimap = MultiMap::new();
     T::extend_before_check(&mut multimap);

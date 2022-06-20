@@ -72,7 +72,7 @@ macro_rules! impl_fetch_mut {
             type Item = ($($types::Item,)*);
 
             #[allow(non_snake_case)]
-            fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+            unsafe fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
                 let ($($types,)*) = self;
                 $(let $types = $types.fetch_mut(entity)?;)*
                 Ok(($($types,)*))

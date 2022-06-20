@@ -17,7 +17,10 @@ where
     type Error = FetchError;
 
     fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
-        let resource = world.resources_mut().get_mut().ok_or(FetchError)?;
+        // SAFETY: must be checked by the caller.
+        let resource = unsafe { world.resources_mut() }
+            .get_mut()
+            .ok_or(FetchError)?;
         Ok(Self { resource })
     }
 }
@@ -28,7 +31,7 @@ where
 {
     type Item = &'data mut R;
 
-    fn fetch_mut(&'data mut self, _: Entity) -> Result<Self::Item, FetchError> {
+    unsafe fn fetch_mut(&'data mut self, _: Entity) -> Result<Self::Item, FetchError> {
         Ok(self.resource)
     }
 }

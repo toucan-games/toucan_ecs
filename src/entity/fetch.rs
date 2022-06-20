@@ -32,7 +32,7 @@ impl<'data> TryFrom<WorldDataMut<'data>> for FetchEntity {
 impl<'data> FetchMut<'data> for FetchEntity {
     type Item = Entity;
 
-    fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+    unsafe fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
         Ok(entity)
     }
 }
