@@ -860,24 +860,6 @@ impl World {
         ViewMut::new(self, CheckedQuery::new())
     }
 
-    pub(crate) fn components(&self) -> &ComponentRegistry {
-        &self.components
-    }
-
-    pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
-        &mut self.components
-    }
-
-    #[cfg(feature = "resource")]
-    pub(crate) fn resources(&self) -> &ResourceRegistry {
-        &self.resources
-    }
-
-    #[cfg(feature = "resource")]
-    pub(crate) fn resources_mut(&mut self) -> &mut ResourceRegistry {
-        &mut self.resources
-    }
-
     pub(crate) fn split(&self) -> (&EntityRegistry, WorldData) {
         let (entities, components) = self.components.split();
         let data = WorldData {
@@ -900,10 +882,22 @@ impl World {
     }
 }
 
+#[derive(Copy, Clone)]
 pub struct WorldData<'data> {
     components: &'data StorageMap,
     #[cfg(feature = "resource")]
     resources: &'data ResourceRegistry,
+}
+
+impl<'data> WorldData<'data> {
+    pub fn components(self) -> &'data StorageMap {
+        self.components
+    }
+
+    #[cfg(feature = "resource")]
+    pub fn resources(self) -> &'data ResourceRegistry {
+        self.resources
+    }
 }
 
 #[derive(Copy, Clone)]

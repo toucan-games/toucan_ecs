@@ -19,6 +19,7 @@ pub fn prepare_for_view() -> World {
     world
 }
 
+#[allow(dead_code)]
 pub fn prepare_for_complex_view() -> World {
     let mut world = World::new();
 

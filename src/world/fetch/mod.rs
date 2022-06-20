@@ -1,13 +1,13 @@
 pub use error::FetchError;
 
-use crate::{Entity, World};
+use crate::Entity;
 
-use super::WorldDataMut;
+use super::{WorldData, WorldDataMut};
 
 mod error;
 mod tuple;
 
-pub trait Fetch<'data>: TryFrom<&'data World, Error = FetchError> + 'data {
+pub trait Fetch<'data>: TryFrom<WorldData<'data>, Error = FetchError> + 'data {
     type Item: Send + Sync + 'data;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError>;

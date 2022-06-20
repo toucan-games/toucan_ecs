@@ -1,14 +1,14 @@
 use std::marker::PhantomData;
 
-use crate::world::{Fetch, FetchError, FetchMut, WorldDataMut};
-use crate::{Entity, World};
+use crate::world::{Fetch, FetchError, FetchMut, WorldData, WorldDataMut};
+use crate::Entity;
 
 pub struct FetchEntity(PhantomData<Entity>);
 
-impl<'data> TryFrom<&'data World> for FetchEntity {
+impl<'data> TryFrom<WorldData<'data>> for FetchEntity {
     type Error = FetchError;
 
-    fn try_from(_: &'data World) -> Result<Self, Self::Error> {
+    fn try_from(_: WorldData<'data>) -> Result<Self, Self::Error> {
         Ok(Self(PhantomData))
     }
 }

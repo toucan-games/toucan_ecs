@@ -23,8 +23,9 @@ where
     Q: Query<'data>,
 {
     pub(super) fn new(world: &'data World) -> Self {
-        let entities = world.components().entities();
-        let fetch = world.try_into().ok();
+        let (entities, data) = world.split();
+        let entities = entities.iter();
+        let fetch = data.try_into().ok();
         Self { entities, fetch }
     }
 }
