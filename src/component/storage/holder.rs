@@ -99,7 +99,7 @@ where
     }
 }
 
-trait Holdable: 'static {
+trait Holdable: 'static + Send + Sync {
     fn remove(&mut self, entity: Entity);
 
     fn attached(&self, entity: Entity) -> bool;
