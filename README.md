@@ -16,8 +16,6 @@ Provides basic features, such as:
 
 For now library provides nothing for systems (are responsible for logic). You are free to create your own system!
 
-This crate contains no `unsafe` code.
-
 ## Feature flags
 
 This library contains some feature flags:

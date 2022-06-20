@@ -4,15 +4,14 @@ use std::hash::BuildHasherDefault;
 use crate::component::storage::{ErasedStorageHolder, StorageHolder};
 use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
-use crate::entity::registry::{Iter, Registry as EntityRegistry};
-use crate::entity::Entity;
+use crate::entity::{Entity, Iter, Registry as EntityRegistry};
 use crate::world::TypeIdHasher;
 
 #[derive(Default)]
 pub struct Registry {
     entities: EntityRegistry,
     extended_entities: Vec<Entity>,
-    storages: HashMap<ComponentTypeId, ErasedStorageHolder, BuildHasherDefault<TypeIdHasher>>,
+    storages: StorageMap,
 }
 
 impl Registry {
@@ -116,9 +115,7 @@ impl Registry {
     pub fn clear(&mut self) {
         self.entities.clear();
         self.extended_entities.clear();
-        self.storages
-            .values_mut()
-            .for_each(|storage| storage.clear());
+        self.storages.clear();
     }
 
     pub fn register<C>(&mut self)
@@ -164,9 +161,7 @@ impl Registry {
     }
 
     pub fn is_entity_empty(&self, entity: Entity) -> bool {
-        self.storages
-            .values()
-            .all(|storage| !storage.attached(entity))
+        self.storages.is_entity_empty(entity)
     }
 
     pub fn remove_one<C>(&mut self, entity: Entity)
@@ -187,25 +182,21 @@ impl Registry {
     }
 
     pub fn remove_all(&mut self, entity: Entity) {
-        self.storages
-            .values_mut()
-            .for_each(|storage| storage.remove(entity))
+        self.storages.remove_all(entity)
     }
 
     pub fn get<C>(&self, entity: Entity) -> Option<&C>
     where
         C: Component,
     {
-        let storage = self.get_storage::<C>()?;
-        storage.get(entity)
+        self.storages.get(entity)
     }
 
     pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
     where
         C: Component,
     {
-        let storage = self.get_storage_mut::<C>()?;
-        storage.get_mut(entity)
+        self.storages.get_mut(entity)
     }
 
     pub fn view_one<C>(&self) -> ViewOne<C>
@@ -226,45 +217,92 @@ impl Registry {
     where
         C: Component,
     {
-        let type_id = ComponentTypeId::of::<C>();
-        let storage = self.storages.get(&type_id)?;
-        let storage = storage.downcast_ref().expect("downcast error");
-        Some(storage)
+        self.storages.get_storage()
     }
 
     pub(super) fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
     where
         C: Component,
     {
-        let type_id = ComponentTypeId::of::<C>();
-        let storage = self.storages.get_mut(&type_id)?;
-        let storage = storage.downcast_mut().expect("downcast error");
-        Some(storage)
+        self.storages.get_storage_mut()
     }
 
     pub fn get_storage_holder<C>(&mut self) -> Option<StorageHolder<C>>
     where
         C: Component,
     {
-        let type_id = ComponentTypeId::of::<C>();
-        let storage = self.storages.remove(&type_id)?;
-        Some(storage.into())
+        self.storages.get_storage_holder()
     }
 
     pub fn put_storage_holder<C>(&mut self, storage_holder: StorageHolder<C>)
     where
         C: Component,
     {
-        let type_id = ComponentTypeId::of::<C>();
-        self.storages.insert(type_id, storage_holder.into());
+        self.storages.put_storage_holder(storage_holder)
     }
 
     pub fn has_storage<C>(&self) -> bool
     where
         C: Component,
     {
+        self.storages.has_storage::<C>()
+    }
+
+    fn create_storage<C>(&mut self)
+    where
+        C: Component,
+    {
+        self.storages.create_storage::<C>()
+    }
+
+    pub fn entities(&self) -> Iter {
+        self.entities.iter()
+    }
+
+    pub fn split(&self) -> (&EntityRegistry, &StorageMap) {
+        (&self.entities, &self.storages)
+    }
+
+    pub fn split_mut(&mut self) -> (&EntityRegistry, &mut StorageMap) {
+        (&self.entities, &mut self.storages)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Default)]
+pub struct StorageMap {
+    storages: HashMap<ComponentTypeId, ErasedStorageHolder, BuildHasherDefault<TypeIdHasher>>,
+}
+
+impl StorageMap {
+    pub fn has_storage<C>(&self) -> bool
+    where
+        C: Component,
+    {
         let type_id = ComponentTypeId::of::<C>();
         self.storages.contains_key(&type_id)
+    }
+
+    pub fn is_entity_empty(&self, entity: Entity) -> bool {
+        self.storages
+            .values()
+            .all(|storage| !storage.attached(entity))
+    }
+
+    pub fn get<C>(&self, entity: Entity) -> Option<&C>
+    where
+        C: Component,
+    {
+        let storage = self.get_storage::<C>()?;
+        storage.get(entity)
+    }
+
+    pub fn get_mut<C>(&mut self, entity: Entity) -> Option<&mut C>
+    where
+        C: Component,
+    {
+        let storage = self.get_storage_mut::<C>()?;
+        storage.get_mut(entity)
     }
 
     fn create_storage<C>(&mut self)
@@ -276,7 +314,52 @@ impl Registry {
         self.storages.insert(type_id, storage.into());
     }
 
-    pub fn entities(&self) -> Iter {
-        self.entities.iter()
+    fn remove_all(&mut self, entity: Entity) {
+        self.storages
+            .values_mut()
+            .for_each(|storage| storage.remove(entity))
+    }
+
+    fn clear(&mut self) {
+        self.storages
+            .values_mut()
+            .for_each(|storage| storage.clear());
+    }
+
+    pub fn get_storage<C>(&self) -> Option<&StorageImpl<C>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.get(&type_id)?;
+        let storage = storage.downcast_ref().expect("downcast error");
+        Some(storage)
+    }
+
+    pub fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.get_mut(&type_id)?;
+        let storage = storage.downcast_mut().expect("downcast error");
+        Some(storage)
+    }
+
+    fn get_storage_holder<C>(&mut self) -> Option<StorageHolder<C>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.remove(&type_id)?;
+        Some(storage.into())
+    }
+
+    fn put_storage_holder<C>(&mut self, storage_holder: StorageHolder<C>)
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        self.storages.insert(type_id, storage_holder.into());
     }
 }

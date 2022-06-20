@@ -1,5 +1,9 @@
-use crate::component::{Component, ComponentSet, Entry, Registry, ViewOne, ViewOneMut};
-use crate::entity::Entity;
+use std::marker::PhantomData;
+
+use crate::component::{
+    Component, ComponentSet, Entry, Registry as ComponentRegistry, StorageMap, ViewOne, ViewOneMut,
+};
+use crate::entity::{Entity, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 
@@ -14,7 +18,7 @@ use super::{Query, QueryMut, View, ViewMut};
 /// view each component separately or group of components together.
 #[derive(Default)]
 pub struct World {
-    components: Registry,
+    components: ComponentRegistry,
     #[cfg(feature = "resource")]
     resources: ResourceRegistry,
 }
@@ -30,7 +34,7 @@ impl World {
     /// ```
     pub fn new() -> Self {
         Self {
-            components: Registry::default(),
+            components: ComponentRegistry::default(),
             #[cfg(feature = "resource")]
             resources: ResourceRegistry::default(),
         }
@@ -856,11 +860,11 @@ impl World {
         ViewMut::new(self)
     }
 
-    pub(crate) fn components(&self) -> &Registry {
+    pub(crate) fn components(&self) -> &ComponentRegistry {
         &self.components
     }
 
-    pub(crate) fn components_mut(&mut self) -> &mut Registry {
+    pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
         &mut self.components
     }
 
@@ -872,5 +876,60 @@ impl World {
     #[cfg(feature = "resource")]
     pub(crate) fn resources_mut(&mut self) -> &mut ResourceRegistry {
         &mut self.resources
+    }
+
+    pub(crate) fn split(&self) -> (&EntityRegistry, WorldData) {
+        let (entities, components) = self.components.split();
+        let data = WorldData {
+            components,
+            #[cfg(feature = "resource")]
+            resources: &self.resources,
+        };
+        (entities, data)
+    }
+
+    pub(crate) fn split_mut(&mut self) -> (&EntityRegistry, WorldDataMut) {
+        let (entities, components) = self.components.split_mut();
+        let data = WorldDataMut {
+            components,
+            #[cfg(feature = "resource")]
+            resources: &mut self.resources,
+            _ph: PhantomData,
+        };
+        (entities, data)
+    }
+}
+
+pub struct WorldData<'data> {
+    components: &'data StorageMap,
+    #[cfg(feature = "resource")]
+    resources: &'data ResourceRegistry,
+}
+
+#[derive(Copy, Clone)]
+pub struct WorldDataMut<'data> {
+    components: *mut StorageMap,
+    #[cfg(feature = "resource")]
+    resources: *mut ResourceRegistry,
+    _ph: PhantomData<&'data ()>,
+}
+
+impl<'data> WorldDataMut<'data> {
+    pub fn components(self) -> &'data StorageMap {
+        unsafe { &*self.components }
+    }
+
+    pub fn components_mut(self) -> &'data mut StorageMap {
+        unsafe { &mut *self.components }
+    }
+
+    #[cfg(feature = "resource")]
+    pub fn resources(self) -> &'data ResourceRegistry {
+        unsafe { &*self.resources }
+    }
+
+    #[cfg(feature = "resource")]
+    pub fn resources_mut(self) -> &'data mut ResourceRegistry {
+        unsafe { &mut *self.resources }
     }
 }

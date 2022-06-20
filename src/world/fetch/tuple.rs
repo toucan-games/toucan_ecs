@@ -54,14 +54,14 @@ macro_rules! fetch_mut {
 
 macro_rules! impl_fetch_mut {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> TryFrom<&'data mut World> for ($($types,)*)
+        impl<'data, $($types),*> TryFrom<WorldDataMut<'data>> for ($($types,)*)
         where
             $($types: FetchMut<'data>,)*
         {
             type Error = FetchError;
 
-            fn try_from(world: &'data mut World) -> Result<Self, Self::Error> {
-                todo!() // todo
+            fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
+                Ok(($($types::try_from(world)?,)*))
             }
         }
 

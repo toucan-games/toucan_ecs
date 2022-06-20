@@ -1,6 +1,6 @@
 use crate::component::{Component, Storage, StorageImpl};
-use crate::world::{FetchError, FetchMut};
-use crate::{Entity, World};
+use crate::world::{FetchError, FetchMut, WorldDataMut};
+use crate::Entity;
 
 #[repr(transparent)]
 pub struct FetchOptionWriteMut<'data, C>
@@ -10,13 +10,13 @@ where
     storage: Option<&'data mut StorageImpl<C>>,
 }
 
-impl<'data, C> TryFrom<&'data mut World> for FetchOptionWriteMut<'data, C>
+impl<'data, C> TryFrom<WorldDataMut<'data>> for FetchOptionWriteMut<'data, C>
 where
     C: Component,
 {
     type Error = FetchError;
 
-    fn try_from(world: &'data mut World) -> Result<Self, Self::Error> {
+    fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
         let storage = world.components_mut().get_storage_mut();
         Ok(Self { storage })
     }

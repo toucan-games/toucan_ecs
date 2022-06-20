@@ -1,6 +1,6 @@
 use crate::resource::Resource;
-use crate::world::{FetchError, FetchMut};
-use crate::{Entity, World};
+use crate::world::{FetchError, FetchMut, WorldDataMut};
+use crate::Entity;
 
 #[repr(transparent)]
 pub struct FetchReadMut<'data, R>
@@ -10,13 +10,13 @@ where
     resource: &'data R,
 }
 
-impl<'data, R> TryFrom<&'data mut World> for FetchReadMut<'data, R>
+impl<'data, R> TryFrom<WorldDataMut<'data>> for FetchReadMut<'data, R>
 where
     R: Resource,
 {
     type Error = FetchError;
 
-    fn try_from(world: &'data mut World) -> Result<Self, Self::Error> {
+    fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
         let resource = world.resources().get().ok_or(FetchError)?;
         Ok(Self { resource })
     }

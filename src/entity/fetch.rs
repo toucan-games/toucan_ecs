@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::world::{Fetch, FetchError, FetchMut};
+use crate::world::{Fetch, FetchError, FetchMut, WorldDataMut};
 use crate::{Entity, World};
 
 pub struct FetchEntity(PhantomData<Entity>);
@@ -21,10 +21,10 @@ impl<'data> Fetch<'data> for FetchEntity {
     }
 }
 
-impl<'data> TryFrom<&'data mut World> for FetchEntity {
+impl<'data> TryFrom<WorldDataMut<'data>> for FetchEntity {
     type Error = FetchError;
 
-    fn try_from(_: &'data mut World) -> Result<Self, Self::Error> {
+    fn try_from(_: WorldDataMut<'data>) -> Result<Self, Self::Error> {
         Ok(Self(PhantomData))
     }
 }
@@ -32,7 +32,7 @@ impl<'data> TryFrom<&'data mut World> for FetchEntity {
 impl<'data> FetchMut<'data> for FetchEntity {
     type Item = Entity;
 
-    fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+    fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
         Ok(entity)
     }
 }

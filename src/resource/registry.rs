@@ -5,11 +5,6 @@ use crate::world::TypeIdHasher;
 
 use super::{ErasedResourceHolder, Resource, ResourceHolder, ResourceTypeId};
 
-/// Storage of the resources - singletons in ECS.
-///
-/// Use this to [create][`ResourceStorage::create`] and [destroy][`ResourceStorage::destroy`]
-/// resources, get resources [immutably][`ResourceStorage::get`]
-/// or [mutably][`ResourceStorage::get_mut`].
 #[derive(Default)]
 #[repr(transparent)]
 pub struct Registry {

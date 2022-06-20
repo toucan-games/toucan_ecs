@@ -12,8 +12,6 @@
 //! For now library provides nothing for systems (are responsible for logic).
 //! You are free to create your own system!
 //!
-//! This crate contains no `unsafe` code.
-//!
 //! # Examples
 //!
 //! ## Create and destroy entities
@@ -98,7 +96,6 @@
 #![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_auto_cfg))]
 #![warn(missing_docs)]
 #![warn(clippy::disallowed_types)]
-#![forbid(unsafe_code)]
 
 pub use entity::Entity;
 pub use world::World;

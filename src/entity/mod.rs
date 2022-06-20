@@ -1,8 +1,10 @@
 //! Provides entity handle, entry for the specific entity in the world.
 
+pub(crate) use registry::{Iter, Registry};
+
 mod fetch;
 mod query;
-pub(crate) mod registry;
+mod registry;
 
 slotmap::new_key_type! {
     /// Unique handle of the entity in ECS.
