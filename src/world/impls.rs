@@ -772,6 +772,9 @@ impl World {
     /// This iterator will return [entities][`Entity`] and their unique borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
+    /// Consider using [systems][`crate::system::System`]
+    /// to mutate multiple components attached to the entity.
+    ///
     /// # Examples
     ///
     /// ```

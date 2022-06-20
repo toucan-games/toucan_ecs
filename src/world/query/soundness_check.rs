@@ -52,6 +52,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use crate::component::marker::Not;
     use super::*;
 
     #[derive(Copy, Clone)]
@@ -67,8 +68,8 @@ mod tests {
     fn one_type() {
         check_soundness::<&Position>();
         check_soundness::<(&Position,)>();
-        check_soundness::<(&Position, &Position)>();
-        check_soundness::<(&Position, &Position, &Position)>();
+        check_soundness::<(&Position, Not<&Position>)>();
+        check_soundness::<(Not<&Position>, &Position, Option<&Position>)>();
 
         check_soundness::<&mut Position>();
         check_soundness::<(&mut Position,)>();
@@ -77,13 +78,13 @@ mod tests {
     #[test]
     #[should_panic(expected = "mutable borrow occurs while other immutable occurrences was found")]
     fn one_type_mutable_borrow() {
-        check_soundness::<(&mut Position, &Position)>();
+        check_soundness::<(&mut Position, Option<&Position>)>();
     }
 
     #[test]
     #[should_panic(expected = "multiple mutable borrows occur")]
     fn one_type_mutable_borrows() {
-        check_soundness::<(&mut Position, &Position, &mut Position)>();
+        check_soundness::<(Option<&mut Position>, Not<&Position>, &mut Position)>();
     }
 
     #[test]
@@ -91,8 +92,8 @@ mod tests {
         check_soundness::<&Velocity>();
         check_soundness::<(&Velocity,)>();
         check_soundness::<(&Position, &Velocity)>();
-        check_soundness::<(&Position, &Velocity, &Position)>();
-        check_soundness::<(&Position, &Velocity, &Mass, &Position, &Mass, &Velocity)>();
+        check_soundness::<(&Position, Not<&Velocity>, Option<&Position>)>();
+        check_soundness::<(&Position, &Velocity, Option<&Mass>, &Position, &Mass, &Velocity)>();
 
         check_soundness::<&mut Velocity>();
         check_soundness::<(&mut Mass,)>();

@@ -106,4 +106,5 @@ pub mod component;
 pub mod entity;
 #[cfg(feature = "resource")]
 pub mod resource;
+pub mod system;
 pub mod world;
