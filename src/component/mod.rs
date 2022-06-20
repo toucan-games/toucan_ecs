@@ -3,7 +3,7 @@
 pub use entry::Entry;
 pub(crate) use registry::{Registry, StorageMap};
 pub(crate) use set::ComponentSet;
-pub(crate) use storage::{Iter, IterMut, Storage, StorageHolder, StorageImpl};
+pub(crate) use storage::{Iter, IterMut, Storage, StorageImpl};
 pub(crate) use type_id::ComponentTypeId;
 pub use view_one::{ViewOne, ViewOneMut};
 
