@@ -59,28 +59,29 @@ impl World {
         self.components.create()
     }
 
-    /// Creates new resource and stores it in the world.
-    ///
-    /// To get created resource, call [`get_resource`][World::get_resource] or
-    /// [`get_resource_mut`][World::get_resource_mut] associated function.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// struct Resource(u32);
-    ///
-    /// let mut world = World::new();
-    ///
-    /// world.create_resource(Resource(42));
-    /// assert!(!world.is_empty());
-    /// ```
-    #[cfg(feature = "resource")]
-    pub fn create_resource<R>(&mut self, resource: R)
-    where
-        R: Resource,
-    {
-        self.resources.create(resource)
+    cfg_resource! {
+        /// Creates new resource and stores it in the world.
+        ///
+        /// To get created resource, call [`get_resource`][World::get_resource] or
+        /// [`get_resource_mut`][World::get_resource_mut] associated function.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// # use toucan_ecs::World;
+        /// struct Resource(u32);
+        ///
+        /// let mut world = World::new();
+        ///
+        /// world.create_resource(Resource(42));
+        /// assert!(!world.is_empty());
+        /// ```
+        pub fn create_resource<R>(&mut self, resource: R)
+        where
+            R: Resource,
+        {
+            self.resources.create(resource)
+        }
     }
 
     /// Creates new entity with one component attached to it.
@@ -311,25 +312,26 @@ impl World {
         self.components.contains(entity)
     }
 
-    /// Returns `true` if the world has resource of generic type.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// struct Resource(u32);
-    ///
-    /// let mut world = World::new();
-    ///
-    /// world.create_resource(Resource(42));
-    /// assert!(world.contains_resource::<Resource>());
-    /// ```
-    #[cfg(feature = "resource")]
-    pub fn contains_resource<R>(&self) -> bool
-    where
-        R: Resource,
-    {
-        self.resources.contains::<R>()
+    cfg_resource! {
+        /// Returns `true` if the world has resource of generic type.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// # use toucan_ecs::World;
+        /// struct Resource(u32);
+        ///
+        /// let mut world = World::new();
+        ///
+        /// world.create_resource(Resource(42));
+        /// assert!(world.contains_resource::<Resource>());
+        /// ```
+        pub fn contains_resource<R>(&self) -> bool
+        where
+            R: Resource,
+        {
+            self.resources.contains::<R>()
+        }
     }
 
     /// Destroys the entity and removes all its attached components.
@@ -348,26 +350,27 @@ impl World {
         self.components.destroy(entity)
     }
 
-    /// Destroys the resource of generic type and removes it from the world.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// struct Resource(u32);
-    ///
-    /// let mut world = World::new();
-    ///
-    /// world.create_resource(Resource(42));
-    /// world.destroy_resource::<Resource>();
-    /// assert!(!world.contains_resource::<Resource>());
-    /// ```
-    #[cfg(feature = "resource")]
-    pub fn destroy_resource<R>(&mut self)
-    where
-        R: Resource,
-    {
-        self.resources.destroy::<R>();
+    cfg_resource! {
+        /// Destroys the resource of generic type and removes it from the world.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// # use toucan_ecs::World;
+        /// struct Resource(u32);
+        ///
+        /// let mut world = World::new();
+        ///
+        /// world.create_resource(Resource(42));
+        /// world.destroy_resource::<Resource>();
+        /// assert!(!world.contains_resource::<Resource>());
+        /// ```
+        pub fn destroy_resource<R>(&mut self)
+        where
+            R: Resource,
+        {
+            self.resources.destroy::<R>();
+        }
     }
 
     /// Returns `true` if the world does not contain any entity and any resource.
@@ -693,51 +696,53 @@ impl World {
         self.components.get_mut::<C>(entity)
     }
 
-    /// Retrieves the shared borrow of the generic resource type.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// #[derive(Debug, Eq, PartialEq)]
-    /// struct Resource(u32);
-    ///
-    /// let mut world = World::new();
-    ///
-    /// world.create_resource(Resource(42));
-    /// let resource = world.get_resource::<Resource>().unwrap();
-    /// assert_eq!(*resource, Resource(42));
-    /// ```
-    #[cfg(feature = "resource")]
-    pub fn get_resource<R>(&self) -> Option<&R>
-    where
-        R: Resource,
-    {
-        self.resources.get::<R>()
+    cfg_resource! {
+        /// Retrieves the shared borrow of the generic resource type.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// # use toucan_ecs::World;
+        /// #[derive(Debug, Eq, PartialEq)]
+        /// struct Resource(u32);
+        ///
+        /// let mut world = World::new();
+        ///
+        /// world.create_resource(Resource(42));
+        /// let resource = world.get_resource::<Resource>().unwrap();
+        /// assert_eq!(*resource, Resource(42));
+        /// ```
+        pub fn get_resource<R>(&self) -> Option<&R>
+        where
+            R: Resource,
+        {
+            self.resources.get::<R>()
+        }
     }
 
-    /// Retrieves the unique borrow of the generic resource type.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::World;
-    /// #[derive(Debug, Eq, PartialEq)]
-    /// struct Resource(u32);
-    ///
-    /// let mut world = World::new();
-    /// world.create_resource(Resource(42));
-    ///
-    /// let mut resource = world.get_resource_mut::<Resource>().unwrap();
-    /// *resource = Resource(35);
-    /// assert_eq!(*resource, Resource(35));
-    /// ```
-    #[cfg(feature = "resource")]
-    pub fn get_resource_mut<R>(&mut self) -> Option<&mut R>
-    where
-        R: Resource,
-    {
-        self.resources.get_mut::<R>()
+    cfg_resource! {
+        /// Retrieves the unique borrow of the generic resource type.
+        ///
+        /// # Examples
+        ///
+        /// ```
+        /// # use toucan_ecs::World;
+        /// #[derive(Debug, Eq, PartialEq)]
+        /// struct Resource(u32);
+        ///
+        /// let mut world = World::new();
+        /// world.create_resource(Resource(42));
+        ///
+        /// let mut resource = world.get_resource_mut::<Resource>().unwrap();
+        /// *resource = Resource(35);
+        /// assert_eq!(*resource, Resource(35));
+        /// ```
+        pub fn get_resource_mut<R>(&mut self) -> Option<&mut R>
+        where
+            R: Resource,
+        {
+            self.resources.get_mut::<R>()
+        }
     }
 
     /// Creates a [view][`ViewOne`] of the component type.

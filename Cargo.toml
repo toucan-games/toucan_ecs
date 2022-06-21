@@ -34,3 +34,7 @@ harness = false
 
 [features]
 resource = []
+
+[package.metadata.docs.rs]
+all-features = true
+rustc-args = ["--cfg", "docsrs"]

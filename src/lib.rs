@@ -1,5 +1,11 @@
-//! # toucan_ecs
-//!
+#![warn(missing_docs)]
+#![warn(
+    clippy::disallowed_types,
+    clippy::undocumented_unsafe_blocks,
+    clippy::missing_safety_doc
+)]
+#![cfg_attr(any(docsrs, all(doc, CHANNEL_NIGHTLY)), feature(doc_cfg))]
+
 //! Simple and safe ECS library for Rust.
 //!
 //! Provides basic features, such as:
@@ -93,18 +99,16 @@
 //! }
 //! ```
 
-#![cfg_attr(all(doc, CHANNEL_NIGHTLY), feature(doc_auto_cfg))]
-#![warn(missing_docs)]
-#![warn(clippy::disallowed_types)]
-#![warn(clippy::undocumented_unsafe_blocks)]
-#![warn(clippy::missing_safety_doc)]
-
 pub use entity::Entity;
 pub use world::World;
 
+#[macro_use]
+mod macros;
+
 pub mod component;
 pub mod entity;
-#[cfg(feature = "resource")]
-pub mod resource;
+cfg_resource! {
+    pub mod resource;
+}
 pub mod system;
 pub mod world;
