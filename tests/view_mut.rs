@@ -67,7 +67,7 @@ fn complex_view_mut() {
 #[cfg(feature = "resource")]
 fn complex_resource_view_mut() {
     use resources::Time;
-    use toucan_ecs::resource::marker::Resource;
+    use toucan_ecs::resource::marker::ResourceMut;
 
     let mut world = utils::prepare_for_complex_view();
     world.create_resource(Time::new());
@@ -77,10 +77,10 @@ fn complex_resource_view_mut() {
         &'data mut Position,
         Not<'data, Velocity>,
         Option<&'data mut Mass>,
-        Resource<&'data mut Time>,
+        ResourceMut<'data, Time>,
     );
 
-    for (entity, position, _, mut mass, time) in world.view_mut::<Query>() {
+    for (entity, position, _, mut mass, mut time) in world.view_mut::<Query>() {
         position.x -= 10.0;
         if let Some(mass) = mass.as_deref_mut() {
             mass.0 += 1.0;

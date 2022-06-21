@@ -1,6 +1,9 @@
 use crate::component::Component;
 #[cfg(feature = "resource")]
-use crate::resource::{marker::Resource as ResourceMarker, Resource};
+use crate::resource::{
+    marker::{Resource as ResourceMarker, ResourceMut as ResourceMarkerMut},
+    Resource,
+};
 use crate::system::fetch::*;
 
 use super::*;
@@ -24,7 +27,7 @@ where
 }
 
 #[cfg(feature = "resource")]
-impl<'data, R> Query<'data> for ResourceMarker<&'data R>
+impl<'data, R> Query<'data> for ResourceMarker<'data, R>
 where
     R: Resource,
 {
@@ -32,7 +35,7 @@ where
 }
 
 #[cfg(feature = "resource")]
-impl<'data, R> Query<'data> for ResourceMarker<&'data mut R>
+impl<'data, R> Query<'data> for ResourceMarkerMut<'data, R>
 where
     R: Resource,
 {

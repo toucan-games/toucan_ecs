@@ -65,7 +65,7 @@ fn complex_resource_view() {
         &'data Position,
         Option<&'data Velocity>,
         Not<'data, Mass>,
-        Resource<&'data Time>,
+        Resource<'data, Time>,
     );
 
     for (entity, position, velocity, _, time) in world.view::<Query>() {

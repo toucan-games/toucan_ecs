@@ -5,17 +5,17 @@ use multimap::MultiMap;
 use crate::world::{Query, QueryMut, SoundnessCheck};
 
 use super::fetch::{FetchRead, FetchReadMut, FetchWriteMut};
-use super::marker::Resource as ResourceMarker;
+use super::marker::{Resource as ResourceMarker, ResourceMut as ResourceMarkerMut};
 use super::Resource;
 
-impl<'data, R> Query<'data> for ResourceMarker<&'data R>
+impl<'data, R> Query<'data> for ResourceMarker<'data, R>
 where
     R: Resource,
 {
     type Fetch = FetchRead<'data, R>;
 }
 
-impl<'data, R> SoundnessCheck for ResourceMarker<&'data R>
+impl<'data, R> SoundnessCheck for ResourceMarker<'data, R>
 where
     R: Resource,
 {
@@ -26,14 +26,14 @@ where
     }
 }
 
-impl<'data, R> QueryMut<'data> for ResourceMarker<&'data R>
+impl<'data, R> QueryMut<'data> for ResourceMarker<'data, R>
 where
     R: Resource,
 {
     type Fetch = FetchReadMut<'data, R>;
 }
 
-impl<'data, R> SoundnessCheck for ResourceMarker<&'data mut R>
+impl<'data, R> SoundnessCheck for ResourceMarkerMut<'data, R>
 where
     R: Resource,
 {
@@ -44,7 +44,7 @@ where
     }
 }
 
-impl<'data, R> QueryMut<'data> for ResourceMarker<&'data mut R>
+impl<'data, R> QueryMut<'data> for ResourceMarkerMut<'data, R>
 where
     R: Resource,
 {

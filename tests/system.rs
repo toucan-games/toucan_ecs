@@ -34,7 +34,7 @@ fn test() {
         .system(|| println!("Result of sum is {}", 2 + 2))
         .system(component_system)
         .system(local_system)
-        .system(|time: Resource<&Time>| println!("Elapsed seconds are {}", time.elapsed_secs()))
+        .system(|time: Resource<Time>| println!("Elapsed seconds are {}", time.elapsed_secs()))
         .build();
     schedule.run(&mut world);
 }

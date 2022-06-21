@@ -1,6 +1,6 @@
-use crate::resource::Resource;
-use crate::world::{Fetch, FetchError, WorldData};
 use crate::Entity;
+use crate::resource::{marker::Resource as ResourceMarker, Resource};
+use crate::world::{Fetch, FetchError, WorldData};
 
 #[repr(transparent)]
 pub struct FetchRead<'data, R>
@@ -26,9 +26,10 @@ impl<'data, R> Fetch<'data> for FetchRead<'data, R>
 where
     R: Resource,
 {
-    type Item = &'data R;
+    type Item = ResourceMarker<'data, R>;
 
     fn fetch(&self, _: Entity) -> Result<Self::Item, FetchError> {
-        Ok(self.resource)
+        let resource = ResourceMarker::new(self.resource);
+        Ok(resource)
     }
 }
