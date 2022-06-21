@@ -53,6 +53,7 @@ where
 #[cfg(test)]
 mod tests {
     use crate::component::marker::Not;
+
     use super::*;
 
     #[derive(Copy, Clone)]
@@ -93,7 +94,14 @@ mod tests {
         check_soundness::<(&Velocity,)>();
         check_soundness::<(&Position, &Velocity)>();
         check_soundness::<(&Position, Not<&Velocity>, Option<&Position>)>();
-        check_soundness::<(&Position, &Velocity, Option<&Mass>, &Position, &Mass, &Velocity)>();
+        check_soundness::<(
+            &Position,
+            &Velocity,
+            Option<&Mass>,
+            &Position,
+            &Mass,
+            &Velocity,
+        )>();
 
         check_soundness::<&mut Velocity>();
         check_soundness::<(&mut Mass,)>();

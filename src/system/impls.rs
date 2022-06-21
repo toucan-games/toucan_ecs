@@ -2,7 +2,7 @@ use super::*;
 
 impl<'data, F> System<'data, ()> for F
 where
-    F: FnMut() + 'static,
+    F: FnMut() + 'data,
 {
     fn run(&mut self, _: ()) {
         self()
@@ -23,7 +23,7 @@ macro_rules! impl_system {
     ($($types:ident),*) => {
         impl<'data, F, $($types),*> System<'data, ($($types,)*)> for F
         where
-            F: FnMut($($types,)*) + 'static,
+            F: FnMut($($types,)*) + 'data,
             ($($types,)*): Query<'data>,
         {
             #[allow(non_snake_case)]

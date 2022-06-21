@@ -4,6 +4,6 @@ mod impls;
 
 pub type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 
-pub trait Query<'data> {
+pub trait Query<'data>: 'data {
     type Fetch: Fetch<'data>;
 }

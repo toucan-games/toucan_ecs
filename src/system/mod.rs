@@ -1,7 +1,5 @@
 //! Provides traits and utilities for [systems][`System`].
 
-use as_any::AsAny;
-
 use fetch::Fetch;
 use query::Query;
 pub use schedule::{Schedule, ScheduleBuilder};
@@ -16,7 +14,7 @@ mod schedule;
 /// Each system performs global actions on every [entity][`crate::Entity`]
 /// that possesses a [component][`crate::component::Component`]
 /// or components that match that system's query.
-pub trait System<'data, Q>: AsAny
+pub trait System<'data, Q>: 'data
 where
     Q: Query<'data>,
 {

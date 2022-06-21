@@ -4,35 +4,35 @@ use crate::system::{Query, System};
 use crate::World;
 
 #[repr(transparent)]
-pub struct SystemHolder(Box<dyn SystemRunnable>);
+pub struct ErasedSystemHolder<'data>(Box<dyn Holdable + 'data>);
 
-impl<R> From<R> for SystemHolder
+impl<'data, H> From<H> for ErasedSystemHolder<'data>
 where
-    R: SystemRunnable,
+    H: Holdable + 'data,
 {
-    fn from(system_runnable: R) -> Self {
-        Self(Box::new(system_runnable))
+    fn from(holdable: H) -> Self {
+        Self(Box::new(holdable))
     }
 }
 
-impl SystemHolder {
+impl<'data> ErasedSystemHolder<'data> {
     pub fn run(&mut self, world: &mut World) {
         self.0.run(world)
     }
 }
 
-trait SystemRunnable: 'static {
+trait Holdable {
     fn run(&mut self, world: &mut World);
 }
 
-impl<'data, S, Q> SystemRunnable for (S, PhantomData<Q>)
+impl<'data, S, Q> Holdable for (S, PhantomData<Q>)
 where
     S: System<'data, Q>,
-    Q: Query<'data> + 'static,
+    Q: Query<'data>,
 {
     fn run(&mut self, _world: &mut World) {
         let system = &mut self.0;
-        let args = todo!();
+        let args: Q = todo!();
         system.run(args)
     }
 }
