@@ -1,9 +1,6 @@
-use std::io::{stdin, stdout, BufRead, Write};
-use std::thread::sleep;
-use std::time::Duration;
+use std::io::{stdin, stdout, Write};
 
-use crossterm::cursor::MoveToPreviousLine;
-use crossterm::ExecutableCommand;
+use rand::{thread_rng, Rng};
 
 use field::{Alive, Field, Point, WatchAfter};
 use toucan_ecs::{Entity, World};
@@ -23,29 +20,42 @@ fn main() -> Result<()> {
     print!("Enter field width: ");
     stdout.flush()?;
     let field_width = utils::read_and_parse(&mut stdin)?;
-    let field = Field::new(field_width);
+    print!("Enter probability of cell to be initially alive: ");
+    stdout.flush()?;
+    let probability = utils::read_and_parse(&mut stdin)?;
+    if probability < 0.0 || probability > 1.0 {
+        let error = format!("Probability must be between 0 and 1, got {}", probability);
+        return Err(error.into());
+    }
 
     println!("Preparing for field generation...");
-    world.create_resource(field);
     world.register::<Point>();
     world.register::<Alive>();
     world.register::<WatchAfter>();
+    let field = Field::new(field_width);
+    world.create_resource(field);
 
     println!("Generating the field...");
     let range: Vec<_> = (0..field_width).collect();
     let entities = range
         .iter()
         .map(|x| {
-            range
-                .iter()
-                .map(|y| (Point { x: *x, y: *y }, Alive { alive: false }))
+            range.iter().map(|y| {
+                let point = Point { x: *x, y: *y };
+                let alive = thread_rng().gen_bool(probability);
+                let alive = Alive { alive };
+                (point, alive)
+            })
         })
         .flatten();
     world.extend_with(entities);
 
     println!("Field generation was completed!");
-    for (entity, point) in world.view::<(Entity, &Point)>() {
-        println!("entity: {:?}, point: {:?}", entity, point);
+    for (entity, point, alive) in world.view::<(Entity, &Point, &Alive)>() {
+        println!(
+            "entity: {:?}, point: {:?}, alive: {}",
+            entity, point, alive.alive
+        );
     }
     Ok(())
 }
