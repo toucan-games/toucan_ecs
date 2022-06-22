@@ -6,11 +6,13 @@ mod components;
 mod resources;
 mod utils;
 
-fn component_system(position: &mut Position, velocity: &Velocity, mass: &Mass) {
+fn for_each_component_system(position: &mut Position, velocity: &Velocity, mass: Option<&Mass>) {
     position.x += 10.0;
     println!(
         "position {:?}, velocity {:?}, mass {:?}",
-        position, velocity, mass
+        position,
+        velocity,
+        mass.as_deref()
     );
 }
 
@@ -32,7 +34,7 @@ fn test() {
     let mut schedule = Schedule::builder()
         .system(|| println!("Hello, World"))
         .system(|| println!("Result of sum is {}", 2 + 2))
-        .system(component_system)
+        .system(for_each_component_system)
         .system(local_system)
         .system(|time: Resource<Time>| println!("Elapsed seconds are {}", time.elapsed_secs()))
         .build();

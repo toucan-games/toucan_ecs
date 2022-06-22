@@ -26,6 +26,20 @@ where
     type Fetch = FetchWrite<C>;
 }
 
+impl<'data, C> Query<'data> for Option<&'data C>
+where
+    C: Component,
+{
+    type Fetch = FetchOptionRead<C>;
+}
+
+impl<'data, C> Query<'data> for Option<&'data mut C>
+where
+    C: Component,
+{
+    type Fetch = FetchOptionWrite<C>;
+}
+
 #[cfg(feature = "resource")]
 impl<'data, R> Query<'data> for ResourceMarker<'data, R>
 where
