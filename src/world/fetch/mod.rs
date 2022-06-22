@@ -7,13 +7,17 @@ use super::{WorldData, WorldDataMut};
 mod error;
 mod tuple;
 
-pub trait Fetch<'data>: TryFrom<WorldData<'data>, Error = FetchError> + 'data {
+pub trait Fetch<'data>:
+    TryFrom<WorldData<'data>, Error = FetchError> + Send + Sync + 'data
+{
     type Item: Send + Sync + 'data;
 
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError>;
 }
 
-pub trait FetchMut<'data>: TryFrom<WorldDataMut<'data>, Error = FetchError> + 'data {
+pub trait FetchMut<'data>:
+    TryFrom<WorldDataMut<'data>, Error = FetchError> + Send + Sync + 'data
+{
     type Item: Send + Sync + 'data;
 
     /// # Safety

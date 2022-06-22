@@ -1,10 +1,11 @@
-use crate::component::Component;
+use crate::component::{Component, ViewOne, ViewOneMut};
 #[cfg(feature = "resource")]
 use crate::resource::{
     marker::{Resource as ResourceMarker, ResourceMut as ResourceMarkerMut},
     Resource,
 };
 use crate::system::fetch::*;
+use crate::world::{Query as WorldQuery, QueryMut as WorldQueryMut, View, ViewMut};
 
 use super::*;
 
@@ -38,6 +39,34 @@ where
     C: Component,
 {
     type Fetch = FetchOptionWrite<C>;
+}
+
+impl<'data, C> Query<'data> for ViewOne<'data, C>
+where
+    C: Component,
+{
+    type Fetch = FetchViewOne<C>;
+}
+
+impl<'data, C> Query<'data> for ViewOneMut<'data, C>
+where
+    C: Component,
+{
+    type Fetch = FetchViewOneMut<C>;
+}
+
+impl<'data, Q> Query<'data> for View<'data, Q>
+where
+    Q: WorldQuery<'data>,
+{
+    type Fetch = FetchView<'data, Q>;
+}
+
+impl<'data, Q> Query<'data> for ViewMut<'data, Q>
+where
+    Q: WorldQueryMut<'data>,
+{
+    type Fetch = FetchViewMut<'data, Q>;
 }
 
 #[cfg(feature = "resource")]
