@@ -46,7 +46,7 @@ fn complex_view_mut() {
         Entity,
         &'data mut Position,
         Option<&'data mut Velocity>,
-        Not<'data, Mass>,
+        Not<Mass>,
     );
 
     for (entity, position, mut velocity, _) in world.view_mut::<Query>() {
@@ -75,7 +75,7 @@ fn complex_resource_view_mut() {
     type Query<'data> = (
         Entity,
         &'data mut Position,
-        Not<'data, Velocity>,
+        Not<Velocity>,
         Option<&'data mut Mass>,
         ResourceMut<'data, Time>,
     );

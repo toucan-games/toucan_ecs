@@ -34,12 +34,7 @@ fn view() {
 fn complex_view() {
     let world = utils::prepare_for_complex_view();
 
-    type Query<'data> = (
-        Entity,
-        &'data Position,
-        Option<&'data Velocity>,
-        Not<'data, Mass>,
-    );
+    type Query<'data> = (Entity, &'data Position, Option<&'data Velocity>, Not<Mass>);
 
     for (entity, position, velocity, _) in world.view::<Query>() {
         println!(
@@ -64,7 +59,7 @@ fn complex_resource_view() {
         Entity,
         &'data Position,
         Option<&'data Velocity>,
-        Not<'data, Mass>,
+        Not<Mass>,
         Resource<'data, Time>,
     );
 

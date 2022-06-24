@@ -25,7 +25,7 @@ where
     type Fetch = FetchOptionRead<'data, C>;
 }
 
-impl<'data, C> Query<'data> for Not<'data, C>
+impl<'data, C> Query<'data> for Not<C>
 where
     C: Component,
 {
@@ -104,7 +104,7 @@ where
     type Fetch = FetchOptionWriteMut<'data, C>;
 }
 
-impl<'data, C> SoundnessCheck for Not<'data, C>
+impl<'data, C> SoundnessCheck for Not<C>
 where
     C: Component,
 {
@@ -115,7 +115,7 @@ where
     }
 }
 
-impl<'data, C> QueryMut<'data> for Not<'data, C>
+impl<'data, C> QueryMut<'data> for Not<C>
 where
     C: Component,
 {

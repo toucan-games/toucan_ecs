@@ -31,7 +31,7 @@ impl<'data, C> FetchMut<'data> for FetchNotMut<'data, C>
 where
     C: Component,
 {
-    type Item = Not<'data, C>;
+    type Item = Not<C>;
 
     // noinspection DuplicatedCode
     unsafe fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {

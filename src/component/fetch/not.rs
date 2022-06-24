@@ -30,7 +30,7 @@ impl<'data, C> Fetch<'data> for FetchNot<'data, C>
 where
     C: Component,
 {
-    type Item = Not<'data, C>;
+    type Item = Not<C>;
 
     // noinspection DuplicatedCode
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
