@@ -10,29 +10,21 @@ where
     resource: &'data mut R,
 }
 
-impl<'data, R> TryFrom<WorldDataMut<'data>> for FetchWriteMut<'data, R>
-where
-    R: Resource,
-{
-    type Error = FetchError;
-
-    fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
-        // SAFETY: must be checked by the caller.
-        let resource = unsafe { world.resources_mut() }
-            .get_mut()
-            .ok_or(FetchError)?;
-        Ok(Self { resource })
-    }
-}
-
 impl<'data, R> FetchMut<'data> for FetchWriteMut<'data, R>
 where
     R: Resource,
 {
     type Item = ResourceMarkerMut<'data, R>;
 
-    unsafe fn fetch_mut(&'data mut self, _: Entity) -> Result<Self::Item, FetchError> {
-        let resource = ResourceMarkerMut::new(self.resource);
+    unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
+        // SAFETY: must be checked by the caller.
+        let resource = world.resources_mut().get_mut().ok_or(FetchError)?;
+        Ok(Self { resource })
+    }
+
+    fn fetch_mut(&'data mut self, _: Entity) -> Result<Self::Item, FetchError> {
+        // SAFETY: was checked at fetch creation.
+        let resource = unsafe { ResourceMarkerMut::new(self.resource) };
         Ok(resource)
     }
 }

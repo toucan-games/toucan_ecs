@@ -12,22 +12,15 @@ macro_rules! fetch {
 
 macro_rules! impl_fetch {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> TryFrom<WorldData<'data>> for ($($types,)*)
-        where
-            $($types: Fetch<'data>,)*
-        {
-            type Error = FetchError;
-
-            fn try_from(world: WorldData<'data>) -> Result<Self, Self::Error> {
-                Ok(($($types::try_from(world)?,)*))
-            }
-        }
-
         impl<'data, $($types),*> Fetch<'data> for ($($types,)*)
         where
             $($types: Fetch<'data>,)*
         {
             type Item = ($($types::Item,)*);
+
+            fn new(world: WorldData<'data>) -> Result<Self, FetchError> {
+                Ok(($($types::new(world)?,)*))
+            }
 
             #[allow(non_snake_case)]
             fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
@@ -54,25 +47,18 @@ macro_rules! fetch_mut {
 
 macro_rules! impl_fetch_mut {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> TryFrom<WorldDataMut<'data>> for ($($types,)*)
-        where
-            $($types: FetchMut<'data>,)*
-        {
-            type Error = FetchError;
-
-            fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
-                Ok(($($types::try_from(world)?,)*))
-            }
-        }
-
         impl<'data, $($types),*> FetchMut<'data> for ($($types,)*)
         where
             $($types: FetchMut<'data>,)*
         {
             type Item = ($($types::Item,)*);
 
+            unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
+                Ok(($($types::new(world)?,)*))
+            }
+
             #[allow(non_snake_case)]
-            unsafe fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+            fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
                 let ($($types,)*) = self;
                 $(let $types = $types.fetch_mut(entity)?;)*
                 Ok(($($types,)*))

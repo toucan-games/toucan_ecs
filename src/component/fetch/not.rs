@@ -13,24 +13,16 @@ where
     storage: Option<&'data StorageImpl<C>>,
 }
 
-impl<'data, C> TryFrom<WorldData<'data>> for FetchNot<'data, C>
-where
-    C: Component,
-{
-    type Error = FetchError;
-
-    // noinspection DuplicatedCode
-    fn try_from(world: WorldData<'data>) -> Result<Self, Self::Error> {
-        let storage = world.components().get_storage();
-        Ok(Self { storage })
-    }
-}
-
 impl<'data, C> Fetch<'data> for FetchNot<'data, C>
 where
     C: Component,
 {
     type Item = Not<C>;
+
+    fn new(data: WorldData<'data>) -> Result<Self, FetchError> {
+        let storage = data.components().get_storage();
+        Ok(Self { storage })
+    }
 
     // noinspection DuplicatedCode
     fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {

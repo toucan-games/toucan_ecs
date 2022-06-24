@@ -13,20 +13,6 @@ where
     storage: Option<&'data StorageImpl<C>>,
 }
 
-impl<'data, C> TryFrom<WorldDataMut<'data>> for FetchNotMut<'data, C>
-where
-    C: Component,
-{
-    type Error = FetchError;
-
-    // noinspection DuplicatedCode
-    fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
-        // SAFETY: must be checked by the caller.
-        let storage = unsafe { world.components() }.get_storage();
-        Ok(Self { storage })
-    }
-}
-
 impl<'data, C> FetchMut<'data> for FetchNotMut<'data, C>
 where
     C: Component,
@@ -34,7 +20,14 @@ where
     type Item = Not<C>;
 
     // noinspection DuplicatedCode
-    unsafe fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+    unsafe fn new(data: WorldDataMut<'data>) -> Result<Self, FetchError> {
+        // SAFETY: must be checked by the caller.
+        let storage = data.components().get_storage();
+        Ok(Self { storage })
+    }
+
+    // noinspection DuplicatedCode
+    fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
         match self.storage {
             None => Ok(Not(PhantomData)),
             Some(storage) => {

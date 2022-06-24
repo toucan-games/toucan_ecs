@@ -10,28 +10,19 @@ where
     storage: &'data StorageImpl<C>,
 }
 
-impl<'data, C> TryFrom<WorldDataMut<'data>> for FetchReadMut<'data, C>
-where
-    C: Component,
-{
-    type Error = FetchError;
-
-    fn try_from(world: WorldDataMut<'data>) -> Result<Self, Self::Error> {
-        // SAFETY: must be checked by the caller.
-        let storage = unsafe { world.components() }
-            .get_storage()
-            .ok_or(FetchError)?;
-        Ok(Self { storage })
-    }
-}
-
 impl<'data, C> FetchMut<'data> for FetchReadMut<'data, C>
 where
     C: Component,
 {
     type Item = &'data C;
 
-    unsafe fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+    unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
+        // SAFETY: must be checked by the caller.
+        let storage = world.components().get_storage().ok_or(FetchError)?;
+        Ok(Self { storage })
+    }
+
+    fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
         self.storage.get(entity).ok_or(FetchError)
     }
 }

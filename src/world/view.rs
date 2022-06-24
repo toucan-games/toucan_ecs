@@ -25,10 +25,11 @@ impl<'data, Q> View<'data, Q>
 where
     Q: Query<'data>,
 {
+    // noinspection RsUnnecessaryQualifications
     pub(super) fn new(world: &'data World) -> Self {
         let (entities, data) = world.split();
         let entities = entities.iter();
-        let fetch = data.try_into().ok();
+        let fetch = Q::Fetch::new(data).ok();
         Self { entities, fetch }
     }
 }
@@ -70,10 +71,11 @@ impl<'data, Q> ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    pub(super) fn new(world: &'data mut World, _: CheckedQuery<'data, Q>) -> Self {
+    pub(super) fn new(world: &'data mut World, _checked: CheckedQuery<'data, Q>) -> Self {
         let (entities, data) = world.split_mut();
         let entities = entities.iter();
-        let fetch = data.try_into().ok();
+        // SAFETY: query was checked by `CheckedQuery`
+        let fetch = unsafe { Q::Fetch::new(data) }.ok();
         Self { entities, fetch }
     }
 }
@@ -87,11 +89,9 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             let entity = self.entities.next()?;
-            // SAFETY: was checked at struct creation.
-            // No GATs?
+            // SAFETY: no GATs?
             let fetch = unsafe { transmute::<_, &'data mut Q::Fetch>(self.fetch.as_mut()?) };
-            // SAFETY: was checked at struct creation.
-            let result = unsafe { fetch.fetch_mut(entity) };
+            let result = fetch.fetch_mut(entity);
             match result {
                 Ok(item) => return Some(item),
                 Err(_) => continue,
