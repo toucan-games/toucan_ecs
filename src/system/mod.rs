@@ -1,4 +1,4 @@
-//! Provides traits and utilities for [systems][`System`].
+//! Provides traits and utilities for systems.
 
 use fetch::Fetch;
 use query::Query;
@@ -11,8 +11,8 @@ mod schedule;
 
 /// Trait for systems in ECS.
 ///
-/// Each system performs global actions on every [entity][`crate::Entity`]
-/// that possesses a [component][`crate::component::Component`]
+/// Each system performs global actions on every [entity](crate::Entity)
+/// that possesses a [component](crate::component::Component)
 /// or components that match that system's query.
 pub trait System<'data, Q>: 'data
 where

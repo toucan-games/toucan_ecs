@@ -7,14 +7,15 @@ use crate::entity::{Entity, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 
-use super::{CheckedQuery, Query, QueryMut, View, ViewMut};
+use super::query::{CheckedQuery, Query, QueryMut};
+use super::{View, ViewMut};
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
 ///
-/// Use this to [create][`World::create`] and [destroy][`World::destroy`] entities,
-/// [attach][`World::attach`] and [remove][`World::remove`] components' data of the entity,
-/// [create][`World::entry`] entry for the entity,
+/// Use this to [create][World::create()] and [destroy][World::destroy()] entities,
+/// [attach][World::attach()] and [remove][World::remove()] components' data of the entity,
+/// [create entry][World::entry()] for the entity,
 /// view each component separately or group of components together.
 #[derive(Default)]
 pub struct World {
@@ -42,8 +43,8 @@ impl World {
 
     /// Creates new entity with no data attached to it.
     ///
-    /// To attach some data to the entity, use [`attach`][`World::attach`]
-    /// or [`attach_one`][`World::attach_one`] associated functions.
+    /// To attach some data to the entity, use [`attach`][World::attach()]
+    /// or [`attach_one`][World::attach_one()] associated functions.
     ///
     /// # Examples
     ///
@@ -62,8 +63,8 @@ impl World {
     cfg_resource! {
         /// Creates new resource and stores it in the world.
         ///
-        /// To get created resource, call [`get_resource`][World::get_resource] or
-        /// [`get_resource_mut`][World::get_resource_mut] associated function.
+        /// To get created resource, call [`get_resource`][World::get_resource()] or
+        /// [`get_resource_mut`][World::get_resource_mut()] associated function.
         ///
         /// # Examples
         ///
@@ -86,7 +87,7 @@ impl World {
 
     /// Creates new entity with one component attached to it.
     ///
-    /// This can be done by hand with [`attach_one`][`World::attach_one`] associated function.
+    /// This can be done by hand with [`attach_one`][World::attach_one()] associated function.
     ///
     /// # Examples
     ///
@@ -109,7 +110,7 @@ impl World {
 
     /// Creates new entity with set of components attached to it.
     ///
-    /// This can be done by hand with [`attach`][`World::attach`] associated function.
+    /// This can be done by hand with [`attach`][World::attach()] associated function.
     ///
     /// # Examples
     ///
@@ -133,7 +134,7 @@ impl World {
         self.components.create_with(set)
     }
 
-    /// Creates new [entry][`Entry`] for the newly created entity.
+    /// Creates new [entry](Entry) for the newly created entity.
     ///
     /// # Examples
     ///
@@ -150,7 +151,7 @@ impl World {
         self.components.create_entry()
     }
 
-    /// Creates [entry][`Entry`] for the newly created entity with one component attached to it.
+    /// Creates [entry](Entry) for the newly created entity with one component attached to it.
     ///
     /// This can be done by hand with [`Entry::attach_one`] associated function.
     ///
@@ -175,7 +176,7 @@ impl World {
         self.components.create_entry_with_one(component)
     }
 
-    /// Creates [entry][`Entry`] for the newly created entity with set of components attached to it.
+    /// Creates [entry](Entry) for the newly created entity with set of components attached to it.
     ///
     /// This can be done by hand with [`Entry::attach`] associated function.
     ///
@@ -203,9 +204,9 @@ impl World {
         self.components.create_entry_with(set)
     }
 
-    /// Create [entry][`Entry`] for the provided entity.
+    /// Create [entry](Entry) for the provided entity.
     ///
-    /// Returns [`None`][`Option::None`] if the provided entity was previously destroyed.
+    /// Returns [`None`](Option::None) if the provided entity was previously destroyed.
     ///
     /// # Examples
     ///
@@ -444,7 +445,7 @@ impl World {
     /// Attaches exactly one component to the entity.
     ///
     /// To attach multiple components of different types to the entity at once,
-    /// use [`attach`][`World::attach`] associated function.
+    /// use [`attach`][World::attach()] associated function.
     ///
     /// # Examples
     ///
@@ -469,7 +470,7 @@ impl World {
     /// Attaches set of components to the entity.
     ///
     /// To attach component of exactly one type to the entity,
-    /// use [`attach_one`][`World::attach_one`] associated function.
+    /// use [`attach_one`][World::attach_one()] associated function.
     ///
     /// # Examples
     ///
@@ -497,7 +498,7 @@ impl World {
     /// Returns `true` if component of generic type is attached to the entity.
     ///
     /// To check if the entity has components of multiple types,
-    /// use [`attached`][`World::attached`] associated function.
+    /// use [`attached`][World::attached()] associated function.
     ///
     /// # Examples
     ///
@@ -524,7 +525,7 @@ impl World {
     /// Returns `true` if components in the generic set type are attached to the entity.
     ///
     /// To check if the entity has component of exactly one type,
-    /// use [`attached_one`][`World::attached_one`] associated function.
+    /// use [`attached_one`][World::attached_one()] associated function.
     ///
     /// # Examples
     ///
@@ -569,7 +570,7 @@ impl World {
     /// Removes component of one type from the entity.
     ///
     /// To remove components of multiple types from the entity at once,
-    /// use [`remove`][`World::remove`] associated function.
+    /// use [`remove`][World::remove()] associated function.
     ///
     /// # Examples
     ///
@@ -596,7 +597,7 @@ impl World {
     /// Removes components of multiple types from the entity.
     ///
     /// To remove component of one type from the entity,
-    /// use [`remove_one`][`World::remove_one`] associated function.
+    /// use [`remove_one`][World::remove_one()] associated function.
     ///
     /// # Examples
     ///
@@ -625,7 +626,7 @@ impl World {
     /// It makes the entity effectively empty.
     ///
     /// To remove just a set of components from the entity,
-    /// use [`remove_one`][`World::remove_one`] and [`remove`][`World::remove`]
+    /// use [`remove_one`][World::remove_one()] and [`remove`][World::remove()]
     /// associated functions.
     ///
     /// # Examples
@@ -649,7 +650,7 @@ impl World {
     }
 
     /// Retrieves the shared borrow for the component of one type attached to the entity.
-    /// Returns [`None`][`Option::None`] if component is not attached to the entity.
+    /// Returns [`None`](Option::None) if component is not attached to the entity.
     ///
     /// # Examples
     ///
@@ -672,7 +673,7 @@ impl World {
     }
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
-    /// Returns [`None`][`Option::None`] if component is not attached to the entity.
+    /// Returns [`None`](Option::None) if component is not attached to the entity.
     ///
     /// # Examples
     ///
@@ -745,12 +746,12 @@ impl World {
         }
     }
 
-    /// Creates a [view][`ViewOne`] of the component type.
+    /// Creates a [view](ViewOne) of the component type.
     ///
-    /// This iterator will return [entities][`Entity`] and their shared borrows
+    /// This iterator will return [entities](Entity) and their shared borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
-    /// More complex views can be constructed with [view][`World::view`] associated function.
+    /// More complex views can be constructed with [`view`][World::view()] associated function.
     ///
     /// # Examples
     ///
@@ -772,12 +773,12 @@ impl World {
         self.components.view_one::<C>()
     }
 
-    /// Creates a [view][`ViewOneMut`] of the component type.
+    /// Creates a [view](ViewOneMut) of the component type.
     ///
-    /// This iterator will return [entities][`Entity`] and their unique borrows
+    /// This iterator will return [entities](Entity) and their unique borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
-    /// Consider using [systems][`crate::system::System`]
+    /// Consider using [systems](crate::system::System)
     /// to mutate multiple components attached to the entity.
     ///
     /// # Examples
@@ -801,9 +802,9 @@ impl World {
         self.components.view_one_mut::<C>()
     }
 
-    /// Creates a [view][`View`] of the multiple component types.
+    /// Creates a [view](View) of the multiple component types.
     ///
-    /// This iterator will return [entities][`Entity`] and their shared borrows of components.
+    /// This iterator will return [entities](Entity) and their shared borrows of components.
     ///
     /// View will be constructed from the query which is determined by the generic type.
     /// Only entities that satisfies the query will be returned.
@@ -831,9 +832,9 @@ impl World {
         View::new(self)
     }
 
-    /// Creates a [view][`ViewMut`] of the multiple component types.
+    /// Creates a [view](ViewMut) of the multiple component types.
     ///
-    /// This iterator will return [entities][`Entity`] and their shared OR unique
+    /// This iterator will return [entities](Entity) and their shared OR unique
     /// borrows of components.
     ///
     /// View will be constructed from the query which is determined by the generic type.
@@ -914,24 +915,21 @@ pub struct WorldDataMut<'data> {
 impl<'data> WorldDataMut<'data> {
     /// # Safety
     ///
-    /// This function should be called if and only if mutability soundness was checked
-    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    /// This function should be called if and only if mutability soundness was checked.
     pub unsafe fn components(self) -> &'data StorageMap {
         &*self.components
     }
 
     /// # Safety
     ///
-    /// This function should be called if and only if mutability soundness was checked
-    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    /// This function should be called if and only if mutability soundness was checked.
     pub unsafe fn components_mut(self) -> &'data mut StorageMap {
         &mut *self.components
     }
 
     /// # Safety
     ///
-    /// This function should be called if and only if mutability soundness was checked
-    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    /// This function should be called if and only if mutability soundness was checked.
     #[cfg(feature = "resource")]
     pub unsafe fn resources(self) -> &'data ResourceRegistry {
         &*self.resources
@@ -939,8 +937,7 @@ impl<'data> WorldDataMut<'data> {
 
     /// # Safety
     ///
-    /// This function should be called if and only if mutability soundness was checked
-    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    /// This function should be called if and only if mutability soundness was checked.
     #[cfg(feature = "resource")]
     pub unsafe fn resources_mut(self) -> &'data mut ResourceRegistry {
         &mut *self.resources

@@ -5,11 +5,13 @@ use multimap::MultiMap;
 use crate::component::fetch::{
     FetchNotMut, FetchOptionReadMut, FetchOptionWriteMut, FetchReadMut, FetchWriteMut,
 };
-use crate::world::{Query, QueryMut, SoundnessCheck};
+use crate::world::query::{Query, QueryMut, QuerySealed, SoundnessCheck};
 
 use super::fetch::{FetchNot, FetchOptionRead, FetchRead};
 use super::marker::Not;
 use super::Component;
+
+impl<'data, C> QuerySealed for &'data C where C: Component {}
 
 impl<'data, C> Query<'data> for &'data C
 where
@@ -18,12 +20,16 @@ where
     type Fetch = FetchRead<'data, C>;
 }
 
+impl<'data, C> QuerySealed for Option<&'data C> where C: Component {}
+
 impl<'data, C> Query<'data> for Option<&'data C>
 where
     C: Component,
 {
     type Fetch = FetchOptionRead<'data, C>;
 }
+
+impl<C> QuerySealed for Not<C> where C: Component {}
 
 impl<'data, C> Query<'data> for Not<C>
 where

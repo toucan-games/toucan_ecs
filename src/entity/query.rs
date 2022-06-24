@@ -2,10 +2,12 @@ use std::any::TypeId;
 
 use multimap::MultiMap;
 
-use crate::world::{Query, QueryMut, SoundnessCheck};
+use crate::world::query::{Query, QueryMut, QuerySealed, SoundnessCheck};
 use crate::Entity;
 
 use super::fetch::FetchEntity;
+
+impl QuerySealed for Entity {}
 
 impl<'data> Query<'data> for Entity {
     type Fetch = FetchEntity;

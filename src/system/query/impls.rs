@@ -5,7 +5,8 @@ use crate::resource::{
     Resource,
 };
 use crate::system::fetch::*;
-use crate::world::{Query as WorldQuery, QueryMut as WorldQueryMut, View, ViewMut};
+use crate::world::query::{Query as WorldQuery, QueryMut as WorldQueryMut};
+use crate::world::{View, ViewMut};
 
 use super::*;
 

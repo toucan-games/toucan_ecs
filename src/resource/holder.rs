@@ -75,11 +75,11 @@ where
     }
 }
 
-impl<T> From<(T,)> for ErasedResourceHolder
+impl<T> From<(T, )> for ErasedResourceHolder
 where
     T: Resource,
 {
-    fn from(resource: (T,)) -> Self {
+    fn from(resource: (T, )) -> Self {
         Self(Box::new(resource.0))
     }
 }

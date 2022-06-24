@@ -12,6 +12,11 @@ macro_rules! query {
 
 macro_rules! impl_query {
     ($($types:ident),*) => {
+        impl<'data, $($types),*> QuerySealed for ($($types,)*)
+        where
+            $($types: Query<'data>,)*
+        {}
+
         impl<'data, $($types),*> Query<'data> for ($($types,)*)
         where
             $($types: Query<'data>,)*

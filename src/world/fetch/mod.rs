@@ -22,7 +22,6 @@ pub trait FetchMut<'data>:
 
     /// # Safety
     ///
-    /// This function should be called if and only if mutability soundness was checked
-    /// by [`check_soundness`][`super::query::check_soundness`] function.
+    /// This function should be called if and only if mutability soundness was checked.
     unsafe fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError>;
 }

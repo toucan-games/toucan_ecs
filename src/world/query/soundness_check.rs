@@ -25,7 +25,7 @@ where
     }
 }
 
-pub fn check_soundness<T>()
+fn check_soundness<T>()
 where
     T: SoundnessCheck,
 {

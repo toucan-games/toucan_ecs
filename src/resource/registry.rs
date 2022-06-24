@@ -25,7 +25,7 @@ impl Registry {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        self.resources.insert(type_id, (resource,).into());
+        self.resources.insert(type_id, (resource, ).into());
     }
 
     pub fn destroy<R>(&mut self)

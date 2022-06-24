@@ -2,20 +2,22 @@ use std::any::TypeId;
 
 use multimap::MultiMap;
 
-use crate::world::{Query, QueryMut, SoundnessCheck};
+use crate::world::query::{Query, QueryMut, QuerySealed, SoundnessCheck};
 
 use super::fetch::{FetchRead, FetchReadMut, FetchWriteMut};
-use super::marker::{Resource as ResourceMarker, ResourceMut as ResourceMarkerMut};
+use super::marker;
 use super::Resource;
 
-impl<'data, R> Query<'data> for ResourceMarker<'data, R>
+impl<'data, R> QuerySealed for marker::Resource<'data, R> where R: Resource {}
+
+impl<'data, R> Query<'data> for marker::Resource<'data, R>
 where
     R: Resource,
 {
     type Fetch = FetchRead<'data, R>;
 }
 
-impl<'data, R> SoundnessCheck for ResourceMarker<'data, R>
+impl<'data, R> SoundnessCheck for marker::Resource<'data, R>
 where
     R: Resource,
 {
@@ -26,14 +28,14 @@ where
     }
 }
 
-impl<'data, R> QueryMut<'data> for ResourceMarker<'data, R>
+impl<'data, R> QueryMut<'data> for marker::Resource<'data, R>
 where
     R: Resource,
 {
     type Fetch = FetchReadMut<'data, R>;
 }
 
-impl<'data, R> SoundnessCheck for ResourceMarkerMut<'data, R>
+impl<'data, R> SoundnessCheck for marker::ResourceMut<'data, R>
 where
     R: Resource,
 {
@@ -44,7 +46,7 @@ where
     }
 }
 
-impl<'data, R> QueryMut<'data> for ResourceMarkerMut<'data, R>
+impl<'data, R> QueryMut<'data> for marker::ResourceMut<'data, R>
 where
     R: Resource,
 {

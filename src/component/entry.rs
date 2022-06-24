@@ -1,15 +1,15 @@
 use crate::component::{Component, ComponentSet, Registry};
 use crate::entity::Entity;
 
-/// Entry of the specific [entity][`Entity`].
+/// Entry of the specific [entity](Entity).
 ///
 /// Use this struct to simplify access to the entity so
 /// you don't have to provide it each time to retrieve something,
 /// you can do it only once.
 ///
 /// You can retrieve this from
-/// [`World::create_entry`][`crate::World::create_entry`] to create new entity and easily access it
-/// or from [`World::entry`][`crate::World::entry`] if an entity was created earlier.
+/// [`World::create_entry`][crate::World::create_entry()] to create new entity and easily access it
+/// or from [`World::entry`][crate::World::entry()] if an entity was created earlier.
 pub struct Entry<'r> {
     entity: Entity,
     registry: &'r mut Registry,
@@ -74,7 +74,7 @@ impl<'r> Entry<'r> {
     /// This function does not panic because it registers component type automatically.
     ///
     /// To attach multiple components of different types to the entity at once,
-    /// use [`attach`][`Entry::attach`] associated function.
+    /// use [`attach`][Entry::attach()] associated function.
     ///
     /// # Examples
     ///
@@ -100,7 +100,7 @@ impl<'r> Entry<'r> {
     /// This function does not panic because it registers components' types automatically.
     ///
     /// To attach component of exactly one type to the entity,
-    /// use [`attach_one`][`Entry::attach_one`] associated function.
+    /// use [`attach_one`][Entry::attach_one()] associated function.
     ///
     /// # Examples
     ///
@@ -127,7 +127,7 @@ impl<'r> Entry<'r> {
     /// Returns `true` if component of generic type is attached to the entity.
     ///
     /// To check if the entity has components of multiple types,
-    /// use [`attached`][`Entry::attached`] associated function.
+    /// use [`attached`][Entry::attached()] associated function.
     ///
     /// # Examples
     ///
@@ -154,7 +154,7 @@ impl<'r> Entry<'r> {
     /// Returns `true` if components in the generic set type are attached to the entity.
     ///
     /// To check if the entity has component of exactly one type,
-    /// use [`attached_one`][`Entry::attached_one`] associated function.
+    /// use [`attached_one`][Entry::attached_one()] associated function.
     ///
     /// # Examples
     ///
@@ -184,7 +184,7 @@ impl<'r> Entry<'r> {
     /// Removes component of one type from the entity.
     ///
     /// To remove components of multiple types from the entity at once,
-    /// use [`remove`][`Entry::remove`] associated function.
+    /// use [`remove`][Entry::remove()] associated function.
     ///
     /// # Examples
     ///
@@ -211,7 +211,7 @@ impl<'r> Entry<'r> {
     /// Removes components of multiple types from the entity.
     ///
     /// To remove component of one type from the entity,
-    /// use [`remove_one`][`Entry::remove_one`] associated function.
+    /// use [`remove_one`][Entry::remove_one()] associated function.
     ///
     /// # Examples
     ///
@@ -240,7 +240,7 @@ impl<'r> Entry<'r> {
     /// It makes the entity effectively empty.
     ///
     /// To remove just a set of components from the entity,
-    /// use [`remove_one`][`Entry::remove_one`] and [`remove`][`Entry::remove`]
+    /// use [`remove_one`][Entry::remove_one()] and [`remove`][Entry::remove()]
     /// associated functions.
     ///
     /// # Examples
@@ -264,7 +264,7 @@ impl<'r> Entry<'r> {
     }
 
     /// Retrieves the shared borrow for the component of one type attached to the entity.
-    /// Returns [`None`][`Option::None`] if component is not attached to the entity.
+    /// Returns [`None`][Option::None] if component is not attached to the entity.
     ///
     /// # Examples
     ///
@@ -287,7 +287,7 @@ impl<'r> Entry<'r> {
     }
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
-    /// Returns [`None`][`Option::None`] if component is not attached to the entity.
+    /// Returns [`None`][Option::None] if component is not attached to the entity.
     ///
     /// # Examples
     ///

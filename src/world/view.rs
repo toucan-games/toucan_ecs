@@ -4,12 +4,15 @@ use crate::world::query::CheckedQuery;
 use crate::world::FetchMut;
 use crate::{entity::Iter, World};
 
-use super::{Fetch, Query, QueryItem, QueryMut, QueryMutItem};
+use super::query::{Query, QueryItem, QueryMut, QueryMutItem};
+use super::Fetch;
 
-/// Iterator which returns shared borrows of components.
+/// Iterator which returns **shared** borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfy the query will be returned.
+///
+/// List of available types to query is located in [`world::query`](crate::world::query) module.
 pub struct View<'data, Q>
 where
     Q: Query<'data>,
@@ -49,10 +52,12 @@ where
     }
 }
 
-/// Iterator which returns shared OR unique borrows of components.
+/// Iterator which returns **shared** and/or **unique** borrows of components.
 ///
 /// It will be constructed from the query which is determined by the generic type.
 /// Only entities that satisfy the query will be returned.
+///
+/// List of available types to query is located in [`world::query`](crate::world::query) module.
 pub struct ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,

@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
-use crate::world::{Query, View};
+use crate::world::query::Query;
+use crate::world::View;
 
 use super::Fetch;
 

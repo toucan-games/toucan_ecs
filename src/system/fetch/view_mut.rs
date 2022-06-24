@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
-use crate::world::{QueryMut, ViewMut};
+use crate::world::query::QueryMut;
+use crate::world::ViewMut;
 
 use super::Fetch;
 

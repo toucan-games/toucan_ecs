@@ -18,7 +18,7 @@ pub struct Schedule<'data> {
 }
 
 impl<'data> Schedule<'data> {
-    /// Creates a new [schedule][`Schedule`] builder.
+    /// Creates a new [schedule](Schedule) builder.
     pub fn builder() -> ScheduleBuilder<'data> {
         ScheduleBuilder::new()
     }
@@ -41,7 +41,7 @@ impl<'data> ScheduleBuilder<'data> {
         }
     }
 
-    /// Adds a system to the [schedule][`Schedule`].
+    /// Adds a system to the [schedule](Schedule).
     pub fn system<S, Q>(mut self, system: S) -> Self
     where
         S: System<'data, Q>,
@@ -52,7 +52,7 @@ impl<'data> ScheduleBuilder<'data> {
         self
     }
 
-    /// Finalizes the builder into a [schedule][`Schedule`].
+    /// Finalizes the builder into a [schedule](Schedule).
     pub fn build(self) -> Schedule<'data> {
         let systems = self.systems;
         Schedule { systems }
