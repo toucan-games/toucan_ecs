@@ -1,5 +1,5 @@
 use crate::Entity;
-use crate::resource::{marker::Resource as ResourceMarker, Resource};
+use crate::resource::{marker, Resource};
 use crate::world::{FetchError, FetchMut, WorldDataMut};
 
 #[repr(transparent)]
@@ -14,7 +14,7 @@ impl<'data, R> FetchMut<'data> for FetchReadMut<'data, R>
 where
     R: Resource,
 {
-    type Item = ResourceMarker<'data, R>;
+    type Item = marker::Resource<'data, R>;
 
     unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
         // SAFETY: must be checked by the caller.
@@ -23,7 +23,7 @@ where
     }
 
     fn fetch_mut(&mut self, _: Entity) -> Result<Self::Item, FetchError> {
-        let resource = ResourceMarker::new(self.resource);
+        let resource = marker::Resource::new(self.resource);
         Ok(resource)
     }
 }

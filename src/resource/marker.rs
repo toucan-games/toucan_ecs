@@ -1,85 +1,76 @@
 //! Special marker types for views and systems.
 
-use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
-use super::Resource as ResourceTrait;
-
-/// Marker for retrieving shared borrow of resource from the world.
+/// Marker for retrieving **shared** borrow of [resource] from the world.
 /// It must be used in query to be retrieved.
+///
+/// This struct is just a wrapper around **shared** [reference] of the resource.
+///
+/// [resource]: super::Resource
+/// [reference]: prim@reference
 #[repr(transparent)]
-pub struct Resource<'data, R>
+pub struct Resource<'data, R>(&'data R)
 where
-    R: ResourceTrait,
-{
-    resource: &'data R,
-}
+    R: super::Resource;
 
 impl<'data, R> Resource<'data, R>
 where
-    R: ResourceTrait,
+    R: super::Resource,
 {
     pub(super) fn new(resource: &'data R) -> Self {
-        Self { resource }
+        Self(resource)
     }
 }
 
 impl<'data, R> Deref for Resource<'data, R>
 where
-    R: ResourceTrait,
+    R: super::Resource,
 {
     type Target = R;
 
     fn deref(&self) -> &Self::Target {
-        self.resource
+        self.0
     }
 }
 
-/// Marker for retrieving unique borrow of resource from the world.
+/// Marker for retrieving **unique** borrow of [resource] from the world.
 /// It must be used in query to be retrieved.
+///
+/// This struct is just a wrapper around **mutable** [reference] of the resource.
+///
+/// [resource]: super::Resource
+/// [reference]: prim@reference
 #[repr(transparent)]
-pub struct ResourceMut<'data, R>
+pub struct ResourceMut<'data, R>(&'data mut R)
 where
-    R: ResourceTrait,
-{
-    resource: *mut R,
-    _ph: PhantomData<&'data mut R>,
-}
-
-unsafe impl<'data, R> Send for ResourceMut<'data, R> where R: ResourceTrait {}
-
-unsafe impl<'data, R> Sync for ResourceMut<'data, R> where R: ResourceTrait {}
+    R: super::Resource;
 
 impl<'data, R> ResourceMut<'data, R>
 where
-    R: ResourceTrait,
+    R: super::Resource,
 {
-    /// # Safety
-    ///
-    /// Use this function if and only if soundness was checked earlier.
-    pub(super) unsafe fn new(resource: *mut R) -> Self {
-        Self { resource, _ph: PhantomData }
+    pub(super) fn new(resource: &'data mut R) -> Self {
+        Self(resource)
     }
 }
 
 impl<'data, R> Deref for ResourceMut<'data, R>
 where
-    R: ResourceTrait,
+    R: super::Resource,
 {
     type Target = R;
 
     fn deref(&self) -> &Self::Target {
-        // SAFETY: was checked at marker creation.
-        unsafe { &*self.resource }
+        self.0
     }
 }
 
 impl<'data, R> DerefMut for ResourceMut<'data, R>
 where
-    R: ResourceTrait,
+    R: super::Resource,
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
-        // SAFETY: was checked at marker creation.
-        unsafe { &mut *self.resource }
+        self.0
     }
 }
