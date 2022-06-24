@@ -4,7 +4,7 @@
     clippy::undocumented_unsafe_blocks,
     clippy::missing_safety_doc
 )]
-#![cfg_attr(any(docsrs, all(doc, CHANNEL_NIGHTLY)), feature(doc_cfg))]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 //! Simple and safe ECS library for Rust.
 //!

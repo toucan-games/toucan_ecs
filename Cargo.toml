@@ -15,9 +15,6 @@ slotmap = "1.0.6"
 as-any = "0.3.0"
 multimap = { version = "0.8.3", default-features = false }
 
-[build-dependencies]
-rustc_version = "0.4.0"
-
 [dev-dependencies]
 criterion = { version = "0.3.5", features = ["html_reports"] }
 crossterm = "0.23.2"
@@ -39,4 +36,7 @@ resource = []
 
 [package.metadata.docs.rs]
 all-features = true
-rustc-args = ["--cfg", "docsrs"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[package.metadata.playground]
+features = ["resource"]
