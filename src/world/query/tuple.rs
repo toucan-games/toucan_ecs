@@ -19,6 +19,7 @@ macro_rules! impl_query {
 
         impl<'data, $($types),*> Query<'data> for ($($types,)*)
         where
+            Self: From<($(QueryItem<'data, $types>,)*)>,
             $($types: Query<'data>,)*
         {
             type Fetch = ($($types::Fetch,)*);
@@ -54,6 +55,7 @@ macro_rules! impl_query_mut {
 
         impl<'data, $($types),*> QueryMut<'data> for ($($types,)*)
         where
+            Self: From<($(QueryMutItem<'data, $types>,)*)>,
             $($types: QueryMut<'data>,)*
         {
             type Fetch = ($($types::Fetch,)*);

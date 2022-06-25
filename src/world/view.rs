@@ -4,7 +4,7 @@ use crate::world::query::CheckedQuery;
 use crate::world::FetchMut;
 use crate::{entity::Iter, World};
 
-use super::query::{Query, QueryItem, QueryMut, QueryMutItem};
+use super::query::{Query, QueryMut};
 use super::Fetch;
 
 /// Iterator which returns **shared** borrows of components.
@@ -38,7 +38,7 @@ impl<'data, Q> Iterator for View<'data, Q>
 where
     Q: Query<'data>,
 {
-    type Item = QueryItem<'data, Q>;
+    type Item = Q;
 
     fn next(&mut self) -> Option<Self::Item> {
         let fetch = self.fetch.as_ref()?;
@@ -46,7 +46,7 @@ where
             let entity = self.entities.next()?;
             let result = fetch.fetch(entity);
             match result {
-                Ok(item) => return Some(item),
+                Ok(item) => return Some(item.into()),
                 Err(_) => continue,
             }
         }
@@ -84,7 +84,7 @@ impl<'data, Q> Iterator for ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    type Item = QueryMutItem<'data, Q>;
+    type Item = Q;
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
@@ -93,7 +93,7 @@ where
             let fetch = unsafe { transmute::<_, &'data mut Q::Fetch>(self.fetch.as_mut()?) };
             let result = fetch.fetch_mut(entity);
             match result {
-                Ok(item) => return Some(item),
+                Ok(item) => return Some(item.into()),
                 Err(_) => continue,
             }
         }

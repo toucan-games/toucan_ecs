@@ -3,6 +3,7 @@ use std::fmt::Debug;
 use components::{Mass, Position, Velocity};
 use toucan_ecs::component::{Component, ViewOne, ViewOneMut};
 use toucan_ecs::system::Schedule;
+use toucan_ecs::world::query::Query;
 use toucan_ecs::world::{View, ViewMut};
 use toucan_ecs::Entity;
 
@@ -17,7 +18,7 @@ fn for_each_component_system(position: &mut Position, velocity: &Velocity, mass:
         "position {:?}, velocity {:?}, mass {:?}",
         position,
         velocity,
-        mass.as_deref()
+        mass.as_deref(),
     );
 }
 
@@ -38,9 +39,12 @@ fn view_one_mut_system(view_one_mut: ViewOneMut<Velocity>) {
     }
 }
 
-fn view_system<'data>(view: View<'data, (Entity, &'data Position)>) {
-    for (entity, position) in view {
-        println!("entity: {:?}, position: {:?}", entity, position)
+fn view_system<'data, Q>(view: View<'data, Q>)
+where
+    Q: Query<'data> + Debug,
+{
+    for item in view {
+        println!("item: {:?}", item)
     }
 }
 
@@ -75,7 +79,7 @@ fn test() {
         .system(|time: Resource<Time>| println!("Elapsed seconds are {}", time.elapsed_secs()))
         .system(view_one_system::<Position>)
         .system(view_one_mut_system)
-        .system(view_system)
+        .system(view_system::<(Entity, &Position, Option<&Velocity>)>)
         .system(view_mut_system)
         .build();
     schedule.run(&mut world);
