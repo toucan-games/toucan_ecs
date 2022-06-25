@@ -4,10 +4,10 @@
 //! - [`Entity`](crate::entity::Entity) handle;
 //! - immutable and mutable [references] of [components];
 //! - immutable and mutable [references] of [components] wrapped in [`Option`];
-//! - immutable and mutable [references] of [resources] (if enabled by `resource` feature);
-//! - [marker](crate::component::marker) types of components;
-//! - [marker](crate::resource::marker) types of resources (if enabled by `resource` feature);
-//! - and [tuples] of types listed above.
+//! - immutable and mutable [references] of [resources] via [markers](crate::resource::marker)
+//! (if enabled by `resource` feature);
+//! - [`Not`](crate::component::marker::Not) marker type of components;
+//! - and [tuples] of arity 12 or less of types listed above.
 //!
 //! [references]: prim@reference
 //! [tuples]: prim@tuple
