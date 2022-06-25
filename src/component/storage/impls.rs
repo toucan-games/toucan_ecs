@@ -14,9 +14,8 @@ pub struct StorageImpl<C>
 where
     C: Component,
 {
-    components: DenseSlotMap<ComponentKey, C>,
+    components: DenseSlotMap<ComponentKey, (Entity, C)>,
     entity_to_key: SecondaryMap<Entity, ComponentKey>,
-    key_to_entity: SecondaryMap<ComponentKey, Entity>,
 }
 
 impl<C> StorageImpl<C>
@@ -24,17 +23,13 @@ where
     C: Component,
 {
     pub fn iter(&self) -> Iter<C> {
-        Iter {
-            iter: self.components.iter(),
-            key_to_entity: &self.key_to_entity,
-        }
+        let iter = self.components.iter();
+        Iter { iter }
     }
 
     pub fn iter_mut(&mut self) -> IterMut<C> {
-        IterMut {
-            iter: self.components.iter_mut(),
-            key_to_entity: &self.key_to_entity,
-        }
+        let iter_mut = self.components.iter_mut();
+        IterMut { iter_mut }
     }
 }
 
@@ -46,7 +41,6 @@ where
         Self {
             components: DenseSlotMap::with_key(),
             entity_to_key: SecondaryMap::new(),
-            key_to_entity: SecondaryMap::new(),
         }
     }
 }
@@ -58,9 +52,8 @@ where
     type Item = C;
 
     fn attach(&mut self, entity: Entity, component: Self::Item) {
-        let component = self.components.insert(component);
+        let component = self.components.insert((entity, component));
         self.entity_to_key.insert(entity, component);
-        self.key_to_entity.insert(component, entity);
     }
 
     fn attached(&self, entity: Entity) -> bool {
@@ -69,25 +62,25 @@ where
 
     fn get(&self, entity: Entity) -> Option<&Self::Item> {
         let key = self.entity_to_key.get(entity)?;
-        self.components.get(*key)
+        let (_, component) = self.components.get(*key)?;
+        Some(component)
     }
 
     fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> {
         let key = self.entity_to_key.get(entity)?;
-        self.components.get_mut(*key)
+        let (_, component) = self.components.get_mut(*key)?;
+        Some(component)
     }
 
     fn remove(&mut self, entity: Entity) {
         let component = self.entity_to_key.remove(entity);
         if let Some(component) = component {
             self.components.remove(component);
-            self.key_to_entity.remove(component);
         }
     }
 
     fn clear(&mut self) {
         self.entity_to_key.clear();
-        self.key_to_entity.clear();
         self.components.clear();
     }
 }
@@ -96,8 +89,7 @@ pub struct Iter<'data, C>
 where
     C: Component,
 {
-    iter: DenseIter<'data, ComponentKey, C>,
-    key_to_entity: &'data SecondaryMap<ComponentKey, Entity>,
+    iter: DenseIter<'data, ComponentKey, (Entity, C)>,
 }
 
 impl<'data, C> Iterator for Iter<'data, C>
@@ -110,7 +102,7 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         self.iter
             .next()
-            .map(|(key, data)| (self.key_to_entity[key], data))
+            .map(|(_, (entity, component))| (*entity, component))
     }
 }
 
@@ -118,8 +110,7 @@ pub struct IterMut<'data, C>
 where
     C: Component,
 {
-    iter: DenseIterMut<'data, ComponentKey, C>,
-    key_to_entity: &'data SecondaryMap<ComponentKey, Entity>,
+    iter_mut: DenseIterMut<'data, ComponentKey, (Entity, C)>,
 }
 
 impl<'data, C> Iterator for IterMut<'data, C>
@@ -130,8 +121,8 @@ where
 
     // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter
+        self.iter_mut
             .next()
-            .map(|(key, data)| (self.key_to_entity[key], data))
+            .map(|(_, (entity, component))| (*entity, component))
     }
 }
