@@ -1,4 +1,4 @@
-//! Provides types which can be queried in the [world](crate::world::World).
+//! Provides types which can be queried by views in the [world](crate::world::World).
 //!
 //! Such types are:
 //! - [`Entity`](crate::entity::Entity) handle;

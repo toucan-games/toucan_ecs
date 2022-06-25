@@ -1,7 +1,21 @@
 //! Provides types which can be queried by the [system](crate::system::System).
 //!
 //! Such types are:
-//! - todo
+//! - [`Entity`](crate::entity::Entity) handle;
+//! - immutable and mutable [references] of [components];
+//! - immutable and mutable [references] of [components] wrapped in [`Option`];
+//! - immutable and mutable [references] of [resources] via [markers](crate::resource::marker)
+//! (if enabled by `resource` feature);
+//! - [`Not`](crate::component::marker::Not) marker type of components;
+//! - world views, such as [`ViewOne`](crate::component::ViewOne),
+//! [`ViewOneMut`](crate::component::ViewOneMut), [`View`](crate::world::View) and
+//! [`ViewMut`](crate::world::ViewMut);
+//! - and [tuples] of arity 12 or less of types listed above.
+//!
+//! [references]: prim@reference
+//! [tuples]: prim@tuple
+//! [components]: crate::component::Component
+//! [resources]: crate::resource::Resource
 
 use private::QuerySealed;
 

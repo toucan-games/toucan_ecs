@@ -1,4 +1,6 @@
+use crate::component::marker::Not;
 use crate::component::{Component, ViewOne, ViewOneMut};
+use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::*;
@@ -10,6 +12,12 @@ impl QuerySealed for () {}
 
 impl<'data> Query<'data> for () {
     type Fetch = ();
+}
+
+impl QuerySealed for Entity {}
+
+impl<'data> Query<'data> for Entity {
+    type Fetch = FetchEntity;
 }
 
 impl<'data, C> QuerySealed for &'data C where C: Component {}
@@ -46,6 +54,15 @@ where
     C: Component,
 {
     type Fetch = FetchOptionWrite<C>;
+}
+
+impl<C> QuerySealed for Not<C> where C: Component {}
+
+impl<'data, C> Query<'data> for Not<C>
+where
+    C: Component,
+{
+    type Fetch = FetchNot<C>;
 }
 
 impl<'data, C> QuerySealed for ViewOne<'data, C> where C: Component {}
