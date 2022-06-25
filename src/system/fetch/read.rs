@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::component::Component;
 #[cfg(feature = "resource")]
-use crate::resource::Resource;
+use crate::resource::{marker, Resource};
 
 use super::Fetch;
 
@@ -33,5 +33,5 @@ impl<'data, R> Fetch<'data> for FetchResourceRead<R>
 where
     R: Resource,
 {
-    type Item = &'data R;
+    type Item = marker::Resource<'data, R>;
 }
