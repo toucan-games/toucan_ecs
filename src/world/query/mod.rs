@@ -28,9 +28,14 @@ use super::fetch::{Fetch, FetchMut};
 mod soundness_check;
 mod tuple;
 
+#[cfg(doc)]
+#[doc(hidden)]
+pub type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
+
+#[cfg(not(doc))]
 type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 
-/// Type which can be queried by [view](crate::world::View)
+/// Type which can be queried by **shared** [view](crate::world::View)
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
@@ -43,6 +48,11 @@ mod private {
     pub trait QuerySealed {}
 }
 
+#[cfg(doc)]
+#[doc(hidden)]
+pub type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>::Item;
+
+#[cfg(not(doc))]
 type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>::Item;
 
 /// Type which can be queried by **mutable** [view](crate::world::ViewMut)
