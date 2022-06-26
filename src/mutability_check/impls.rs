@@ -1,10 +1,18 @@
 use crate::component::marker::Not;
-use crate::component::{Component, ComponentTypeId};
+use crate::component::{Component, ComponentTypeId, ViewOne, ViewOneMut};
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource, ResourceTypeId};
+use crate::world::query::{Query, QueryMut};
+use crate::world::{View, ViewMut};
 
 use super::*;
+
+impl MutabilityCheck for () {
+    const MUTABLE: bool = false;
+
+    fn extend_before_check(_: &mut MultiMap<TypeId, bool>) {}
+}
 
 impl MutabilityCheck for Entity {
     const MUTABLE: bool = false;
@@ -88,5 +96,49 @@ where
 
     fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
+    }
+}
+
+impl<'data, C> MutabilityCheck for ViewOne<'data, C>
+where
+    C: Component,
+{
+    const MUTABLE: bool = false;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE);
+    }
+}
+
+impl<'data, C> MutabilityCheck for ViewOneMut<'data, C>
+where
+    C: Component,
+{
+    const MUTABLE: bool = true;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE);
+    }
+}
+
+impl<'data, Q> MutabilityCheck for View<'data, Q>
+where
+    Q: Query<'data>,
+{
+    const MUTABLE: bool = Q::MUTABLE;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        Q::extend_before_check(multimap)
+    }
+}
+
+impl<'data, Q> MutabilityCheck for ViewMut<'data, Q>
+where
+    Q: QueryMut<'data>,
+{
+    const MUTABLE: bool = Q::MUTABLE;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        Q::extend_before_check(multimap)
     }
 }

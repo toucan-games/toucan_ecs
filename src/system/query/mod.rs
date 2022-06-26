@@ -17,7 +17,7 @@
 //! [components]: crate::component::Component
 //! [resources]: crate::resource::Resource
 
-use private::QuerySealed;
+use crate::mutability_check::MutabilityCheck as QuerySealed;
 
 use super::Fetch;
 
@@ -37,8 +37,4 @@ type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 pub trait Query<'data>: 'data + QuerySealed + From<QueryItem<'data, Self>> {
     #[doc(hidden)]
     type Fetch: Fetch<'data>;
-}
-
-mod private {
-    pub trait QuerySealed {}
 }

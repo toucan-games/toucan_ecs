@@ -12,11 +12,6 @@ macro_rules! system_query {
 
 macro_rules! impl_system_query {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> QuerySealed for ($($types,)*)
-        where
-            $($types: Query<'data>,)*
-        {}
-
         impl<'data, $($types),*> Query<'data> for ($($types,)*)
         where
             Self: From<($(QueryItem<'data, $types>,)*)>,
