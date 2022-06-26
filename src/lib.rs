@@ -104,6 +104,7 @@ pub use world::World;
 
 #[macro_use]
 mod macros;
+mod mutability_check;
 
 pub mod component;
 pub mod entity;

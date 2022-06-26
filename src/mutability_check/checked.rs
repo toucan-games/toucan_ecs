@@ -1,36 +1,30 @@
-use std::any::TypeId;
 use std::marker::PhantomData;
 
-use multimap::MultiMap;
+use super::{MultiMap, MutabilityCheck};
 
-pub trait SoundnessCheck {
-    const MUTABLE: bool;
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>);
-}
-
-pub struct SoundnessChecked<T>
+pub struct MutabilityChecked<T>(PhantomData<*const T>)
 where
-    T: SoundnessCheck,
-{
-    _ph: PhantomData<*const T>,
-}
+    T: MutabilityCheck;
 
-impl<T> Default for SoundnessChecked<T>
+impl<T> Default for MutabilityChecked<T>
 where
-    T: SoundnessCheck,
+    T: MutabilityCheck,
 {
     fn default() -> Self {
-        check_soundness::<T>();
-        Self { _ph: PhantomData }
+        check::<T>();
+        Self(PhantomData)
     }
 }
 
-fn check_soundness<T>()
+fn check<T>()
 where
-    T: SoundnessCheck,
+    T: MutabilityCheck,
 {
-    let mut multimap = MultiMap::new();
-    T::extend_before_check(&mut multimap);
+    let multimap = {
+        let mut multimap = MultiMap::new();
+        T::extend_before_check(&mut multimap);
+        multimap
+    };
 
     for (_, vec) in multimap {
         // all type occurrences are immutable, this is sound
@@ -67,34 +61,34 @@ mod tests {
 
     #[test]
     fn one_type() {
-        check_soundness::<&Position>();
-        check_soundness::<(&Position,)>();
-        check_soundness::<(&Position, Not<&Position>)>();
-        check_soundness::<(Not<&Position>, &Position, Option<&Position>)>();
+        check::<&Position>();
+        check::<(&Position,)>();
+        check::<(&Position, Not<&Position>)>();
+        check::<(Not<&Position>, &Position, Option<&Position>)>();
 
-        check_soundness::<&mut Position>();
-        check_soundness::<(&mut Position,)>();
+        check::<&mut Position>();
+        check::<(&mut Position,)>();
     }
 
     #[test]
     #[should_panic(expected = "mutable borrow occurs while other immutable occurrences was found")]
     fn one_type_mutable_borrow() {
-        check_soundness::<(&mut Position, Option<&Position>)>();
+        check::<(&mut Position, Option<&Position>)>();
     }
 
     #[test]
     #[should_panic(expected = "multiple mutable borrows occur")]
     fn one_type_mutable_borrows() {
-        check_soundness::<(Option<&mut Position>, Not<&Position>, &mut Position)>();
+        check::<(Option<&mut Position>, Not<&Position>, &mut Position)>();
     }
 
     #[test]
     fn multiple_types() {
-        check_soundness::<&Velocity>();
-        check_soundness::<(&Velocity,)>();
-        check_soundness::<(&Position, &Velocity)>();
-        check_soundness::<(&Position, Not<&Velocity>, Option<&Position>)>();
-        check_soundness::<(
+        check::<&Velocity>();
+        check::<(&Velocity,)>();
+        check::<(&Position, &Velocity)>();
+        check::<(&Position, Not<&Velocity>, Option<&Position>)>();
+        check::<(
             &Position,
             &Velocity,
             Option<&Mass>,
@@ -103,19 +97,19 @@ mod tests {
             &Velocity,
         )>();
 
-        check_soundness::<&mut Velocity>();
-        check_soundness::<(&mut Mass,)>();
+        check::<&mut Velocity>();
+        check::<(&mut Mass,)>();
     }
 
     #[test]
     #[should_panic(expected = "mutable borrow occurs while other immutable occurrences was found")]
     fn multiple_types_mutable_borrow() {
-        check_soundness::<(&mut Mass, &mut Velocity, &Mass, &Position)>();
+        check::<(&mut Mass, &mut Velocity, &Mass, &Position)>();
     }
 
     #[test]
     #[should_panic(expected = "multiple mutable borrows occur")]
     fn multiple_types_mutable_borrows() {
-        check_soundness::<(&Velocity, &mut Position, &Mass, &mut Position)>();
+        check::<(&Velocity, &mut Position, &Mass, &mut Position)>();
     }
 }

@@ -15,6 +15,7 @@ mod not;
 mod option_read;
 mod option_write;
 mod read;
+mod tuple;
 mod view;
 mod view_mut;
 mod view_one;

@@ -12,11 +12,6 @@ macro_rules! query {
 
 macro_rules! impl_query {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> QuerySealed for ($($types,)*)
-        where
-            $($types: Query<'data>,)*
-        {}
-
         impl<'data, $($types),*> Query<'data> for ($($types,)*)
         where
             Self: From<($(QueryItem<'data, $types>,)*)>,
@@ -42,17 +37,6 @@ macro_rules! query_mut {
 
 macro_rules! impl_query_mut {
     ($($types:ident),*) => {
-        impl<'data, $($types),*> SoundnessCheck for ($($types,)*)
-        where
-            $($types: QueryMut<'data>,)*
-        {
-            const MUTABLE: bool = $($types::MUTABLE)||*;
-
-            fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
-                $($types::extend_before_check(multimap);)*
-            }
-        }
-
         impl<'data, $($types),*> QueryMut<'data> for ($($types,)*)
         where
             Self: From<($(QueryMutItem<'data, $types>,)*)>,

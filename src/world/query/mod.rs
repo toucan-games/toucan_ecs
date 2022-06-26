@@ -14,18 +14,13 @@
 //! [components]: crate::component::Component
 //! [resources]: crate::resource::Resource
 
-use std::any::TypeId;
-use std::marker::PhantomData;
+pub(crate) use checked::CheckedQuery;
 
-use multimap::MultiMap;
-
-pub(crate) use private::QuerySealed;
-use soundness_check::SoundnessCheck as QueryMutSealed;
-pub(crate) use soundness_check::{SoundnessCheck, SoundnessChecked};
+use crate::mutability_check::{MutabilityCheck as QuerySealed, MutabilityCheck as QueryMutSealed};
 
 use super::fetch::{Fetch, FetchMut};
 
-mod soundness_check;
+mod checked;
 mod tuple;
 
 #[cfg(doc)]
@@ -44,10 +39,6 @@ pub trait Query<'data>: 'data + QuerySealed + From<QueryItem<'data, Self>> {
     type Fetch: Fetch<'data>;
 }
 
-mod private {
-    pub trait QuerySealed {}
-}
-
 #[cfg(doc)]
 #[doc(hidden)]
 pub type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>::Item;
@@ -62,24 +53,4 @@ type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>
 pub trait QueryMut<'data>: 'data + QueryMutSealed + From<QueryMutItem<'data, Self>> {
     #[doc(hidden)]
     type Fetch: FetchMut<'data>;
-}
-
-pub(crate) struct CheckedQuery<'data, Q>
-where
-    Q: QueryMut<'data>,
-{
-    _checked: SoundnessChecked<Q>,
-    _ph: PhantomData<&'data Q>,
-}
-
-impl<'data, Q> CheckedQuery<'data, Q>
-where
-    Q: QueryMut<'data>,
-{
-    pub(super) fn new() -> Self {
-        Self {
-            _ph: PhantomData,
-            _checked: SoundnessChecked::default(),
-        }
-    }
 }

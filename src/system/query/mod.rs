@@ -22,6 +22,7 @@ use private::QuerySealed;
 use super::Fetch;
 
 mod impls;
+mod tuple;
 
 #[cfg(doc)]
 #[doc(hidden)]

@@ -3,14 +3,15 @@
 use holder::ErasedResourceHolder;
 pub(crate) use holder::ResourceHolder;
 pub(crate) use registry::Registry;
-use type_id::ResourceTypeId;
+pub(crate) use type_id::ResourceTypeId;
 
 mod fetch;
 mod holder;
-pub mod marker;
 mod query;
 mod registry;
 mod type_id;
+
+pub mod marker;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///

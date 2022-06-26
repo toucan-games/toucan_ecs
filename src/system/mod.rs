@@ -6,8 +6,10 @@ pub use schedule::{Schedule, ScheduleBuilder};
 
 mod fetch;
 mod impls;
-pub mod query;
 mod schedule;
+mod tuple;
+
+pub mod query;
 
 /// Trait for systems in ECS.
 ///
