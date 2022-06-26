@@ -7,9 +7,9 @@ mod components;
 fn extend() {
     let mut world = World::new();
 
-    let entities = world.extend(1_000).to_vec();
+    let entities = world.extend(10).to_vec();
     assert!(!world.is_empty());
-    assert_eq!(entities.len(), 1_000);
+    assert_eq!(entities.len(), 10);
 
     for entity in entities {
         assert!(world.is_entity_empty(entity));
@@ -20,9 +20,9 @@ fn extend() {
 fn extend_with_one() {
     let mut world = World::new();
 
-    let entities = world.extend_with_one([Mass(0.0); 1_000]).to_vec();
+    let entities = world.extend_with_one([Mass(0.0); 10]).to_vec();
     assert!(!world.is_empty());
-    assert_eq!(entities.len(), 1_000);
+    assert_eq!(entities.len(), 10);
 
     for entity in entities {
         assert!(!world.is_entity_empty(entity));
@@ -35,10 +35,10 @@ fn extend_with() {
     let mut world = World::new();
 
     let entities = world
-        .extend_with(std::iter::repeat((Mass(1.0), Position { x: 0.0, y: 0.0 })).take(1_000))
+        .extend_with(std::iter::repeat((Mass(1.0), Position { x: 0.0, y: 0.0 })).take(10))
         .to_vec();
     assert!(!world.is_empty());
-    assert_eq!(entities.len(), 1_000);
+    assert_eq!(entities.len(), 10);
 
     for entity in entities {
         assert!(!world.is_entity_empty(entity));

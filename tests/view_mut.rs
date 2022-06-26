@@ -1,3 +1,5 @@
+use rand::{thread_rng, Rng};
+
 use components::{Mass, Position, Velocity};
 use toucan_ecs::component::marker::Not;
 use toucan_ecs::Entity;
@@ -66,18 +68,18 @@ fn complex_view_mut() {
 #[test]
 #[cfg(feature = "resource")]
 fn complex_resource_view_mut() {
-    use resources::Time;
+    use resources::SimpleResource;
     use toucan_ecs::resource::marker::ResourceMut;
 
     let mut world = utils::prepare_for_complex_view();
-    world.create_resource(Time::new());
+    world.create_resource(SimpleResource::default());
 
     type Query<'data> = (
         Entity,
         &'data mut Position,
         Not<Velocity>,
         Option<&'data mut Mass>,
-        ResourceMut<'data, Time>,
+        ResourceMut<'data, SimpleResource>,
     );
 
     for (entity, position, _, mut mass, mut time) in world.view_mut::<Query>() {
@@ -85,13 +87,13 @@ fn complex_resource_view_mut() {
         if let Some(mass) = mass.as_deref_mut() {
             mass.0 += 1.0;
         }
-        time.reset();
+        time.set_inner(thread_rng().gen());
         println!(
-            "entity: {:?}, position: {:?}, mass: {:?}, time: {}",
+            "entity: {:?}, position: {:?}, mass: {:?}, inner: {}",
             entity,
             position,
             mass.as_deref(),
-            time.elapsed_secs(),
+            time.inner(),
         )
     }
 }

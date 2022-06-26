@@ -1,3 +1,5 @@
+#![cfg(not(miri))]
+
 use std::fmt::Debug;
 
 use components::{Mass, Position, Velocity};
@@ -59,11 +61,11 @@ fn view_mut_system<'data>(view_mut: ViewMut<'data, (Entity, &'data mut Position)
 #[test]
 #[cfg(feature = "resource")]
 fn test() {
-    use resources::Time;
+    use resources::SimpleResource;
     use toucan_ecs::resource::marker::Resource;
 
     let mut world = utils::prepare_for_view();
-    world.create_resource(Time::new());
+    world.create_resource(SimpleResource::default());
 
     let mut local_var = 0;
     let local_system = || {
@@ -76,7 +78,7 @@ fn test() {
         .system(|| println!("Result of sum is {}", 2 + 2))
         .system(for_each_component_system)
         .system(local_system)
-        .system(|time: Resource<Time>| println!("Elapsed seconds are {}", time.elapsed_secs()))
+        .system(|time: Resource<SimpleResource>| println!("Inner is {}", time.inner()))
         .system(view_one_system::<Position>)
         .system(view_one_mut_system)
         .system(view_system::<(Entity, &Position, Option<&Velocity>)>)

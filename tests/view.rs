@@ -49,27 +49,27 @@ fn complex_view() {
 #[test]
 #[cfg(feature = "resource")]
 fn complex_resource_view() {
-    use resources::Time;
+    use resources::SimpleResource;
     use toucan_ecs::resource::marker::Resource;
 
     let mut world = utils::prepare_for_complex_view();
-    world.create_resource(Time::new());
+    world.create_resource(SimpleResource::default());
 
     type Query<'data> = (
         Entity,
         &'data Position,
         Option<&'data Velocity>,
         Not<Mass>,
-        Resource<'data, Time>,
+        Resource<'data, SimpleResource>,
     );
 
     for (entity, position, velocity, _, time) in world.view::<Query>() {
         println!(
-            "entity: {:?}, position: {:?}, velocity: {:?}, time: {}",
+            "entity: {:?}, position: {:?}, velocity: {:?}, inner: {}",
             entity,
             position,
             velocity.as_deref(),
-            time.elapsed_secs(),
+            time.inner(),
         )
     }
 }
