@@ -17,10 +17,13 @@
 //! [components]: crate::component::Component
 //! [resources]: crate::resource::Resource
 
+pub(crate) use checked::CheckedQuery;
+
 use crate::mutability_check::MutabilityCheck as QuerySealed;
 
 use super::Fetch;
 
+mod checked;
 mod impls;
 mod tuple;
 
