@@ -63,13 +63,13 @@ fn complex_resource_view() {
         Resource<'data, SimpleResource>,
     );
 
-    for (entity, position, velocity, _, time) in world.view::<Query>() {
+    for (entity, position, velocity, _, res) in world.view::<Query>() {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, inner: {}",
             entity,
             position,
             velocity.as_deref(),
-            time.inner(),
+            res.inner(),
         )
     }
 }

@@ -82,18 +82,18 @@ fn complex_resource_view_mut() {
         ResourceMut<'data, SimpleResource>,
     );
 
-    for (entity, position, _, mut mass, mut time) in world.view_mut::<Query>() {
+    for (entity, position, _, mut mass, mut res) in world.view_mut::<Query>() {
         position.x -= 10.0;
         if let Some(mass) = mass.as_deref_mut() {
             mass.0 += 1.0;
         }
-        time.set_inner(thread_rng().gen());
+        res.set_inner(thread_rng().gen());
         println!(
             "entity: {:?}, position: {:?}, mass: {:?}, inner: {}",
             entity,
             position,
             mass.as_deref(),
-            time.inner(),
+            res.inner(),
         )
     }
 }

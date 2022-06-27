@@ -78,7 +78,7 @@ fn test() {
         .system(|| println!("Result of sum is {}", 2 + 2))
         .system(for_each_component_system)
         .system(local_system)
-        .system(|time: Resource<SimpleResource>| println!("Inner is {}", time.inner()))
+        .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
         .system(view_one_system::<Position>)
         .system(view_one_mut_system)
         .system(view_system::<(Entity, &Position, Option<&Velocity>)>)
