@@ -840,7 +840,34 @@ impl World {
     /// View will be constructed from the query which is determined by the generic type.
     /// Only entities that satisfies the query will be returned.
     ///
+    /// # Panics
+    ///
+    /// This function will panic if provided query does not satisfies
+    /// the first rule of references described in
+    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
+    ///
+    /// > - *At any given time, you can have either **one** mutable reference
+    /// or **any** number of immutable references.*
+    ///
     /// # Examples
+    ///
+    /// For this query function will panic:
+    ///
+    /// ```should_panic
+    /// # use toucan_ecs::World;
+    /// #[derive(Copy, Clone, Debug)]
+    /// struct ID(u32);
+    ///
+    /// let mut world = World::new();
+    ///
+    /// // immutable ID reference and mutable one of the same type are illegal
+    /// for (id, mut mut_id) in world.view_mut::<(&ID, &mut ID)>() {
+    ///     mut_id.0 += 10;
+    ///     println!("unchanged id: {:?}", id)
+    /// }
+    /// ```
+    ///
+    /// But for this query it will not panic:
     ///
     /// ```
     /// # use toucan_ecs::World;
@@ -857,6 +884,8 @@ impl World {
     ///     println!("name: {:?}, id: {:?}", name.as_deref(), id)
     /// }
     /// ```
+    ///
+    /// [rust_book]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
     pub fn view_mut<'data, Q>(&'data mut self) -> ViewMut<'data, Q>
     where
         Q: QueryMut<'data>,

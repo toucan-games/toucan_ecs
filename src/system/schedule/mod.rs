@@ -41,6 +41,16 @@ impl<'data> ScheduleBuilder<'data> {
     }
 
     /// Adds a system to the [schedule](Schedule).
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if provided query does not satisfies
+    /// the first rule of references described in
+    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
+    ///
+    /// > - *At any given time, you can have either **one** mutable reference
+    /// or **any** number of immutable references.*
+    ///
     pub fn system<S, Q>(mut self, system: S) -> Self
     where
         S: System<'data, Q>,
