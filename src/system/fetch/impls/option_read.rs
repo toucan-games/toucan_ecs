@@ -1,8 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::Component;
-
-use super::Fetch;
+use crate::system::fetch::Fetch;
 
 pub struct FetchOptionRead<C>
 where

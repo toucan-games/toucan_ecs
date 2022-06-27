@@ -2,8 +2,6 @@
 
 pub(crate) use registry::{Iter, Registry};
 
-mod fetch;
-mod query;
 mod registry;
 
 slotmap::new_key_type! {

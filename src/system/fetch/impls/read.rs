@@ -3,8 +3,7 @@ use std::marker::PhantomData;
 use crate::component::Component;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
-
-use super::Fetch;
+use crate::system::fetch::Fetch;
 
 pub struct FetchRead<C>
 where

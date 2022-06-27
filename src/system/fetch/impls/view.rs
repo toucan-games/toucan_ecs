@@ -1,9 +1,8 @@
 use std::marker::PhantomData;
 
+use crate::system::fetch::Fetch;
 use crate::world::query::Query;
 use crate::world::View;
-
-use super::Fetch;
 
 pub struct FetchView<'data, Q>
 where

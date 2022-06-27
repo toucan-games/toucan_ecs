@@ -18,7 +18,7 @@ impl<'data, R> Resource<'data, R>
 where
     R: super::Resource,
 {
-    pub(super) fn new(resource: &'data R) -> Self {
+    pub(crate) fn new(resource: &'data R) -> Self {
         Self(resource)
     }
 }
@@ -50,7 +50,7 @@ impl<'data, R> ResourceMut<'data, R>
 where
     R: super::Resource,
 {
-    pub(super) fn new(resource: &'data mut R) -> Self {
+    pub(crate) fn new(resource: &'data mut R) -> Self {
         Self(resource)
     }
 }

@@ -1,6 +1,5 @@
 use crate::entity::Entity;
-
-use super::Fetch;
+use crate::system::fetch::Fetch;
 
 pub struct FetchEntity;
 

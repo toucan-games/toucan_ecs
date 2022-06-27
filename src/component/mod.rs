@@ -8,8 +8,6 @@ pub(crate) use type_id::ComponentTypeId;
 pub use view_one::{ViewOne, ViewOneMut};
 
 mod entry;
-mod fetch;
-mod query;
 mod registry;
 mod set;
 mod storage;

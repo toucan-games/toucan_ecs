@@ -1,10 +1,18 @@
-use crate::component::fetch::{
-    FetchNotMut, FetchOptionReadMut, FetchOptionWriteMut, FetchReadMut, FetchWriteMut,
-};
+use crate::component::marker::Not;
+use crate::component::Component;
+use crate::entity::Entity;
+#[cfg(feature = "resource")]
+use crate::resource::{marker, Resource};
+use crate::world::fetch::*;
 use crate::world::query::{Query, QueryMut};
 
-use super::fetch::{FetchNot, FetchOptionRead, FetchRead};
-use super::{marker::Not, Component};
+impl<'data> Query<'data> for Entity {
+    type Fetch = FetchEntity;
+}
+
+impl<'data> QueryMut<'data> for Entity {
+    type Fetch = FetchEntity;
+}
 
 impl<'data, C> Query<'data> for &'data C
 where
@@ -60,4 +68,27 @@ where
     C: Component,
 {
     type Fetch = FetchNotMut<'data, C>;
+}
+
+cfg_resource! {
+    impl<'data, R> Query<'data> for marker::Resource<'data, R>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceRead<'data, R>;
+    }
+
+    impl<'data, R> QueryMut<'data> for marker::Resource<'data, R>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceReadMut<'data, R>;
+    }
+
+    impl<'data, R> QueryMut<'data> for marker::ResourceMut<'data, R>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceWriteMut<'data, R>;
+    }
 }

@@ -2,8 +2,7 @@ use std::marker::PhantomData;
 
 use crate::component::marker::Not;
 use crate::component::Component;
-
-use super::Fetch;
+use crate::system::fetch::Fetch;
 
 pub struct FetchNot<C>(PhantomData<C>)
 where

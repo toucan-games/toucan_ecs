@@ -5,9 +5,7 @@ pub(crate) use holder::ResourceHolder;
 pub(crate) use registry::Registry;
 pub(crate) use type_id::ResourceTypeId;
 
-mod fetch;
 mod holder;
-mod query;
 mod registry;
 mod type_id;
 

@@ -1,10 +1,12 @@
 pub use error::FetchError;
+pub use impls::*;
 
 use crate::Entity;
 
 use super::{WorldData, WorldDataMut};
 
 mod error;
+mod impls;
 mod tuple;
 
 pub trait Fetch<'data>: Sized + Send + Sync + 'data {

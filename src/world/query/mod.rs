@@ -21,6 +21,7 @@ use crate::mutability_check::{MutabilityCheck as QuerySealed, MutabilityCheck as
 use super::fetch::{Fetch, FetchMut};
 
 mod checked;
+mod impls;
 mod tuple;
 
 #[cfg(doc)]

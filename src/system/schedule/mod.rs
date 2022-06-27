@@ -51,6 +51,7 @@ impl<'data> ScheduleBuilder<'data> {
     /// > - *At any given time, you can have either **one** mutable reference
     /// or **any** number of immutable references.*
     ///
+    /// [rust_book]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
     pub fn system<S, Q>(mut self, system: S) -> Self
     where
         S: System<'data, Q>,
