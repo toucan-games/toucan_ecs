@@ -1,7 +1,7 @@
 use std::iter::Flatten;
 use std::option::IntoIter;
 
-use crate::component::{Component, IterMut, StorageImpl, StorageMap};
+use crate::component::{Component, IterMut, Registry, StorageImpl};
 use crate::Entity;
 
 /// Iterator which returns *entity* of the world
@@ -20,7 +20,7 @@ impl<'data, C> ViewOneMut<'data, C>
 where
     C: Component,
 {
-    pub(crate) fn new(registry: &'data mut StorageMap) -> Self {
+    pub(crate) fn new(registry: &'data mut Registry) -> Self {
         let iter = registry
             .get_storage_mut()
             .map(StorageImpl::iter_mut)

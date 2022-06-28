@@ -1,6 +1,6 @@
 //! Provides trait for components and borrow types for them.
 
-pub(crate) use registry::{Registry, StorageMap};
+pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
 pub(crate) use storage::{Iter, IterMut, Storage, StorageImpl};
 pub(crate) use type_id::ComponentTypeId;

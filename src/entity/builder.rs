@@ -3,7 +3,7 @@ use std::hash::BuildHasherDefault;
 
 use crate::component::{Component, ComponentTypeId, Registry};
 use crate::hash::TypeIdHasher;
-use crate::Entity;
+use crate::{Entity, World};
 
 /// Allows for building the new entity with **builder** pattern.
 ///
@@ -16,14 +16,14 @@ use crate::Entity;
 /// [build]: EntityBuilder::build()
 #[must_use = "Please call .build() on this to finish building the new entity"]
 pub struct EntityBuilder<'data> {
-    registry: &'data mut Registry,
+    world: &'data mut World,
     data: HashMap<ComponentTypeId, ErasedComponentHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl<'data> EntityBuilder<'data> {
-    pub(crate) fn new(registry: &'data mut Registry) -> Self {
+    pub(crate) fn new(world: &'data mut World) -> Self {
         Self {
-            registry,
+            world,
             data: HashMap::default(),
         }
     }
@@ -47,10 +47,11 @@ impl<'data> EntityBuilder<'data> {
     /// Finalizes the builder, attaches all saved components
     /// and returns new [entity](crate::entity::Entity) handle.
     pub fn build(self) -> Entity {
-        let entity = self.registry.create();
-        for holder in self.data.into_values() {
-            holder.attach(entity, self.registry);
-        }
+        let entity = self.world.create();
+        let registry = self.world.components_mut();
+        self.data
+            .into_values()
+            .for_each(|holder| holder.attach(entity, registry));
         entity
     }
 }

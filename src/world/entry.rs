@@ -1,5 +1,5 @@
-use crate::component::{Component, ComponentSet, Registry};
-use crate::entity::Entity;
+use crate::component::{Component, ComponentSet};
+use crate::{Entity, World};
 
 /// Entry of the specific [entity](Entity).
 ///
@@ -12,12 +12,12 @@ use crate::entity::Entity;
 /// or from [`World::entry`][crate::World::entry()] if an entity was created earlier.
 pub struct Entry<'data> {
     entity: Entity,
-    registry: &'data mut Registry,
+    world: &'data mut World,
 }
 
 impl<'data> Entry<'data> {
-    pub(crate) fn new(entity: Entity, registry: &'data mut Registry) -> Self {
-        Entry { entity, registry }
+    pub(crate) fn new(entity: Entity, world: &'data mut World) -> Self {
+        Entry { entity, world }
     }
 
     /// Destroys the entity and removes all its attached components.
@@ -35,7 +35,7 @@ impl<'data> Entry<'data> {
     /// assert!(!world.contains(entity));
     /// ```
     pub fn destroy(self) {
-        self.registry.destroy(self.entity)
+        self.world.destroy(self.entity)
     }
 
     /// Returns unique handle of the entity.
@@ -66,7 +66,7 @@ impl<'data> Entry<'data> {
     /// assert!(entry.is_empty());
     /// ```
     pub fn is_empty(&self) -> bool {
-        self.registry.is_entity_empty(self.entity)
+        self.world.is_entity_empty(self.entity)
     }
 
     /// Attaches exactly one component to the entity.
@@ -92,7 +92,7 @@ impl<'data> Entry<'data> {
     where
         C: Component,
     {
-        self.registry.attach_one(self.entity, component);
+        self.world.attach_one(self.entity, component);
     }
 
     /// Attaches set of components to the entity.
@@ -121,7 +121,7 @@ impl<'data> Entry<'data> {
     where
         S: ComponentSet,
     {
-        self.registry.attach(self.entity, set)
+        self.world.attach(self.entity, set)
     }
 
     /// Returns `true` if component of generic type is attached to the entity.
@@ -148,7 +148,7 @@ impl<'data> Entry<'data> {
     where
         C: Component,
     {
-        self.registry.attached_one::<C>(self.entity)
+        self.world.attached_one::<C>(self.entity)
     }
 
     /// Returns `true` if components in the generic set type are attached to the entity.
@@ -178,7 +178,7 @@ impl<'data> Entry<'data> {
     where
         S: ComponentSet,
     {
-        self.registry.attached::<S>(self.entity)
+        self.world.attached::<S>(self.entity)
     }
 
     /// Removes component of one type from the entity.
@@ -205,7 +205,7 @@ impl<'data> Entry<'data> {
     where
         C: Component,
     {
-        self.registry.remove_one::<C>(self.entity)
+        self.world.remove_one::<C>(self.entity)
     }
 
     /// Removes components of multiple types from the entity.
@@ -233,7 +233,7 @@ impl<'data> Entry<'data> {
     where
         S: ComponentSet,
     {
-        self.registry.remove::<S>(self.entity)
+        self.world.remove::<S>(self.entity)
     }
 
     /// Removes all attached components from the entity.
@@ -260,7 +260,7 @@ impl<'data> Entry<'data> {
     /// assert!(!entry.attached::<(Name, ID)>());
     /// ```
     pub fn remove_all(&mut self) {
-        self.registry.remove_all(self.entity)
+        self.world.remove_all(self.entity)
     }
 
     /// Retrieves the shared borrow for the component of one type attached to the entity.
@@ -283,7 +283,7 @@ impl<'data> Entry<'data> {
     where
         C: Component,
     {
-        self.registry.get(self.entity)
+        self.world.get(self.entity)
     }
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
@@ -308,6 +308,6 @@ impl<'data> Entry<'data> {
     where
         C: Component,
     {
-        self.registry.get_mut(self.entity)
+        self.world.get_mut(self.entity)
     }
 }

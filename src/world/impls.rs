@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::component::{Component, ComponentSet, Registry as ComponentRegistry, StorageMap};
+use crate::component::{Component, ComponentSet, Registry as ComponentRegistry};
 use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
@@ -18,6 +18,7 @@ use super::view::{View, ViewMut, ViewOne, ViewOneMut};
 /// view each component separately or group of components together.
 #[derive(Default)]
 pub struct World {
+    entities: EntityRegistry,
     components: ComponentRegistry,
     #[cfg(feature = "resource")]
     resources: ResourceRegistry,
@@ -34,6 +35,7 @@ impl World {
     /// ```
     pub fn new() -> Self {
         Self {
+            entities: EntityRegistry::default(),
             components: ComponentRegistry::default(),
             #[cfg(feature = "resource")]
             resources: ResourceRegistry::default(),
@@ -56,7 +58,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn create(&mut self) -> Entity {
-        self.components.create()
+        self.entities.create()
     }
 
     cfg_resource! {
@@ -104,7 +106,9 @@ impl World {
     where
         C: Component,
     {
-        self.components.create_with_one(component)
+        let entity = self.create();
+        self.attach_one(entity, component);
+        entity
     }
 
     /// Creates new entity with set of components attached to it.
@@ -130,7 +134,9 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.components.create_with(set)
+        let entity = self.create();
+        self.attach(entity, set);
+        entity
     }
 
     /// Creates new [entry](Entry) for the newly created entity.
@@ -147,7 +153,8 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn create_entry(&mut self) -> Entry {
-        self.components.create_entry()
+        let entity = self.create();
+        Entry::new(entity, self)
     }
 
     /// Creates [entry](Entry) for the newly created entity with one component attached to it.
@@ -172,7 +179,8 @@ impl World {
     where
         C: Component,
     {
-        self.components.create_entry_with_one(component)
+        let entity = self.create_with_one(component);
+        Entry::new(entity, self)
     }
 
     /// Creates [entry](Entry) for the newly created entity with set of components attached to it.
@@ -200,7 +208,8 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.components.create_entry_with(set)
+        let entity = self.create_with(set);
+        Entry::new(entity, self)
     }
 
     /// Creates [entry](Entry) for the provided entity.
@@ -220,7 +229,7 @@ impl World {
     /// assert!(world.entry(entity).is_none());
     /// ```
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
-        self.components.entry(entity)
+        self.contains(entity).then(|| Entry::new(entity, self))
     }
 
     /// Creates new entity lazy builder which allows
@@ -250,7 +259,7 @@ impl World {
     /// assert!(world.attached::<(Position, Mass)>(entity));
     /// ```
     pub fn entity(&mut self) -> EntityBuilder {
-        self.components.entity()
+        EntityBuilder::new(self)
     }
 
     /// Extends world with provided count of newly created entities.
@@ -265,8 +274,8 @@ impl World {
     /// let entities = world.extend(10);
     /// assert_eq!(entities.len(), 10);
     /// ```
-    pub fn extend(&mut self, count: u32) -> &[Entity] {
-        self.components.extend(count)
+    pub fn extend(&mut self, count: u32) -> Vec<Entity> {
+        (0..count).map(|_| self.create()).collect()
     }
 
     /// Extends world with collection of components to the newly created entities.
@@ -284,12 +293,15 @@ impl World {
     /// let entities = world.extend_with_one([ID(1), ID(2), ID(3), ID(4), ID(5)]);
     /// assert_eq!(entities.len(), 5);
     /// ```
-    pub fn extend_with_one<I, C>(&mut self, into_iter: I) -> &[Entity]
+    pub fn extend_with_one<I, C>(&mut self, into_iter: I) -> Vec<Entity>
     where
         I: IntoIterator<Item = C>,
         C: Component,
     {
-        self.components.extend_with_one(into_iter)
+        into_iter
+            .into_iter()
+            .map(|component| self.create_with_one(component))
+            .collect()
     }
 
     // noinspection SpellCheckingInspection
@@ -316,15 +328,19 @@ impl World {
     /// ]);
     /// assert_eq!(entities.len(), 4);
     /// ```
-    pub fn extend_with<I, S>(&mut self, into_iter: I) -> &[Entity]
+    pub fn extend_with<I, S>(&mut self, into_iter: I) -> Vec<Entity>
     where
         I: IntoIterator<Item = S>,
         S: ComponentSet,
     {
-        self.components.extend_with(into_iter)
+        into_iter
+            .into_iter()
+            .map(|set| self.create_with(set))
+            .collect()
     }
 
     /// Returns `true` if the world contains the entity.
+    /// Returns `false` if provided entity was destroyed in this world.
     ///
     /// # Examples
     ///
@@ -339,7 +355,7 @@ impl World {
     /// assert!(!world.contains(entity));
     /// ```
     pub fn contains(&self, entity: Entity) -> bool {
-        self.components.contains(entity)
+        self.entities.contains(entity)
     }
 
     cfg_resource! {
@@ -377,7 +393,8 @@ impl World {
     /// assert!(!world.contains(entity));
     /// ```
     pub fn destroy(&mut self, entity: Entity) {
-        self.components.destroy(entity)
+        self.remove_all(entity);
+        self.entities.destroy(entity);
     }
 
     cfg_resource! {
@@ -422,13 +439,13 @@ impl World {
     #[cfg(feature = "resource")]
     #[inline(always)]
     fn cfg_is_empty(&self) -> bool {
-        self.components.is_empty() && self.resources.is_empty()
+        self.entities.is_empty() && self.resources.is_empty()
     }
 
     #[cfg(not(feature = "resource"))]
     #[inline(always)]
     fn cfg_is_empty(&self) -> bool {
-        self.components.is_empty()
+        self.entities.is_empty()
     }
 
     /// Clears this world, destroying all resources, all entities and their data.
@@ -446,6 +463,7 @@ impl World {
     /// assert!(world.is_empty());
     /// ```
     pub fn clear(&mut self) {
+        self.entities.clear();
         self.components.clear();
         #[cfg(feature = "resource")]
         self.resources.clear();
@@ -799,7 +817,7 @@ impl World {
     where
         C: Component,
     {
-        self.components.view_one::<C>()
+        ViewOne::new(&self.components)
     }
 
     /// Creates a [view](ViewOneMut) of the component type.
@@ -828,7 +846,7 @@ impl World {
     where
         C: Component,
     {
-        self.components.view_one_mut::<C>()
+        ViewOneMut::new(&mut self.components)
     }
 
     /// Creates a [view](View) of the multiple component types.
@@ -922,37 +940,39 @@ impl World {
         ViewMut::new(self, CheckedQuery::new())
     }
 
+    pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
+        &mut self.components
+    }
+
     pub(crate) fn split(&self) -> (&EntityRegistry, WorldData) {
-        let (entities, components) = self.components.split();
         let data = WorldData {
-            components,
+            components: &self.components,
             #[cfg(feature = "resource")]
             resources: &self.resources,
         };
-        (entities, data)
+        (&self.entities, data)
     }
 
     pub(crate) fn split_mut(&mut self) -> (&EntityRegistry, WorldDataMut) {
-        let (entities, components) = self.components.split_mut();
         let data = WorldDataMut {
-            components,
+            components: &mut self.components,
             #[cfg(feature = "resource")]
             resources: &mut self.resources,
             _ph: PhantomData,
         };
-        (entities, data)
+        (&self.entities, data)
     }
 }
 
 #[derive(Copy, Clone)]
 pub struct WorldData<'data> {
-    components: &'data StorageMap,
+    components: &'data ComponentRegistry,
     #[cfg(feature = "resource")]
     resources: &'data ResourceRegistry,
 }
 
 impl<'data> WorldData<'data> {
-    pub fn components(self) -> &'data StorageMap {
+    pub fn components(self) -> &'data ComponentRegistry {
         self.components
     }
 
@@ -964,7 +984,7 @@ impl<'data> WorldData<'data> {
 
 #[derive(Copy, Clone)]
 pub struct WorldDataMut<'data> {
-    components: *mut StorageMap,
+    components: *mut ComponentRegistry,
     #[cfg(feature = "resource")]
     resources: *mut ResourceRegistry,
     _ph: PhantomData<&'data ()>,
@@ -974,14 +994,14 @@ impl<'data> WorldDataMut<'data> {
     /// # Safety
     ///
     /// This function should be called if and only if mutability soundness was checked.
-    pub unsafe fn components(self) -> &'data StorageMap {
+    pub unsafe fn components(self) -> &'data ComponentRegistry {
         &*self.components
     }
 
     /// # Safety
     ///
     /// This function should be called if and only if mutability soundness was checked.
-    pub unsafe fn components_mut(self) -> &'data mut StorageMap {
+    pub unsafe fn components_mut(self) -> &'data mut ComponentRegistry {
         &mut *self.components
     }
 
