@@ -8,5 +8,5 @@ mod tuple;
 pub trait Fetch<'data>: 'data {
     type Item: Send + Sync + 'data;
 
-    unsafe fn fetch(world: &'data mut World) -> Self::Item;
+    unsafe fn fetch(world: *mut World) -> Self::Item;
 }

@@ -18,7 +18,8 @@ where
 {
     type Item = View<'data, Q>;
 
-    unsafe fn fetch(world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(world: *mut World) -> Self::Item {
+        let world = &*world;
         View::new(world)
     }
 }

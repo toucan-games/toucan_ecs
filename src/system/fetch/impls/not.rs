@@ -15,7 +15,7 @@ where
 {
     type Item = Not<C>;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> Self::Item {
         todo!()
     }
 }

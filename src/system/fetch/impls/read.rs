@@ -19,7 +19,7 @@ where
 {
     type Item = &'data C;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> Self::Item {
         todo!()
     }
 }
@@ -39,7 +39,7 @@ where
 {
     type Item = marker::Resource<'data, R>;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> Self::Item {
         todo!()
     }
 }

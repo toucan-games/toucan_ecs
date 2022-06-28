@@ -4,5 +4,5 @@ use crate::World;
 impl<'data> Fetch<'data> for () {
     type Item = ();
 
-    unsafe fn fetch(_: &'data mut World) -> Self::Item {}
+    unsafe fn fetch(_: *mut World) -> Self::Item {}
 }

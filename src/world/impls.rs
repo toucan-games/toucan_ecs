@@ -942,6 +942,10 @@ impl World {
         ViewMut::new(self, CheckedQuery::new())
     }
 
+    pub(crate) fn components(&self) -> &ComponentRegistry {
+        &self.components
+    }
+
     pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
         &mut self.components
     }

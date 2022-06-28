@@ -17,7 +17,7 @@ where
 {
     type Item = Option<&'data C>;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> Self::Item {
         todo!()
     }
 }

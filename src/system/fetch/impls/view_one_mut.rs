@@ -18,7 +18,9 @@ where
 {
     type Item = ViewOneMut<'data, C>;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
-        todo!()
+    unsafe fn fetch(world: *mut World) -> Self::Item {
+        let world = &mut *world;
+        let storage = world.components_mut().get_storage_mut();
+        ViewOneMut::new(storage)
     }
 }

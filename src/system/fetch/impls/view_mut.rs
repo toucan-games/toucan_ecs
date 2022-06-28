@@ -18,7 +18,8 @@ where
 {
     type Item = ViewMut<'data, Q>;
 
-    unsafe fn fetch(world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(world: *mut World) -> Self::Item {
+        let world = &mut *world;
         ViewMut::new(world, CheckedQuery::new())
     }
 }

@@ -18,7 +18,9 @@ where
 {
     type Item = ViewOne<'data, C>;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
-        todo!()
+    unsafe fn fetch(world: *mut World) -> Self::Item {
+        let world = &*world;
+        let storage = world.components().get_storage();
+        ViewOne::new(storage)
     }
 }

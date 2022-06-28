@@ -7,7 +7,7 @@ pub struct FetchEntity;
 impl<'data> Fetch<'data> for FetchEntity {
     type Item = Entity;
 
-    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> Self::Item {
         todo!()
     }
 }
