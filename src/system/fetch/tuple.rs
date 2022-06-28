@@ -17,6 +17,10 @@ macro_rules! impl_system_fetch {
             $($types: Fetch<'data>,)*
         {
             type Item = ($($types::Item,)*);
+
+            unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+                todo!()
+            }
         }
     };
 }

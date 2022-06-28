@@ -1,13 +1,14 @@
+use crate::system::fetch::Fetch;
 use crate::system::query::CheckedQuery;
 use crate::system::{Query, System};
-use crate::World;
+use crate::world::World;
 
 #[repr(transparent)]
-pub struct ErasedSystemHolder<'data>(Box<dyn Holdable + 'data>);
+pub struct ErasedSystemHolder<'data>(Box<dyn Holdable<'data>>);
 
 impl<'data, H> From<H> for ErasedSystemHolder<'data>
 where
-    H: Holdable + 'data,
+    H: Holdable<'data>,
 {
     fn from(holdable: H) -> Self {
         Self(Box::new(holdable))
@@ -15,23 +16,26 @@ where
 }
 
 impl<'data> ErasedSystemHolder<'data> {
-    pub fn run(&mut self, world: &mut World) {
+    pub fn run(&mut self, world: *mut World) {
+        let world = unsafe { &mut *world };
         self.0.run(world)
     }
 }
 
-trait Holdable {
-    fn run(&mut self, world: &mut World);
+trait Holdable<'data>: 'data {
+    fn run(&mut self, world: &'data mut World);
 }
 
-impl<'data, S, Q> Holdable for (S, CheckedQuery<'data, Q>)
+impl<'data, S, Q> Holdable<'data> for (S, CheckedQuery<'data, Q>)
 where
     S: System<'data, Q>,
     Q: Query<'data>,
 {
-    fn run(&mut self, _world: &mut World) {
+    // noinspection RsUnnecessaryQualifications
+    fn run(&mut self, world: &'data mut World) {
         let system = &mut self.0;
-        let args: Q = todo!();
+        // SAFETY: was checked because of CheckedQuery struct was constructed
+        let args = unsafe { Q::Fetch::fetch(world) }.into();
         system.run(args)
     }
 }

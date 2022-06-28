@@ -4,6 +4,7 @@ use crate::component::Component;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
+use crate::World;
 
 pub struct FetchRead<C>
 where
@@ -17,6 +18,10 @@ where
     C: Component,
 {
     type Item = &'data C;
+
+    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+        todo!()
+    }
 }
 
 #[cfg(feature = "resource")]
@@ -33,4 +38,8 @@ where
     R: Resource,
 {
     type Item = marker::Resource<'data, R>;
+
+    unsafe fn fetch(_world: &'data mut World) -> Self::Item {
+        todo!()
+    }
 }

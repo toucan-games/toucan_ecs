@@ -16,7 +16,7 @@ impl<'data, Q> CheckedQuery<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    pub(in crate::world) fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
             _ph: PhantomData,
             _checked: MutabilityChecked::default(),

@@ -22,7 +22,7 @@ where
     Q: Query<'data>,
 {
     // noinspection RsUnnecessaryQualifications
-    pub(in crate::world) fn new(world: &'data World) -> Self {
+    pub(crate) fn new(world: &'data World) -> Self {
         let (entities, data) = world.split();
         let entities = entities.iter();
         let fetch = Q::Fetch::new(data).ok();

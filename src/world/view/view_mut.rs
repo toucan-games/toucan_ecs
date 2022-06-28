@@ -23,7 +23,7 @@ impl<'data, Q> ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    pub(in crate::world) fn new(world: &'data mut World, _checked: CheckedQuery<'data, Q>) -> Self {
+    pub(crate) fn new(world: &'data mut World, _checked: CheckedQuery<'data, Q>) -> Self {
         let (entities, data) = world.split_mut();
         let entities = entities.iter();
         // SAFETY: query was checked by `CheckedQuery`
