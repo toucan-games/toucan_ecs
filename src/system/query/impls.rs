@@ -1,10 +1,11 @@
 use crate::component::marker::Not;
-use crate::component::{Component, ViewOne, ViewOneMut};
+use crate::component::Component;
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::*;
-use crate::world::{query, View, ViewMut};
+use crate::world::query;
+use crate::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 
 use super::Query;
 

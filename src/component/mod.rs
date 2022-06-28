@@ -5,14 +5,12 @@ pub(crate) use registry::{Registry, StorageMap};
 pub(crate) use set::ComponentSet;
 pub(crate) use storage::{Iter, IterMut, Storage, StorageImpl};
 pub(crate) use type_id::ComponentTypeId;
-pub use view_one::{ViewOne, ViewOneMut};
 
 mod entry;
 mod registry;
 mod set;
 mod storage;
 mod type_id;
-mod view_one;
 
 pub mod marker;
 

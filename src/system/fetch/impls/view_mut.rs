@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::system::fetch::Fetch;
 use crate::world::query::QueryMut;
-use crate::world::ViewMut;
+use crate::world::view::ViewMut;
 
 pub struct FetchViewMut<'data, Q>
 where

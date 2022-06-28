@@ -1,7 +1,8 @@
 use std::marker::PhantomData;
 
-use crate::component::{Component, ViewOne};
+use crate::component::Component;
 use crate::system::fetch::Fetch;
+use crate::world::view::ViewOne;
 
 pub struct FetchViewOne<C>
 where

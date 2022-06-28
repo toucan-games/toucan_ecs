@@ -7,15 +7,18 @@
 //! - immutable and mutable [references] of [resources] via [markers](crate::resource::marker)
 //! (if enabled by `resource` feature);
 //! - [`Not`](crate::component::marker::Not) marker type of components;
-//! - world views, such as [`ViewOne`](crate::component::ViewOne),
-//! [`ViewOneMut`](crate::component::ViewOneMut), [`View`](crate::world::View) and
-//! [`ViewMut`](crate::world::ViewMut);
+//! - world views, such as [`ViewOne`][view_one], [`ViewOneMut`][view_one_mut],
+//! [`View`][view] and [`ViewMut`][view_mut];
 //! - and [tuples] of arity 12 or less of types listed above.
 //!
 //! [references]: prim@reference
 //! [tuples]: prim@tuple
 //! [components]: crate::component::Component
 //! [resources]: crate::resource::Resource
+//! [view]: crate::world::view::View
+//! [view_mut]: crate::world::view::ViewMut
+//! [view_one]: crate::world::view::ViewOne
+//! [view_one_mut]: crate::world::view::ViewOneMut
 
 pub(crate) use checked::CheckedQuery;
 

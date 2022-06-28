@@ -3,10 +3,10 @@
 use std::fmt::Debug;
 
 use components::{Mass, Position, Velocity};
-use toucan_ecs::component::{Component, ViewOne, ViewOneMut};
+use toucan_ecs::component::Component;
 use toucan_ecs::system::Schedule;
 use toucan_ecs::world::query::Query;
-use toucan_ecs::world::{View, ViewMut};
+use toucan_ecs::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 use toucan_ecs::Entity;
 
 mod components;

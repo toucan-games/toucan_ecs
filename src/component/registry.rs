@@ -2,10 +2,10 @@ use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
 use crate::component::storage::{ErasedStorageHolder, StorageHolder};
-use crate::component::view_one::{ViewOne, ViewOneMut};
 use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
 use crate::entity::{Entity, Iter, Registry as EntityRegistry};
-use crate::world::TypeIdHasher;
+use crate::hash::TypeIdHasher;
+use crate::world::view::{ViewOne, ViewOneMut};
 
 #[derive(Default)]
 pub struct Registry {
@@ -203,24 +203,24 @@ impl Registry {
     where
         C: Component,
     {
-        ViewOne::new(self)
+        ViewOne::new(&self.storages)
     }
 
     pub fn view_one_mut<C>(&mut self) -> ViewOneMut<C>
     where
         C: Component,
     {
-        ViewOneMut::new(self)
+        ViewOneMut::new(&mut self.storages)
     }
 
-    pub(super) fn get_storage<C>(&self) -> Option<&StorageImpl<C>>
+    fn get_storage<C>(&self) -> Option<&StorageImpl<C>>
     where
         C: Component,
     {
         self.storages.get_storage()
     }
 
-    pub(super) fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
+    fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
     where
         C: Component,
     {

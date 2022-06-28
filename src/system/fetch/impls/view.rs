@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::system::fetch::Fetch;
 use crate::world::query::Query;
-use crate::world::View;
+use crate::world::view::View;
 
 pub struct FetchView<'data, Q>
 where

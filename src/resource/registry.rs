@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use crate::world::TypeIdHasher;
+use crate::hash::TypeIdHasher;
 
 use super::{ErasedResourceHolder, Resource, ResourceHolder, ResourceTypeId};
 

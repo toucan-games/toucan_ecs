@@ -31,7 +31,7 @@ pub type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Ite
 #[cfg(not(doc))]
 type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 
-/// Type which can be queried by **shared** [view](crate::world::View)
+/// Type which can be queried by **shared** [view](crate::world::view::View)
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
@@ -47,7 +47,7 @@ pub type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'da
 #[cfg(not(doc))]
 type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>::Item;
 
-/// Type which can be queried by **mutable** [view](crate::world::ViewMut)
+/// Type which can be queried by **mutable** [view](crate::world::view::ViewMut)
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.

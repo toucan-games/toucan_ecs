@@ -1,14 +1,12 @@
 use std::marker::PhantomData;
 
-use crate::component::{
-    Component, ComponentSet, Entry, Registry as ComponentRegistry, StorageMap, ViewOne, ViewOneMut,
-};
+use crate::component::{Component, ComponentSet, Entry, Registry as ComponentRegistry, StorageMap};
 use crate::entity::{Entity, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 
 use super::query::{CheckedQuery, Query, QueryMut};
-use super::{View, ViewMut};
+use super::view::{View, ViewMut, ViewOne, ViewOneMut};
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
