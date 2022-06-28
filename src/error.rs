@@ -1,5 +1,7 @@
 use std::error::Error;
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Display, Formatter};
+
+pub type FetchResult<T> = Result<T, FetchError>;
 
 #[derive(Debug)]
 pub struct FetchError;

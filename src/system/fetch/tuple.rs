@@ -18,8 +18,8 @@ macro_rules! impl_system_fetch {
         {
             type Item = ($($types::Item,)*);
 
-            unsafe fn fetch(world: *mut World) -> Self::Item {
-                ($($types::fetch(world),)*)
+            unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
+                Ok(($($types::fetch(world)?,)*))
             }
         }
     };

@@ -35,7 +35,10 @@ where
     fn run(&mut self, world: &'data mut World) {
         let system = &mut self.0;
         // SAFETY: was checked because of CheckedQuery struct was constructed
-        let args = unsafe { Q::Fetch::fetch(world) }.into();
-        system.run(args)
+        let args = unsafe { Q::Fetch::fetch(world) };
+        if let Ok(args) = args {
+            let args = args.into();
+            system.run(args)
+        }
     }
 }

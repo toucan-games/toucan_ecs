@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 
+use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
 use crate::world::query::{CheckedQuery, QueryMut};
 use crate::world::view::ViewMut;
@@ -18,8 +19,9 @@ where
 {
     type Item = ViewMut<'data, Q>;
 
-    unsafe fn fetch(world: *mut World) -> Self::Item {
+    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
         let world = &mut *world;
-        ViewMut::new(world, CheckedQuery::new())
+        let view_mut = ViewMut::new(world, CheckedQuery::new());
+        Ok(view_mut)
     }
 }

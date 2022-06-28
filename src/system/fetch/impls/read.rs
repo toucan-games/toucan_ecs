@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::Component;
+use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
@@ -19,7 +20,7 @@ where
 {
     type Item = &'data C;
 
-    unsafe fn fetch(_world: *mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> FetchResult<Self::Item> {
         todo!()
     }
 }
@@ -39,7 +40,10 @@ where
 {
     type Item = marker::Resource<'data, R>;
 
-    unsafe fn fetch(_world: *mut World) -> Self::Item {
-        todo!()
+    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
+        let world = &*world;
+        let resource = world.get_resource().ok_or(FetchError)?;
+        let resource = marker::Resource::new(resource);
+        Ok(resource)
     }
 }

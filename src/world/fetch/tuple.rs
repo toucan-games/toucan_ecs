@@ -18,12 +18,12 @@ macro_rules! impl_fetch {
         {
             type Item = ($($types::Item,)*);
 
-            fn new(world: WorldData<'data>) -> Result<Self, FetchError> {
+            fn new(world: WorldData<'data>) -> FetchResult<Self> {
                 Ok(($($types::new(world)?,)*))
             }
 
             #[allow(non_snake_case)]
-            fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
+            fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
                 let ($($types,)*) = self;
                 $(let $types = $types.fetch(entity)?;)*
                 Ok(($($types,)*))
@@ -53,12 +53,12 @@ macro_rules! impl_fetch_mut {
         {
             type Item = ($($types::Item,)*);
 
-            unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
+            unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
                 Ok(($($types::new(world)?,)*))
             }
 
             #[allow(non_snake_case)]
-            fn fetch_mut(&'data mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+            fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
                 let ($($types,)*) = self;
                 $(let $types = $types.fetch_mut(entity)?;)*
                 Ok(($($types,)*))

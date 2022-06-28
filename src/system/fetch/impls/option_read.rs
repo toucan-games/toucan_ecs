@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::Component;
+use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
 use crate::World;
 
@@ -17,7 +18,7 @@ where
 {
     type Item = Option<&'data C>;
 
-    unsafe fn fetch(_world: *mut World) -> Self::Item {
+    unsafe fn fetch(_world: *mut World) -> FetchResult<Self::Item> {
         todo!()
     }
 }

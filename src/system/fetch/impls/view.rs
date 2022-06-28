@@ -1,5 +1,6 @@
 use std::marker::PhantomData;
 
+use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
 use crate::world::query::Query;
 use crate::world::view::View;
@@ -18,8 +19,9 @@ where
 {
     type Item = View<'data, Q>;
 
-    unsafe fn fetch(world: *mut World) -> Self::Item {
+    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
         let world = &*world;
-        View::new(world)
+        let view = View::new(world);
+        Ok(view)
     }
 }

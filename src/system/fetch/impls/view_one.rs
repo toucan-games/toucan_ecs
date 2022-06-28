@@ -1,6 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::Component;
+use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
 use crate::world::view::ViewOne;
 use crate::World;
@@ -18,9 +19,10 @@ where
 {
     type Item = ViewOne<'data, C>;
 
-    unsafe fn fetch(world: *mut World) -> Self::Item {
+    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
         let world = &*world;
         let storage = world.components().get_storage();
-        ViewOne::new(storage)
+        let view_one = ViewOne::new(storage);
+        Ok(view_one)
     }
 }

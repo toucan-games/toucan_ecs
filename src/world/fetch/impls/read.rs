@@ -1,7 +1,8 @@
 use crate::component::{Component, Storage, StorageImpl};
+use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
-use crate::world::{Fetch, FetchError, WorldData};
+use crate::world::{Fetch, WorldData};
 use crate::Entity;
 
 #[repr(transparent)]
@@ -19,12 +20,12 @@ where
     type Item = &'data C;
 
     // noinspection DuplicatedCode
-    fn new(world: WorldData<'data>) -> Result<Self, FetchError> {
+    fn new(world: WorldData<'data>) -> FetchResult<Self> {
         let storage = world.components().get_storage().ok_or(FetchError)?;
         Ok(Self { storage })
     }
 
-    fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
+    fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
         self.storage.get(entity).ok_or(FetchError)
     }
 }
@@ -44,12 +45,12 @@ cfg_resource! {
     {
         type Item = marker::Resource<'data, R>;
 
-        fn new(world: WorldData<'data>) -> Result<Self, FetchError> {
+        fn new(world: WorldData<'data>) -> FetchResult<Self> {
             let resource = world.resources().get().ok_or(FetchError)?;
             Ok(Self { resource })
         }
 
-        fn fetch(&self, _: Entity) -> Result<Self::Item, FetchError> {
+        fn fetch(&self, _: Entity) -> FetchResult<Self::Item> {
             let resource = marker::Resource::new(self.resource);
             Ok(resource)
         }

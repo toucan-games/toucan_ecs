@@ -1,5 +1,6 @@
 use crate::component::{Component, Storage, StorageImpl};
-use crate::world::{Fetch, FetchError, WorldData};
+use crate::error::FetchResult;
+use crate::world::{Fetch, WorldData};
 use crate::Entity;
 
 #[repr(transparent)]
@@ -17,12 +18,12 @@ where
     type Item = Option<&'data C>;
 
     // noinspection DuplicatedCode
-    fn new(world: WorldData<'data>) -> Result<Self, FetchError> {
+    fn new(world: WorldData<'data>) -> FetchResult<Self> {
         let storage = world.components().get_storage();
         Ok(Self { storage })
     }
 
-    fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
+    fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
         let item = self.storage.and_then(|storage| storage.get(entity));
         Ok(item)
     }

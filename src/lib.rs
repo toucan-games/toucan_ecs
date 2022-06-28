@@ -104,6 +104,7 @@ pub use world::World;
 
 #[macro_use]
 mod macros;
+mod error;
 mod hash;
 mod mutability_check;
 

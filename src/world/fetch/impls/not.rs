@@ -2,7 +2,8 @@ use std::marker::PhantomData;
 
 use crate::component::marker::Not;
 use crate::component::{Component, Storage, StorageImpl};
-use crate::world::{Fetch, FetchError, WorldData};
+use crate::error::{FetchError, FetchResult};
+use crate::world::{Fetch, WorldData};
 use crate::Entity;
 
 #[repr(transparent)]
@@ -19,13 +20,13 @@ where
 {
     type Item = Not<C>;
 
-    fn new(data: WorldData<'data>) -> Result<Self, FetchError> {
+    fn new(data: WorldData<'data>) -> FetchResult<Self> {
         let storage = data.components().get_storage();
         Ok(Self { storage })
     }
 
     // noinspection DuplicatedCode
-    fn fetch(&self, entity: Entity) -> Result<Self::Item, FetchError> {
+    fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
         match self.storage {
             None => Ok(Not(PhantomData)),
             Some(storage) => {

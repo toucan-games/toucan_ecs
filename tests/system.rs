@@ -95,8 +95,8 @@ fn for_each_system() {
     world.create_resource(SimpleResource::default());
 
     let mut schedule = Schedule::builder()
-        .system(for_each_component_system)
         .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .system(for_each_component_system)
         .build();
     schedule.run(&mut world);
 }

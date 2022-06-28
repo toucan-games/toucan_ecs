@@ -1,7 +1,8 @@
 use crate::component::{Component, Storage, StorageImpl};
+use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
-use crate::world::{FetchError, FetchMut, WorldDataMut};
+use crate::world::{FetchMut, WorldDataMut};
 use crate::Entity;
 
 #[repr(transparent)]
@@ -18,13 +19,13 @@ where
 {
     type Item = &'data C;
 
-    unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
+    unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
         // SAFETY: must be checked by the caller.
         let storage = world.components().get_storage().ok_or(FetchError)?;
         Ok(Self { storage })
     }
 
-    fn fetch_mut(&mut self, entity: Entity) -> Result<Self::Item, FetchError> {
+    fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
         self.storage.get(entity).ok_or(FetchError)
     }
 }
@@ -44,13 +45,13 @@ cfg_resource! {
     {
         type Item = marker::Resource<'data, R>;
 
-        unsafe fn new(world: WorldDataMut<'data>) -> Result<Self, FetchError> {
+        unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
             // SAFETY: must be checked by the caller.
             let resource = world.resources().get().ok_or(FetchError)?;
             Ok(Self { resource })
         }
 
-        fn fetch_mut(&mut self, _: Entity) -> Result<Self::Item, FetchError> {
+        fn fetch_mut(&mut self, _: Entity) -> FetchResult<Self::Item> {
             let resource = marker::Resource::new(self.resource);
             Ok(resource)
         }
