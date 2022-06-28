@@ -69,20 +69,20 @@ where
 }
 
 impl ErasedComponentHolder {
-    pub fn attach(&self, entity: Entity, registry: &mut Registry) {
+    pub fn attach(self, entity: Entity, registry: &mut Registry) {
         self.0.attach(entity, registry)
     }
 }
 
 trait Holdable: Send + Sync + 'static {
-    fn attach(&self, entity: Entity, registry: &mut Registry);
+    fn attach(self: Box<Self>, entity: Entity, registry: &mut Registry);
 }
 
 impl<C> Holdable for C
 where
     C: Component,
 {
-    fn attach(&self, entity: Entity, registry: &mut Registry) {
+    fn attach(self: Box<Self>, entity: Entity, registry: &mut Registry) {
         let component = *self;
         registry.attach_one(entity, component)
     }
