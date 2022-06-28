@@ -1,5 +1,3 @@
-#![cfg(not(miri))]
-
 use std::fmt::Debug;
 
 use components::{Mass, Position, Velocity};
@@ -14,10 +12,16 @@ mod components;
 mod resources;
 mod utils;
 
-fn for_each_component_system(position: &mut Position, velocity: &Velocity, mass: Option<&Mass>) {
+fn for_each_component_system(
+    entity: Entity,
+    position: &mut Position,
+    velocity: &Velocity,
+    mass: Option<&Mass>,
+) {
     position.x += 10.0;
     println!(
-        "position {:?}, velocity {:?}, mass {:?}",
+        "entity: {:?}, position {:?}, velocity {:?}, mass {:?}",
+        entity,
         position,
         velocity,
         mass.as_deref(),
@@ -59,13 +63,8 @@ fn view_mut_system<'data>(view_mut: ViewMut<'data, (Entity, &'data mut Position)
 }
 
 #[test]
-#[cfg(feature = "resource")]
-fn test() {
-    use resources::SimpleResource;
-    use toucan_ecs::resource::marker::Resource;
-
+fn system() {
     let mut world = utils::prepare_for_view();
-    world.create_resource(SimpleResource::default());
 
     let mut local_var = 0;
     let local_system = || {
@@ -76,13 +75,28 @@ fn test() {
     let mut schedule = Schedule::builder()
         .system(|| println!("Hello, World"))
         .system(|| println!("Result of sum is {}", 2 + 2))
-        .system(for_each_component_system)
         .system(local_system)
-        .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
         .system(view_one_system::<Position>)
         .system(view_one_mut_system)
         .system(view_system::<(Entity, &Position, Option<&Velocity>)>)
         .system(view_mut_system)
+        .build();
+    schedule.run(&mut world);
+}
+
+#[test]
+#[cfg(feature = "resource")]
+#[cfg(not(miri))]
+fn for_each_system() {
+    use resources::SimpleResource;
+    use toucan_ecs::resource::marker::Resource;
+
+    let mut world = utils::prepare_for_view();
+    world.create_resource(SimpleResource::default());
+
+    let mut schedule = Schedule::builder()
+        .system(for_each_component_system)
+        .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
         .build();
     schedule.run(&mut world);
 }
