@@ -3,7 +3,7 @@ use std::hash::BuildHasherDefault;
 
 use crate::component::storage::{ErasedStorageHolder, StorageHolder};
 use crate::component::{Component, ComponentSet, ComponentTypeId, Storage, StorageImpl};
-use crate::entity::{Entity, Iter, Registry as EntityRegistry};
+use crate::entity::{Entity, EntityBuilder, Iter, Registry as EntityRegistry};
 use crate::hash::TypeIdHasher;
 use crate::world::view::{ViewOne, ViewOneMut};
 use crate::world::Entry;
@@ -61,6 +61,10 @@ impl Registry {
 
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
         self.contains(entity).then(|| Entry::new(entity, self))
+    }
+
+    pub fn entity(&mut self) -> EntityBuilder {
+        EntityBuilder::new(self)
     }
 
     pub fn extend(&mut self, count: u32) -> &[Entity] {

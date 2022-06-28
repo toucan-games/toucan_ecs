@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::{Component, ComponentSet, Registry as ComponentRegistry, StorageMap};
-use crate::entity::{Entity, Registry as EntityRegistry};
+use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
 use crate::world::Entry;
@@ -203,7 +203,7 @@ impl World {
         self.components.create_entry_with(set)
     }
 
-    /// Create [entry](Entry) for the provided entity.
+    /// Creates [entry](Entry) for the provided entity.
     ///
     /// Returns [`None`](Option::None) if the provided entity was previously destroyed.
     ///
@@ -221,6 +221,36 @@ impl World {
     /// ```
     pub fn entry(&mut self, entity: Entity) -> Option<Entry> {
         self.components.entry(entity)
+    }
+
+    /// Creates new entity lazy builder which allows
+    /// to attach components to new entity later.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::World;
+    /// #[derive(Copy, Clone)]
+    /// struct Position {
+    ///     x: f32,
+    ///     y: f32,
+    /// }
+    ///
+    /// #[derive(Copy, Clone)]
+    /// struct Mass(f32);
+    ///
+    /// let mut world = World::new();
+    ///
+    /// let entity = world.entity()
+    ///     .with(Mass(10.0))
+    ///     .with(Position { x: 100.0, y: -100.0 })
+    ///     .build();
+    ///
+    /// assert!(world.contains(entity));
+    /// assert!(world.attached::<(Position, Mass)>(entity));
+    /// ```
+    pub fn entity(&mut self) -> EntityBuilder {
+        self.components.entity()
     }
 
     /// Extends world with provided count of newly created entities.

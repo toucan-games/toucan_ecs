@@ -1,7 +1,9 @@
 //! Provides entity handle in the world.
 
+pub use builder::EntityBuilder;
 pub(crate) use registry::{Iter, Registry};
 
+mod builder;
 mod registry;
 
 slotmap::new_key_type! {
