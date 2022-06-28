@@ -1,4 +1,4 @@
-//! Provides entity handle, entry for the specific entity in the world.
+//! Provides entity handle in the world.
 
 pub(crate) use registry::{Iter, Registry};
 

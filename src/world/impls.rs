@@ -1,9 +1,10 @@
 use std::marker::PhantomData;
 
-use crate::component::{Component, ComponentSet, Entry, Registry as ComponentRegistry, StorageMap};
+use crate::component::{Component, ComponentSet, Registry as ComponentRegistry, StorageMap};
 use crate::entity::{Entity, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
 use crate::resource::{Registry as ResourceRegistry, Resource};
+use crate::world::Entry;
 
 use super::query::{CheckedQuery, Query, QueryMut};
 use super::view::{View, ViewMut, ViewOne, ViewOneMut};

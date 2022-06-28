@@ -10,13 +10,13 @@ use crate::entity::Entity;
 /// You can retrieve this from
 /// [`World::create_entry`][crate::World::create_entry()] to create new entity and easily access it
 /// or from [`World::entry`][crate::World::entry()] if an entity was created earlier.
-pub struct Entry<'r> {
+pub struct Entry<'data> {
     entity: Entity,
-    registry: &'r mut Registry,
+    registry: &'data mut Registry,
 }
 
-impl<'r> Entry<'r> {
-    pub(super) fn new(entity: Entity, registry: &'r mut Registry) -> Self {
+impl<'data> Entry<'data> {
+    pub(crate) fn new(entity: Entity, registry: &'data mut Registry) -> Self {
         Entry { entity, registry }
     }
 
@@ -26,7 +26,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -44,7 +44,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -60,7 +60,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// assert!(entry.is_empty());
@@ -80,7 +80,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -106,7 +106,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -133,7 +133,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -160,7 +160,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -190,7 +190,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -217,7 +217,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -247,7 +247,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone)]
     /// struct Name(&'static str);
@@ -270,7 +270,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -279,7 +279,7 @@ impl<'r> Entry<'r> {
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&'r self) -> Option<&'r C>
+    pub fn get<C>(&'data self) -> Option<&'data C>
     where
         C: Component,
     {
@@ -293,7 +293,7 @@ impl<'r> Entry<'r> {
     ///
     /// ```
     /// # use toucan_ecs::World;
-    /// # use toucan_ecs::component::Entry;
+    /// # use toucan_ecs::world::Entry;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -304,7 +304,7 @@ impl<'r> Entry<'r> {
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
-    pub fn get_mut<C>(&'r mut self) -> Option<&'r mut C>
+    pub fn get_mut<C>(&'data mut self) -> Option<&'data mut C>
     where
         C: Component,
     {

@@ -2,10 +2,11 @@ use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
 use crate::component::storage::{ErasedStorageHolder, StorageHolder};
-use crate::component::{Component, ComponentSet, ComponentTypeId, Entry, Storage, StorageImpl};
+use crate::component::{Component, ComponentSet, ComponentTypeId, Storage, StorageImpl};
 use crate::entity::{Entity, Iter, Registry as EntityRegistry};
 use crate::hash::TypeIdHasher;
 use crate::world::view::{ViewOne, ViewOneMut};
+use crate::world::Entry;
 
 #[derive(Default)]
 pub struct Registry {
