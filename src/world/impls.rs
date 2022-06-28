@@ -817,7 +817,8 @@ impl World {
     where
         C: Component,
     {
-        ViewOne::new(&self.components)
+        let storage = self.components.get_storage();
+        ViewOne::new(storage)
     }
 
     /// Creates a [view](ViewOneMut) of the component type.
@@ -846,7 +847,8 @@ impl World {
     where
         C: Component,
     {
-        ViewOneMut::new(&mut self.components)
+        let storage = self.components.get_storage_mut();
+        ViewOneMut::new(storage)
     }
 
     /// Creates a [view](View) of the multiple component types.

@@ -1,7 +1,7 @@
 use std::iter::Flatten;
 use std::option::IntoIter;
 
-use crate::component::{Component, Iter, Registry, StorageImpl};
+use crate::component::{Component, Iter, StorageImpl};
 use crate::Entity;
 
 /// Iterator which returns *entity* of the world
@@ -20,12 +20,8 @@ impl<'data, C> ViewOne<'data, C>
 where
     C: Component,
 {
-    pub(crate) fn new(registry: &'data Registry) -> Self {
-        let iter = registry
-            .get_storage()
-            .map(StorageImpl::iter)
-            .into_iter()
-            .flatten();
+    pub(crate) fn new(storage: Option<&'data StorageImpl<C>>) -> Self {
+        let iter = storage.map(StorageImpl::iter).into_iter().flatten();
         Self { iter }
     }
 }
