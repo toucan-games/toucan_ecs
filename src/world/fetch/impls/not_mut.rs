@@ -28,6 +28,13 @@ where
     }
 
     // noinspection DuplicatedCode
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+        let iter = self.storage.as_ref()?.iter();
+        let iter = iter.map(|(entity, _)| entity);
+        Some(Box::new(iter))
+    }
+
+    // noinspection DuplicatedCode
     fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
         match self.storage {
             None => Ok(Not(PhantomData)),

@@ -23,6 +23,13 @@ macro_rules! impl_fetch {
             }
 
             #[allow(non_snake_case)]
+            fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item=Entity> + Send + Sync + 'data>> {
+                let ($($types,)*) = self;
+                let iters = [$($types.entities(),)*];
+                iters.into_iter().flatten().min_by(|x, y| x.len().cmp(&y.len()))
+            }
+
+            #[allow(non_snake_case)]
             fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
                 let ($($types,)*) = self;
                 $(let $types = $types.fetch(entity)?;)*
@@ -55,6 +62,13 @@ macro_rules! impl_fetch_mut {
 
             unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
                 Ok(($($types::new(world)?,)*))
+            }
+
+            #[allow(non_snake_case)]
+            fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item=Entity> + Send + Sync + 'data>> {
+                let ($($types,)*) = self;
+                let iters = [$($types.entities(),)*];
+                iters.into_iter().flatten().min_by(|x, y| x.len().cmp(&y.len()))
             }
 
             #[allow(non_snake_case)]

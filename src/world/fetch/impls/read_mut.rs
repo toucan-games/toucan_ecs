@@ -25,6 +25,13 @@ where
         Ok(Self { storage })
     }
 
+    // noinspection DuplicatedCode
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+        let iter = self.storage.iter();
+        let iter = iter.map(|(entity, _)| entity);
+        Some(Box::new(iter))
+    }
+
     fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
         self.storage.get(entity).ok_or(FetchError)
     }
@@ -49,6 +56,10 @@ cfg_resource! {
             // SAFETY: must be checked by the caller.
             let resource = world.resources().get().ok_or(FetchError)?;
             Ok(Self { resource })
+        }
+
+        fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item=Entity> + Send + Sync + 'data>> {
+            None
         }
 
         fn fetch_mut(&mut self, _: Entity) -> FetchResult<Self::Item> {

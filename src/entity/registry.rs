@@ -29,10 +29,6 @@ impl Registry {
     pub fn clear(&mut self) {
         self.0.clear();
     }
-
-    pub fn iter(&self) -> Iter {
-        Iter(self.0.keys())
-    }
 }
 
 #[repr(transparent)]

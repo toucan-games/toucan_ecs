@@ -42,6 +42,18 @@ where
         });
         Box::new(iter)
     }
+
+    // noinspection DuplicatedCode
+    pub fn iter_ref(&self) -> Box<Iter<'data, C>> {
+        let iter = self.erased.iter();
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: pointer from the holdable iter is valid
+            let component = unsafe { &*(it.1.get() as *const _) };
+            (entity, component)
+        });
+        Box::new(iter)
+    }
 }
 
 impl<'data, C> From<&'data ErasedStorageHolder> for StorageHolder<'data, C>
@@ -116,7 +128,32 @@ where
         Box::new(iter)
     }
 
+    // noinspection DuplicatedCode
+    pub fn iter_ref(&'data self) -> Box<Iter<'data, C>> {
+        let iter = self.erased.iter();
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: pointer from the holdable iter is valid
+            let component = unsafe { &*(it.1.get() as *const _) };
+            (entity, component)
+        });
+        Box::new(iter)
+    }
+
+    // noinspection DuplicatedCode
     pub fn iter_mut(self) -> Box<IterMut<'data, C>> {
+        let iter = self.erased.iter_mut();
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: pointer from the holdable iter is valid
+            let component = unsafe { &mut *(it.1.get() as *mut _) };
+            (entity, component)
+        });
+        Box::new(iter)
+    }
+
+    // noinspection DuplicatedCode
+    pub fn iter_ref_mut(&'data mut self) -> Box<IterMut<'data, C>> {
         let iter = self.erased.iter_mut();
         let iter = iter.map(|it| {
             let entity = it.0;

@@ -13,6 +13,9 @@ pub trait Fetch<'data>: Sized + Send + Sync + 'data {
 
     fn new(data: WorldData<'data>) -> FetchResult<Self>;
 
+    // fixme move to associated type when GATs are stabilized
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>>;
+
     fn fetch(&self, entity: Entity) -> FetchResult<Self::Item>;
 }
 
@@ -23,6 +26,9 @@ pub trait FetchMut<'data>: Sized + Send + Sync + 'data {
     ///
     /// This function should be called if and only if mutability soundness was checked.
     unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self>;
+
+    // fixme move to associated type when GATs are stabilized
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>>;
 
     fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item>;
 }

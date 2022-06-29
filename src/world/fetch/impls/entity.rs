@@ -11,6 +11,10 @@ impl<'data> Fetch<'data> for FetchEntity {
         Ok(Self)
     }
 
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+        None
+    }
+
     fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
         Ok(entity)
     }
@@ -21,6 +25,10 @@ impl<'data> FetchMut<'data> for FetchEntity {
 
     unsafe fn new(_: WorldDataMut<'data>) -> FetchResult<Self> {
         Ok(Self)
+    }
+
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+        None
     }
 
     fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {

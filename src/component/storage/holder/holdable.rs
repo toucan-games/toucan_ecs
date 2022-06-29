@@ -3,7 +3,8 @@ use crate::Entity;
 
 use super::erased::ErasedComponent;
 
-pub type Iter<'data> = dyn Iterator<Item = (Entity, ErasedComponent)> + Send + Sync + 'data;
+pub type Iter<'data> =
+    dyn ExactSizeIterator<Item = (Entity, ErasedComponent)> + Send + Sync + 'data;
 
 pub trait Holdable: Send + Sync + 'static {
     /// # Safety

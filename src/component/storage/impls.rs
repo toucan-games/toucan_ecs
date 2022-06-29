@@ -90,6 +90,15 @@ where
     iter: DenseIter<'data, ComponentKey, (Entity, C)>,
 }
 
+impl<'data, C> ExactSizeIterator for Iter<'data, C>
+where
+    C: Component,
+{
+    fn len(&self) -> usize {
+        self.iter.len()
+    }
+}
+
 impl<'data, C> Iterator for Iter<'data, C>
 where
     C: Component,
@@ -109,6 +118,15 @@ where
     C: Component,
 {
     iter_mut: DenseIterMut<'data, ComponentKey, (Entity, C)>,
+}
+
+impl<'data, C> ExactSizeIterator for IterMut<'data, C>
+where
+    C: Component,
+{
+    fn len(&self) -> usize {
+        self.iter_mut.len()
+    }
 }
 
 impl<'data, C> Iterator for IterMut<'data, C>

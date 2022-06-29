@@ -1,3 +1,5 @@
+use std::mem::transmute;
+
 use crate::component::{Component, StorageHolderMut};
 use crate::error::FetchResult;
 use crate::world::{FetchMut, WorldDataMut};
@@ -21,6 +23,16 @@ where
         // SAFETY: must be checked by the caller.
         let storage = world.components_mut().get_storage_mut();
         Ok(Self { storage })
+    }
+
+    // noinspection DuplicatedCode
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+        // SAFETY: other data will not be changed during iteration
+        let storage: &'data StorageHolderMut<'data, C> =
+            unsafe { transmute(self.storage.as_ref()?) };
+        let iter = storage.iter_ref();
+        let iter = iter.map(|(entity, _)| entity);
+        Some(Box::new(iter))
     }
 
     fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {

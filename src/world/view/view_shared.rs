@@ -1,7 +1,6 @@
-use crate::entity::Iter;
 use crate::world::query::Query;
 use crate::world::Fetch;
-use crate::World;
+use crate::{Entity, World};
 
 /// Iterator which returns **shared** borrows of components.
 ///
@@ -13,7 +12,7 @@ pub struct View<'data, Q>
 where
     Q: Query<'data>,
 {
-    entities: Iter<'data>,
+    entities: Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -23,9 +22,9 @@ where
 {
     // noinspection RsUnnecessaryQualifications
     pub(crate) fn new(world: &'data World) -> Self {
-        let (entities, data) = world.split();
-        let entities = entities.iter();
+        let (_, data) = world.split();
         let fetch = Q::Fetch::new(data).ok();
+        let entities = fetch.as_ref().and_then(Fetch::entities);
         Self { entities, fetch }
     }
 }
@@ -38,8 +37,9 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         let fetch = self.fetch.as_ref()?;
+        let entities = self.entities.as_mut()?;
         loop {
-            let entity = self.entities.next()?;
+            let entity = entities.next()?;
             let result = fetch.fetch(entity);
             match result {
                 Ok(item) => return Some(item.into()),

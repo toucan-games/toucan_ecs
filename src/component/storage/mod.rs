@@ -7,9 +7,10 @@ use crate::Entity;
 mod holder;
 mod impls;
 
-pub type Iter<'data, C> = dyn Iterator<Item = (Entity, &'data C)> + Send + Sync + 'data;
+pub type Iter<'data, C> = dyn ExactSizeIterator<Item = (Entity, &'data C)> + Send + Sync + 'data;
 
-pub type IterMut<'data, C> = dyn Iterator<Item = (Entity, &'data mut C)> + Send + Sync + 'data;
+pub type IterMut<'data, C> =
+    dyn ExactSizeIterator<Item = (Entity, &'data mut C)> + Send + Sync + 'data;
 
 pub trait Storage: Send + Sync + 'static {
     type Item: Component;

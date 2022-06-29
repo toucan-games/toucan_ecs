@@ -1,7 +1,7 @@
 //! Provides entity handle in the world.
 
 pub use builder::EntityBuilder;
-pub(crate) use registry::{Iter, Registry};
+pub(crate) use registry::Registry;
 
 mod builder;
 mod registry;
