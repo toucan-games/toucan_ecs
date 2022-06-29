@@ -62,6 +62,14 @@ fn view_mut_system<'data>(view_mut: ViewMut<'data, (Entity, &'data mut Position)
     }
 }
 
+fn complex_view_mut_system<'data>(
+    _view_mut: ViewMut<'data, (Entity, &'data mut Position, Option<&'data Mass>)>,
+    _velocities: ViewMut<'data, &'data mut Velocity>,
+    _masses: ViewOne<'data, Mass>,
+) {
+    // do nothing here
+}
+
 #[test]
 fn system() {
     let mut world = utils::prepare_for_view();
@@ -80,6 +88,7 @@ fn system() {
         .system(view_one_mut_system)
         .system(view_system::<(Entity, &Position, Option<&Velocity>)>)
         .system(view_mut_system)
+        .system(complex_view_mut_system)
         .build();
     schedule.run(&mut world);
 }
