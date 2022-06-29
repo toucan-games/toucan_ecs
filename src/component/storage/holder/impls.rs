@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use crate::component::{Component, ComponentTypeId, Iter, IterMut};
 use crate::Entity;
 
-use super::erased::ErasedStorageHolder;
+use super::erased::{ErasedComponent, ErasedStorageHolder};
 
 #[repr(transparent)]
 #[derive(Copy, Clone)]
@@ -27,14 +27,19 @@ where
     pub fn get(&self, entity: Entity) -> Option<&'data C> {
         let erased = self.erased.get(entity)?;
         // SAFETY: was checked at creation
-        let component = unsafe { &*(erased as *const _) };
+        let component = unsafe { &*(erased.get() as *const _) };
         Some(component)
     }
 
     // noinspection DuplicatedCode
     pub fn iter(self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
-        let iter = iter.map(|it| (it.0, unsafe { &*(it.1 as *const C) }));
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: pointer from the holdable iter is valid
+            let component = unsafe { &*(it.1.get() as *const _) };
+            (entity, component)
+        });
         Box::new(iter)
     }
 }
@@ -66,7 +71,8 @@ where
     C: Component,
 {
     pub fn attach(&mut self, entity: Entity, component: C) {
-        let component = &component as *const _ as _;
+        // SAFETY: component reference cannot be null
+        let component = unsafe { ErasedComponent::new_unchecked(&component as *const _ as _) };
         // SAFETY: was checked at creation
         unsafe { self.erased.attach(entity, component) }
     }
@@ -79,14 +85,14 @@ where
     pub fn get(&self, entity: Entity) -> Option<&'data C> {
         let erased = self.erased.get(entity)?;
         // SAFETY: was checked at creation
-        let component = unsafe { &*(erased as *const _) };
+        let component = unsafe { &*(erased.get() as *const _) };
         Some(component)
     }
 
     pub fn get_mut(&mut self, entity: Entity) -> Option<&'data mut C> {
         let erased = self.erased.get_mut(entity)?;
         // SAFETY: was checked at creation
-        let component = unsafe { &mut *(erased as *mut _) };
+        let component = unsafe { &mut *(erased.get() as *mut _) };
         Some(component)
     }
 
@@ -101,13 +107,23 @@ where
     // noinspection DuplicatedCode
     pub fn iter(self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
-        let iter = iter.map(|it| (it.0, unsafe { &*(it.1 as *const _) }));
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: pointer from the holdable iter is valid
+            let component = unsafe { &*(it.1.get() as *const _) };
+            (entity, component)
+        });
         Box::new(iter)
     }
 
     pub fn iter_mut(self) -> Box<IterMut<'data, C>> {
         let iter = self.erased.iter_mut();
-        let iter = iter.map(|it| (it.0, unsafe { &mut *(it.1 as *mut _) }));
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: pointer from the holdable iter is valid
+            let component = unsafe { &mut *(it.1.get() as *mut _) };
+            (entity, component)
+        });
         Box::new(iter)
     }
 }

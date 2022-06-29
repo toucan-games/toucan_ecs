@@ -17,6 +17,7 @@ where
 
 impl<'data> ErasedSystemHolder<'data> {
     pub fn run(&mut self, world: *mut World) {
+        // SAFETY: provided pointer is valid
         let world = unsafe { &mut *world };
         self.0.run(world)
     }

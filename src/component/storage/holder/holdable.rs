@@ -51,7 +51,7 @@ where
     C: Component,
 {
     unsafe fn attach(&mut self, entity: Entity, component: ErasedComponent) {
-        let component = *(component as *const _);
+        let component = *(component.get() as *const _);
         self.attach(entity, component)
     }
 
@@ -61,12 +61,16 @@ where
 
     fn get(&self, entity: Entity) -> Option<ErasedComponent> {
         let component = self.get(entity)?;
-        Some(component as *const _ as _)
+        // SAFETY: component reference cannot be null
+        let erased = unsafe { ErasedComponent::new_unchecked(component as *const _ as _) };
+        Some(erased)
     }
 
     fn get_mut(&mut self, entity: Entity) -> Option<ErasedComponent> {
         let component = self.get_mut(entity)?;
-        Some(component as *mut _ as _)
+        // SAFETY: component reference cannot be null
+        let erased = unsafe { ErasedComponent::new_unchecked(component as *mut _ as _) };
+        Some(erased)
     }
 
     fn remove(&mut self, entity: Entity) {
@@ -79,13 +83,23 @@ where
 
     fn iter(&self) -> Box<Iter> {
         let iter = self.iter();
-        let iter = iter.map(|it| (it.0, it.1 as *const _ as ErasedComponent));
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: component reference cannot be null
+            let erased = unsafe { ErasedComponent::new_unchecked(it.1 as *const _ as _) };
+            (entity, erased)
+        });
         Box::new(iter)
     }
 
     fn iter_mut(&mut self) -> Box<Iter> {
         let iter = self.iter_mut();
-        let iter = iter.map(|it| (it.0, it.1 as *mut _ as ErasedComponent));
+        let iter = iter.map(|it| {
+            let entity = it.0;
+            // SAFETY: component reference cannot be null
+            let erased = unsafe { ErasedComponent::new_unchecked(it.1 as *mut _ as _) };
+            (entity, erased)
+        });
         Box::new(iter)
     }
 }

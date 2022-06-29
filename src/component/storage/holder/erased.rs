@@ -1,9 +1,11 @@
+use std::num::NonZeroUsize;
+
 use crate::component::{Component, ComponentTypeId, Storage};
 use crate::Entity;
 
 use super::holdable::{Holdable, Iter};
 
-pub type ErasedComponent = usize;
+pub type ErasedComponent = NonZeroUsize;
 
 pub struct ErasedStorageHolder {
     holdable: Box<dyn Holdable>,
