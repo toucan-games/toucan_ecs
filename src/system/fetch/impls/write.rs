@@ -1,7 +1,9 @@
 use std::marker::PhantomData;
 
 use crate::component::Component;
-use crate::error::{FetchError, FetchResult};
+#[cfg(feature = "resource")]
+use crate::error::FetchError;
+use crate::error::FetchResult;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
