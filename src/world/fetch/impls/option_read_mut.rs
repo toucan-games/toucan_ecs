@@ -1,4 +1,4 @@
-use crate::component::{Component, Storage, StorageImpl};
+use crate::component::{Component, StorageHolder};
 use crate::error::FetchResult;
 use crate::world::{FetchMut, WorldDataMut};
 use crate::Entity;
@@ -8,7 +8,7 @@ pub struct FetchOptionReadMut<'data, C>
 where
     C: Component,
 {
-    storage: Option<&'data StorageImpl<C>>,
+    storage: Option<StorageHolder<'data, C>>,
 }
 
 impl<'data, C> FetchMut<'data> for FetchOptionReadMut<'data, C>

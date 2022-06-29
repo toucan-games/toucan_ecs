@@ -1,4 +1,4 @@
-use crate::component::{Component, Storage, StorageImpl};
+use crate::component::{Component, StorageHolder};
 use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
@@ -10,7 +10,7 @@ pub struct FetchReadMut<'data, C>
 where
     C: Component,
 {
-    storage: &'data StorageImpl<C>,
+    storage: StorageHolder<'data, C>,
 }
 
 impl<'data, C> FetchMut<'data> for FetchReadMut<'data, C>

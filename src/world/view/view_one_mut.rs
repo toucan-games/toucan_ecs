@@ -1,7 +1,7 @@
 use std::iter::Flatten;
 use std::option::IntoIter;
 
-use crate::component::{Component, IterMut, StorageImpl};
+use crate::component::{Component, IterMut, StorageHolderMut};
 use crate::Entity;
 
 /// Iterator which returns *entity* of the world
@@ -13,15 +13,18 @@ pub struct ViewOneMut<'data, C>
 where
     C: Component,
 {
-    iter: Flatten<IntoIter<IterMut<'data, C>>>,
+    iter: Flatten<IntoIter<Box<IterMut<'data, C>>>>,
 }
 
 impl<'data, C> ViewOneMut<'data, C>
 where
     C: Component,
 {
-    pub(crate) fn new(storage: Option<&'data mut StorageImpl<C>>) -> Self {
-        let iter = storage.map(StorageImpl::iter_mut).into_iter().flatten();
+    pub(crate) fn new(storage: Option<StorageHolderMut<'data, C>>) -> Self {
+        let iter = storage
+            .map(StorageHolderMut::iter_mut)
+            .into_iter()
+            .flatten();
         Self { iter }
     }
 }

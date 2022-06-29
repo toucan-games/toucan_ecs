@@ -1,6 +1,7 @@
 use slotmap::dense::{Iter as DenseIter, IterMut as DenseIterMut};
 use slotmap::{DenseSlotMap, SecondaryMap};
 
+use crate::component::storage;
 use crate::component::Component;
 use crate::entity::Entity;
 
@@ -16,21 +17,6 @@ where
 {
     components: DenseSlotMap<ComponentKey, (Entity, C)>,
     entity_to_key: SecondaryMap<Entity, ComponentKey>,
-}
-
-impl<C> StorageImpl<C>
-where
-    C: Component,
-{
-    pub fn iter(&self) -> Iter<C> {
-        let iter = self.components.iter();
-        Iter { iter }
-    }
-
-    pub fn iter_mut(&mut self) -> IterMut<C> {
-        let iter_mut = self.components.iter_mut();
-        IterMut { iter_mut }
-    }
 }
 
 impl<C> Default for StorageImpl<C>
@@ -82,6 +68,18 @@ where
     fn clear(&mut self) {
         self.entity_to_key.clear();
         self.components.clear();
+    }
+
+    fn iter(&self) -> Box<storage::Iter<Self::Item>> {
+        let iter = self.components.iter();
+        let iter = Iter { iter };
+        Box::new(iter)
+    }
+
+    fn iter_mut(&mut self) -> Box<storage::IterMut<Self::Item>> {
+        let iter_mut = self.components.iter_mut();
+        let iter_mut = IterMut { iter_mut };
+        Box::new(iter_mut)
     }
 }
 

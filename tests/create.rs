@@ -52,7 +52,7 @@ fn create_with_builder() {
         world.get(entity),
         Some(&Velocity {
             dx: 1000.0,
-            dy: 1000.0
+            dy: 1000.0,
         })
     );
 }

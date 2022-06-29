@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::component::marker::Not;
-use crate::component::{Component, Storage, StorageImpl};
+use crate::component::{Component, StorageHolder};
 use crate::error::{FetchError, FetchResult};
 use crate::world::{FetchMut, WorldDataMut};
 use crate::Entity;
@@ -11,7 +11,7 @@ pub struct FetchNotMut<'data, C>
 where
     C: Component,
 {
-    storage: Option<&'data StorageImpl<C>>,
+    storage: Option<StorageHolder<'data, C>>,
 }
 
 impl<'data, C> FetchMut<'data> for FetchNotMut<'data, C>

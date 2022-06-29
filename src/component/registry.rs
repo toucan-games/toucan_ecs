@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use crate::component::storage::ErasedStorageHolder;
-use crate::component::{Component, ComponentSet, ComponentTypeId, Storage, StorageImpl};
+use crate::component::storage::{
+    ErasedStorageHolder, StorageHolder, StorageHolderMut, StorageImpl,
+};
+use crate::component::{Component, ComponentSet, ComponentTypeId};
 use crate::hash::TypeIdHasher;
 use crate::Entity;
 
@@ -33,7 +35,7 @@ impl Registry {
         C: Component,
     {
         self.register::<C>();
-        let storage = self.get_storage_mut().unwrap();
+        let mut storage = self.get_storage_mut().unwrap();
         storage.attach(entity, component);
     }
 
@@ -72,7 +74,7 @@ impl Registry {
         C: Component,
     {
         let storage = self.get_storage_mut::<C>();
-        if let Some(storage) = storage {
+        if let Some(mut storage) = storage {
             storage.remove(entity)
         }
     }
@@ -102,28 +104,26 @@ impl Registry {
     where
         C: Component,
     {
-        let storage = self.get_storage_mut::<C>()?;
+        let mut storage = self.get_storage_mut::<C>()?;
         storage.get_mut(entity)
     }
 
-    pub fn get_storage<C>(&self) -> Option<&StorageImpl<C>>
+    pub fn get_storage<C>(&self) -> Option<StorageHolder<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        let storage = storage.downcast_ref().expect("downcast error");
-        Some(storage)
+        Some(storage.into())
     }
 
-    pub fn get_storage_mut<C>(&mut self) -> Option<&mut StorageImpl<C>>
+    pub fn get_storage_mut<C>(&mut self) -> Option<StorageHolderMut<C>>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        let storage = storage.downcast_mut().expect("downcast error");
-        Some(storage)
+        Some(storage.into())
     }
 
     pub fn has_storage<C>(&self) -> bool

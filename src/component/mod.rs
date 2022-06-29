@@ -2,7 +2,7 @@
 
 pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
-pub(crate) use storage::{Iter, IterMut, Storage, StorageImpl};
+pub(crate) use storage::{Iter, IterMut, Storage, StorageHolder, StorageHolderMut};
 pub(crate) use type_id::ComponentTypeId;
 
 mod registry;
