@@ -1,6 +1,3 @@
-use std::iter::Flatten;
-use std::option::IntoIter;
-
 use crate::component::{Component, Iter, StorageHolder};
 use crate::Entity;
 
@@ -13,7 +10,7 @@ pub struct ViewOne<'data, C>
 where
     C: Component,
 {
-    iter: Flatten<IntoIter<Box<Iter<'data, C>>>>,
+    iter: Option<Box<Iter<'data, C>>>,
 }
 
 impl<'data, C> ViewOne<'data, C>
@@ -21,7 +18,7 @@ where
     C: Component,
 {
     pub(crate) fn new(storage: Option<StorageHolder<'data, C>>) -> Self {
-        let iter = storage.map(StorageHolder::iter).into_iter().flatten();
+        let iter = storage.map(StorageHolder::iter);
         Self { iter }
     }
 }
@@ -33,6 +30,20 @@ where
     type Item = (Entity, &'data C);
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.iter.next()
+        self.iter.as_mut()?.next()
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let len = self.len();
+        (len, Some(len))
+    }
+}
+
+impl<'data, C> ExactSizeIterator for ViewOne<'data, C>
+where
+    C: Component,
+{
+    fn len(&self) -> usize {
+        self.iter.as_ref().map(ExactSizeIterator::len).unwrap_or(0)
     }
 }

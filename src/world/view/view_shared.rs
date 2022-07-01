@@ -50,4 +50,9 @@ where
             }
         }
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let upper = self.entities.len();
+        (0, Some(upper))
+    }
 }

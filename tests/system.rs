@@ -32,12 +32,14 @@ fn view_one_system<C>(view_one: ViewOne<C>)
 where
     C: Component + Debug,
 {
+    assert_eq!(view_one.len(), 10);
     for (entity, component) in view_one {
         println!("entity: {:?}, component: {:?}", entity, component)
     }
 }
 
 fn view_one_mut_system(view_one_mut: ViewOneMut<Velocity>) {
+    assert_eq!(view_one_mut.len(), 10);
     for (entity, velocity) in view_one_mut {
         velocity.dx = 0.0;
         velocity.dy = 0.0;
@@ -65,9 +67,10 @@ fn view_mut_system<'data>(view_mut: ViewMut<'data, (Entity, &'data mut Position)
 fn complex_view_mut_system<'data>(
     _view_mut: ViewMut<'data, (Entity, &'data mut Position, Option<&'data Mass>)>,
     _velocities: ViewMut<'data, &'data mut Velocity>,
-    _masses: ViewOne<'data, Mass>,
+    masses: ViewOne<'data, Mass>,
 ) {
-    // do nothing here
+    assert_eq!(masses.len(), 10);
+    // do nothing here for now
 }
 
 #[test]

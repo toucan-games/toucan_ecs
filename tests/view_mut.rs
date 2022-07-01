@@ -13,7 +13,10 @@ mod utils;
 fn view_one_mut() {
     let mut world = utils::prepare_for_view();
 
-    for (_, component) in world.view_one_mut::<Position>() {
+    let view_one_mut = world.view_one_mut::<Position>();
+    assert_eq!(view_one_mut.len(), 10);
+
+    for (_, component) in view_one_mut {
         component.x -= 10.0;
         println!("component: {:?}", component)
     }

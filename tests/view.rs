@@ -11,7 +11,10 @@ mod utils;
 fn view_one() {
     let world = utils::prepare_for_view();
 
-    for component in world.view_one::<Position>() {
+    let view_one = world.view_one::<Position>();
+    assert_eq!(view_one.len(), 10);
+
+    for component in view_one {
         println!("component: {:?}", component)
     }
 }
