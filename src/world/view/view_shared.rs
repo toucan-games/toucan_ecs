@@ -12,7 +12,7 @@ pub struct View<'data, Q>
 where
     Q: Query<'data>,
 {
-    entities: Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>>,
+    entities: Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -22,9 +22,12 @@ where
 {
     // noinspection RsUnnecessaryQualifications
     pub(crate) fn new(world: &'data World) -> Self {
-        let (_, data) = world.split();
+        let (entities, data) = world.split();
         let fetch = Q::Fetch::new(data).ok();
-        let entities = fetch.as_ref().and_then(Fetch::entities);
+        let entities = fetch
+            .as_ref()
+            .and_then(Fetch::entities)
+            .unwrap_or_else(|| Box::new(entities.iter()));
         Self { entities, fetch }
     }
 }
@@ -37,7 +40,7 @@ where
 
     fn next(&mut self) -> Option<Self::Item> {
         let fetch = self.fetch.as_ref()?;
-        let entities = self.entities.as_mut()?;
+        let entities = self.entities.as_mut();
         loop {
             let entity = entities.next()?;
             let result = fetch.fetch(entity);

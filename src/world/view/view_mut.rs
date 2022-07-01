@@ -14,7 +14,7 @@ pub struct ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    entities: Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>>,
+    entities: Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -23,10 +23,13 @@ where
     Q: QueryMut<'data>,
 {
     pub(crate) fn new(world: &'data mut World, _checked: CheckedQuery<'data, Q>) -> Self {
-        let (_, data) = world.split_mut();
+        let (entities, data) = world.split_mut();
         // SAFETY: query was checked by `CheckedQuery`
         let fetch = unsafe { Q::Fetch::new(data) }.ok();
-        let entities = fetch.as_ref().and_then(FetchMut::entities);
+        let entities = fetch
+            .as_ref()
+            .and_then(FetchMut::entities)
+            .unwrap_or_else(|| Box::new(entities.iter()));
         Self { entities, fetch }
     }
 }
@@ -38,7 +41,7 @@ where
     type Item = Q;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let entities = self.entities.as_mut()?;
+        let entities = self.entities.as_mut();
         loop {
             let entity = entities.next()?;
             // SAFETY: no GATs?

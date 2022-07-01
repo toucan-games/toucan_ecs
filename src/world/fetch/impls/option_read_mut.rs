@@ -24,11 +24,8 @@ where
         Ok(Self { storage })
     }
 
-    // noinspection DuplicatedCode
     fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
-        let iter = self.storage.as_ref()?.iter();
-        let iter = iter.map(|(entity, _)| entity);
-        Some(Box::new(iter))
+        None
     }
 
     fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
