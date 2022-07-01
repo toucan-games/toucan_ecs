@@ -64,7 +64,7 @@ where
     }
 }
 
-impl<'data, C> MutabilityCheck for Not<C>
+impl<C> MutabilityCheck for Not<C>
 where
     C: Component,
 {

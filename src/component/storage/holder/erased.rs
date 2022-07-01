@@ -3,9 +3,10 @@ use std::num::NonZeroUsize;
 use crate::component::{Component, ComponentTypeId, Storage};
 use crate::Entity;
 
-use super::holdable::{Holdable, Iter};
+use super::holdable::Holdable;
 
 pub type ErasedComponent = NonZeroUsize;
+pub type ErasedIterator = (*const (), *const ());
 
 pub struct ErasedStorageHolder {
     holdable: Box<dyn Holdable>,
@@ -53,11 +54,11 @@ impl ErasedStorageHolder {
         &self.type_id
     }
 
-    pub(super) fn iter(&self) -> Box<Iter> {
+    pub(super) fn iter(&self) -> ErasedIterator {
         self.holdable.iter()
     }
 
-    pub(super) fn iter_mut(&mut self) -> Box<Iter> {
+    pub(super) fn iter_mut(&mut self) -> ErasedIterator {
         self.holdable.iter_mut()
     }
 }

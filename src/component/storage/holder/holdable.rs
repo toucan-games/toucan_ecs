@@ -1,10 +1,9 @@
+use std::mem::transmute;
+
 use crate::component::{Component, Storage};
 use crate::Entity;
 
-use super::erased::ErasedComponent;
-
-pub type Iter<'data> =
-    dyn ExactSizeIterator<Item = (Entity, ErasedComponent)> + Send + Sync + 'data;
+use super::erased::{ErasedComponent, ErasedIterator};
 
 pub trait Holdable: Send + Sync + 'static {
     /// # Safety
@@ -35,15 +34,13 @@ pub trait Holdable: Send + Sync + 'static {
     ///
     /// Returned iterator with erased components points to the **immutable** data
     /// of type of storage which implements this trait.
-    // fixme move to associated type when GATs are stabilized
-    fn iter(&self) -> Box<Iter>;
+    fn iter(&self) -> ErasedIterator;
 
     /// # Safety
     ///
     /// Returned iterator with erased components points to the **mutable** data
     /// of type of storage which implements this trait.
-    // fixme move to associated type when GATs are stabilized
-    fn iter_mut(&mut self) -> Box<Iter>;
+    fn iter_mut(&mut self) -> ErasedIterator;
 }
 
 impl<T, C> Holdable for T
@@ -82,25 +79,17 @@ where
         self.clear()
     }
 
-    fn iter(&self) -> Box<Iter> {
+    fn iter(&self) -> ErasedIterator {
         let iter = self.iter();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: component reference cannot be null
-            let erased = unsafe { ErasedComponent::new_unchecked(it.1 as *const _ as _) };
-            (entity, erased)
-        });
-        Box::new(iter)
+        let raw = Box::into_raw(iter);
+        // SAFETY: transmute to tuple of 2 usize because of fat pointer
+        unsafe { transmute(raw) }
     }
 
-    fn iter_mut(&mut self) -> Box<Iter> {
+    fn iter_mut(&mut self) -> ErasedIterator {
         let iter = self.iter_mut();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: component reference cannot be null
-            let erased = unsafe { ErasedComponent::new_unchecked(it.1 as *mut _ as _) };
-            (entity, erased)
-        });
-        Box::new(iter)
+        let raw = Box::into_raw(iter);
+        // SAFETY: transmute to tuple of 2 usize because of fat pointer
+        unsafe { transmute(raw) }
     }
 }

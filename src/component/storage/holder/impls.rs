@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::mem::transmute;
 
 use crate::component::{Component, ComponentTypeId, Iter, IterMut};
 use crate::Entity;
@@ -34,25 +35,21 @@ where
     // noinspection DuplicatedCode
     pub fn iter(self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: pointer from the holdable iter is valid
-            let component = unsafe { &*(it.1.get() as *const _) };
-            (entity, component)
-        });
-        Box::new(iter)
+        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
+        unsafe {
+            let iter = transmute(iter);
+            Box::from_raw(iter)
+        }
     }
 
     // noinspection DuplicatedCode
     pub fn iter_ref(&self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: pointer from the holdable iter is valid
-            let component = unsafe { &*(it.1.get() as *const _) };
-            (entity, component)
-        });
-        Box::new(iter)
+        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
+        unsafe {
+            let iter = transmute(iter);
+            Box::from_raw(iter)
+        }
     }
 }
 
@@ -119,49 +116,41 @@ where
     // noinspection DuplicatedCode
     pub fn iter(self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: pointer from the holdable iter is valid
-            let component = unsafe { &*(it.1.get() as *const _) };
-            (entity, component)
-        });
-        Box::new(iter)
+        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
+        unsafe {
+            let iter = transmute(iter);
+            Box::from_raw(iter)
+        }
     }
 
     // noinspection DuplicatedCode
     pub fn iter_ref(&'data self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: pointer from the holdable iter is valid
-            let component = unsafe { &*(it.1.get() as *const _) };
-            (entity, component)
-        });
-        Box::new(iter)
+        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
+        unsafe {
+            let iter = transmute(iter);
+            Box::from_raw(iter)
+        }
     }
 
     // noinspection DuplicatedCode
     pub fn iter_mut(self) -> Box<IterMut<'data, C>> {
         let iter = self.erased.iter_mut();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: pointer from the holdable iter is valid
-            let component = unsafe { &mut *(it.1.get() as *mut _) };
-            (entity, component)
-        });
-        Box::new(iter)
+        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
+        unsafe {
+            let iter = transmute(iter);
+            Box::from_raw(iter)
+        }
     }
 
     // noinspection DuplicatedCode
     pub fn iter_ref_mut(&'data mut self) -> Box<IterMut<'data, C>> {
         let iter = self.erased.iter_mut();
-        let iter = iter.map(|it| {
-            let entity = it.0;
-            // SAFETY: pointer from the holdable iter is valid
-            let component = unsafe { &mut *(it.1.get() as *mut _) };
-            (entity, component)
-        });
-        Box::new(iter)
+        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
+        unsafe {
+            let iter = transmute(iter);
+            Box::from_raw(iter)
+        }
     }
 }
 
