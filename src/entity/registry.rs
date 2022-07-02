@@ -36,9 +36,9 @@ impl Registry {
 }
 
 #[repr(transparent)]
-pub struct Iter<'a>(Keys<'a, Entity, ()>);
+pub struct Iter<'data>(Keys<'data, Entity, ()>);
 
-impl<'a> Iterator for Iter<'a> {
+impl<'data> Iterator for Iter<'data> {
     type Item = Entity;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -46,6 +46,6 @@ impl<'a> Iterator for Iter<'a> {
     }
 }
 
-impl<'a> FusedIterator for Iter<'a> {}
+impl<'data> FusedIterator for Iter<'data> {}
 
-impl<'a> ExactSizeIterator for Iter<'a> {}
+impl<'data> ExactSizeIterator for Iter<'data> {}

@@ -1,8 +1,9 @@
 use std::mem::transmute;
 
 use crate::world::query::{CheckedQuery, QueryMut};
-use crate::world::FetchMut;
-use crate::{Entity, World};
+use crate::world::{FetchMut, World};
+
+use super::entities::Entities;
 
 /// Iterator which returns **shared** and/or **unique** borrows of components.
 ///
@@ -14,7 +15,7 @@ pub struct ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    entities: Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>,
+    entities: Entities<'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -29,7 +30,8 @@ where
         let entities = fetch
             .as_ref()
             .and_then(FetchMut::entities)
-            .unwrap_or_else(|| Box::new(entities.iter()));
+            .map(Entities::Optimized)
+            .unwrap_or_else(|| Entities::All(entities.iter()));
         Self { entities, fetch }
     }
 }
@@ -41,9 +43,8 @@ where
     type Item = Q;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let entities = self.entities.as_mut();
         loop {
-            let entity = entities.next()?;
+            let entity = self.entities.next()?;
             // SAFETY: no GATs?
             let fetch = unsafe { transmute::<_, &'data mut Q::Fetch>(self.fetch.as_mut()?) };
             let result = fetch.fetch_mut(entity);
