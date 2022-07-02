@@ -1,4 +1,6 @@
-use slotmap::dense::{Iter as DenseIter, IterMut as DenseIterMut};
+use std::iter::FusedIterator;
+
+use slotmap::dense;
 use slotmap::{DenseSlotMap, SecondaryMap};
 
 use crate::component::storage;
@@ -87,16 +89,7 @@ pub struct Iter<'data, C>
 where
     C: Component,
 {
-    iter: DenseIter<'data, ComponentKey, (Entity, C)>,
-}
-
-impl<'data, C> ExactSizeIterator for Iter<'data, C>
-where
-    C: Component,
-{
-    fn len(&self) -> usize {
-        self.iter.len()
-    }
+    iter: dense::Iter<'data, ComponentKey, (Entity, C)>,
 }
 
 impl<'data, C> Iterator for Iter<'data, C>
@@ -113,20 +106,22 @@ where
     }
 }
 
-pub struct IterMut<'data, C>
-where
-    C: Component,
-{
-    iter_mut: DenseIterMut<'data, ComponentKey, (Entity, C)>,
-}
+impl<'data, C> FusedIterator for Iter<'data, C> where C: Component {}
 
-impl<'data, C> ExactSizeIterator for IterMut<'data, C>
+impl<'data, C> ExactSizeIterator for Iter<'data, C>
 where
     C: Component,
 {
     fn len(&self) -> usize {
-        self.iter_mut.len()
+        self.iter.len()
     }
+}
+
+pub struct IterMut<'data, C>
+where
+    C: Component,
+{
+    iter_mut: dense::IterMut<'data, ComponentKey, (Entity, C)>,
 }
 
 impl<'data, C> Iterator for IterMut<'data, C>
@@ -140,5 +135,16 @@ where
         self.iter_mut
             .next()
             .map(|(_, (entity, component))| (*entity, component))
+    }
+}
+
+impl<'data, C> FusedIterator for IterMut<'data, C> where C: Component {}
+
+impl<'data, C> ExactSizeIterator for IterMut<'data, C>
+where
+    C: Component,
+{
+    fn len(&self) -> usize {
+        self.iter_mut.len()
     }
 }
