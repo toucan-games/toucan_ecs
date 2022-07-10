@@ -1,6 +1,4 @@
-use crate::component::marker::Not;
 use crate::component::Component;
-use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::*;
@@ -11,45 +9,6 @@ use super::Query;
 
 impl<'data> Query<'data> for () {
     type Fetch = ();
-}
-
-impl<'data> Query<'data> for Entity {
-    type Fetch = FetchEntity;
-}
-
-impl<'data, C> Query<'data> for &'data C
-where
-    C: Component,
-{
-    type Fetch = FetchRead<C>;
-}
-
-impl<'data, C> Query<'data> for &'data mut C
-where
-    C: Component,
-{
-    type Fetch = FetchWrite<C>;
-}
-
-impl<'data, C> Query<'data> for Option<&'data C>
-where
-    C: Component,
-{
-    type Fetch = FetchOptionRead<C>;
-}
-
-impl<'data, C> Query<'data> for Option<&'data mut C>
-where
-    C: Component,
-{
-    type Fetch = FetchOptionWrite<C>;
-}
-
-impl<'data, C> Query<'data> for Not<C>
-where
-    C: Component,
-{
-    type Fetch = FetchNot<C>;
 }
 
 impl<'data, C> Query<'data> for ViewOne<'data, C>

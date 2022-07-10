@@ -20,7 +20,7 @@ fn for_each_component_system(
 ) {
     position.x += 10.0;
     println!(
-        "entity: {:?}, position {:?}, velocity {:?}, mass {:?}",
+        "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
         entity,
         position,
         velocity,
@@ -107,7 +107,7 @@ fn for_each_system() {
     world.create_resource(SimpleResource::default());
 
     let mut schedule = Schedule::builder()
-        .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .system::<_, (_,)>(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
         .system(for_each_component_system)
         .build();
     schedule.run(&mut world);

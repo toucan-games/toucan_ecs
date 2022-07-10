@@ -1,6 +1,5 @@
 use std::marker::PhantomData;
 
-use crate::component::Component;
 #[cfg(feature = "resource")]
 use crate::error::FetchError;
 use crate::error::FetchResult;
@@ -8,24 +7,6 @@ use crate::error::FetchResult;
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
 use crate::World;
-
-pub struct FetchWrite<C>
-where
-    C: Component,
-{
-    _ph: PhantomData<C>,
-}
-
-impl<'data, C> Fetch<'data> for FetchWrite<C>
-where
-    C: Component,
-{
-    type Item = &'data mut C;
-
-    unsafe fn fetch(_world: *mut World) -> FetchResult<Self::Item> {
-        todo!()
-    }
-}
 
 #[cfg(feature = "resource")]
 pub struct FetchResourceWrite<R>

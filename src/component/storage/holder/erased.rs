@@ -6,7 +6,7 @@ use crate::Entity;
 use super::holdable::Holdable;
 
 pub type ErasedComponent = NonZeroUsize;
-pub type ErasedIterator = (*const (), *const ());
+pub type ErasedIterator = (usize, usize);
 
 pub struct ErasedStorageHolder {
     holdable: Box<dyn Holdable>,
