@@ -1,11 +1,15 @@
+#[cfg(feature = "resource")]
 use std::marker::PhantomData;
 
 #[cfg(feature = "resource")]
 use crate::error::FetchError;
+#[cfg(feature = "resource")]
 use crate::error::FetchResult;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
+#[cfg(feature = "resource")]
 use crate::system::fetch::Fetch;
+#[cfg(feature = "resource")]
 use crate::World;
 
 #[cfg(feature = "resource")]

@@ -12,11 +12,10 @@
 //! - create and destroy entities;
 //! - attach, get or remove components from the entity;
 //! - use [entry](crate::world::Entry) of the entity to modify it;
-//! - view components of different types;
-//! - view components [immutably][world::World::view()] or [mutably][world::World::view_mut()].
+//! - view components of different types
+//! [immutably][crate::world::World::view()] or [mutably][crate::world::World::view_mut()].
 //!
-//! For now library provides nothing for systems (are responsible for logic).
-//! You are free to create your own system!
+//! todo describe systems
 //!
 //! # Examples
 //!
