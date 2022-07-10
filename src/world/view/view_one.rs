@@ -18,7 +18,7 @@ where
     C: Component,
 {
     pub(crate) fn new(storage: Option<StorageHolder<'data, C>>) -> Self {
-        let iter = storage.map(StorageHolder::iter);
+        let iter = storage.as_ref().map(StorageHolder::iter);
         Self { iter }
     }
 }

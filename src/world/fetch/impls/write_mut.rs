@@ -1,5 +1,3 @@
-use std::mem::transmute;
-
 use crate::component::{Component, StorageHolderMut};
 use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
@@ -29,10 +27,7 @@ where
 
     // noinspection DuplicatedCode
     fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
-        // SAFETY: other data will not be changed during iteration
-        let storage: &'data StorageHolderMut<'data, C> = unsafe { transmute(&self.storage) };
-        let iter = storage.iter_ref();
-        let iter = iter.map(|(entity, _)| entity);
+        let iter = self.storage.iter().map(|(entity, _)| entity);
         Some(Box::new(iter))
     }
 

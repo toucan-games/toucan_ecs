@@ -33,17 +33,7 @@ where
     }
 
     // noinspection DuplicatedCode
-    pub fn iter(self) -> Box<Iter<'data, C>> {
-        let iter = self.erased.iter();
-        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
-        unsafe {
-            let iter = transmute(iter);
-            Box::from_raw(iter)
-        }
-    }
-
-    // noinspection DuplicatedCode
-    pub fn iter_ref(&self) -> Box<Iter<'data, C>> {
+    pub fn iter(&self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
         // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
         unsafe {
@@ -114,17 +104,7 @@ where
     }
 
     // noinspection DuplicatedCode
-    pub fn iter(self) -> Box<Iter<'data, C>> {
-        let iter = self.erased.iter();
-        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
-        unsafe {
-            let iter = transmute(iter);
-            Box::from_raw(iter)
-        }
-    }
-
-    // noinspection DuplicatedCode
-    pub fn iter_ref(&'data self) -> Box<Iter<'data, C>> {
+    pub fn iter(&self) -> Box<Iter<'data, C>> {
         let iter = self.erased.iter();
         // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
         unsafe {
@@ -135,16 +115,6 @@ where
 
     // noinspection DuplicatedCode
     pub fn iter_mut(self) -> Box<IterMut<'data, C>> {
-        let iter = self.erased.iter_mut();
-        // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
-        unsafe {
-            let iter = transmute(iter);
-            Box::from_raw(iter)
-        }
-    }
-
-    // noinspection DuplicatedCode
-    pub fn iter_ref_mut(&'data mut self) -> Box<IterMut<'data, C>> {
         let iter = self.erased.iter_mut();
         // SAFETY: was created from fat pointer which was retrieved from `Box::into_raw` function
         unsafe {
