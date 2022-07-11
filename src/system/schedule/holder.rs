@@ -16,15 +16,13 @@ where
 }
 
 impl<'data> ErasedSystemHolder<'data> {
-    pub fn run(&mut self, world: *mut World) {
-        // SAFETY: provided pointer is valid
-        let world = unsafe { &mut *world };
+    pub fn run(&mut self, world: &mut World) {
         self.0.run(world)
     }
 }
 
 trait Holdable<'data>: 'data {
-    fn run(&mut self, world: &'data mut World);
+    fn run(&mut self, world: &mut World);
 }
 
 impl<'data, S, Q> Holdable<'data> for (S, CheckedQuery<'data, Q>)
@@ -33,7 +31,7 @@ where
     Q: Query<'data>,
 {
     // noinspection RsUnnecessaryQualifications
-    fn run(&mut self, world: &'data mut World) {
+    fn run(&mut self, world: &mut World) {
         let system = &mut self.0;
         // SAFETY: was checked because of CheckedQuery struct was constructed
         let args = unsafe { Q::Fetch::fetch(world) };
