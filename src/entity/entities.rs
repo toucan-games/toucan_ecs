@@ -1,4 +1,4 @@
-use crate::entity::{Entity, Iter};
+use super::{Entity, Iter};
 
 pub enum Entities<'data> {
     All(Iter<'data>),

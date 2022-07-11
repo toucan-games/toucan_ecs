@@ -1,7 +1,6 @@
+use crate::entity::Entities;
 use crate::world::query::Query;
 use crate::world::{Fetch, World};
-
-use super::entities::Entities;
 
 /// Iterator which returns **shared** borrows of components.
 ///

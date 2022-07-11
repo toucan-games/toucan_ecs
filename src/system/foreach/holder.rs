@@ -1,8 +1,8 @@
 use std::mem::transmute;
 
+use crate::entity::Entities;
 use crate::system::foreach::fetch::Fetch;
 use crate::system::foreach::CheckedQuery;
-use crate::world::view::Entities;
 use crate::World;
 
 use super::query::Query;
@@ -19,6 +19,7 @@ impl<'data, Q> ForeachHolder<'data, Q>
 where
     Q: Query<'data>,
 {
+    // noinspection RsUnnecessaryQualifications
     pub(crate) fn new(world: &'data mut World) -> Self {
         let _checked = CheckedQuery::<'data, Q>::new();
         let (entities, data) = world.split_mut();

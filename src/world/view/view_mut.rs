@@ -1,9 +1,8 @@
 use std::mem::transmute;
 
+use crate::entity::Entities;
 use crate::world::query::{CheckedQuery, QueryMut};
 use crate::world::{FetchMut, World};
-
-use super::entities::Entities;
 
 /// Iterator which returns **shared** and/or **unique** borrows of components.
 ///
