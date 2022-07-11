@@ -1,3 +1,4 @@
+pub use foreach_holder::*;
 #[cfg(feature = "resource")]
 pub use resource::*;
 pub use unit::*;
@@ -6,6 +7,7 @@ pub use view_mut::*;
 pub use view_one::*;
 pub use view_one_mut::*;
 
+mod foreach_holder;
 #[cfg(feature = "resource")]
 mod resource;
 mod unit;

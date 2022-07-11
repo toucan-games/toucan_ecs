@@ -24,7 +24,7 @@ pub(crate) use checked::CheckedQuery;
 
 use crate::mutability_check::MutabilityCheck as Sealed;
 
-use super::Fetch;
+use super::fetch::Fetch;
 
 mod checked;
 mod impls;

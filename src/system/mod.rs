@@ -1,6 +1,5 @@
 //! Provides traits and utilities for systems.
 
-use fetch::Fetch;
 use query::Query;
 pub use schedule::{Schedule, ScheduleBuilder};
 
@@ -9,6 +8,7 @@ mod impls;
 mod schedule;
 mod tuple;
 
+pub mod foreach;
 pub mod query;
 
 /// Trait for systems in ECS.

@@ -3,6 +3,7 @@ use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource, ResourceTypeId};
+use crate::system::foreach::{ForeachHolder, Query as ForeachQuery};
 use crate::world::query::{Query, QueryMut};
 use crate::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 
@@ -159,6 +160,17 @@ where
 impl<'data, Q> MutabilityCheck for ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
+{
+    const MUTABLE: bool = Q::MUTABLE;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        Q::extend_before_check(multimap)
+    }
+}
+
+impl<'data, Q> MutabilityCheck for ForeachHolder<'data, Q>
+where
+    Q: ForeachQuery<'data>,
 {
     const MUTABLE: bool = Q::MUTABLE;
 

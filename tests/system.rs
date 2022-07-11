@@ -17,7 +17,7 @@ mod resources;
 mod utils;
 
 #[cfg(feature = "resource")]
-fn for_each_component_system(
+fn foreach_component_system(
     entity: Entity,
     position: &mut Position,
     velocity: &Velocity,
@@ -129,8 +129,8 @@ fn for_each_system() {
     world.create_resource(SimpleResource::default());
 
     let mut schedule = Schedule::builder()
-        .system::<_, (_,)>(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
-        .system::<_, (_,)>(|file: Option<ResourceMut<File>>| {
+        .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .system(|file: Option<ResourceMut<File>>| {
             println!("Is some file: {}", file.is_some());
             if let Some(mut file) = file {
                 let mut contents = String::new();
@@ -138,7 +138,7 @@ fn for_each_system() {
                 println!("file contents: {}", contents);
             }
         })
-        .system(for_each_component_system)
+        .foreach_system(foreach_component_system)
         .build();
     schedule.run(&mut world);
 }

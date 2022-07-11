@@ -1,5 +1,6 @@
 use holder::ErasedSystemHolder;
 
+use crate::system::foreach::{ForeachSystem, FromForeachSystem, Query as ForeachQuery};
 use crate::system::query::CheckedQuery;
 use crate::world::World;
 
@@ -40,7 +41,7 @@ impl<'data> ScheduleBuilder<'data> {
         }
     }
 
-    /// Adds a system to the [schedule](Schedule).
+    /// Adds the system to the [schedule](Schedule).
     ///
     /// # Panics
     ///
@@ -61,6 +62,27 @@ impl<'data> ScheduleBuilder<'data> {
         let erased = (system, checked_query).into();
         self.systems.push(erased);
         self
+    }
+
+    /// Adds the foreach system to the [schedule](Schedule).
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if provided query does not satisfies
+    /// the first rule of references described in
+    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
+    ///
+    /// > - *At any given time, you can have either **one** mutable reference
+    /// or **any** number of immutable references.*
+    ///
+    /// [rust_book]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
+    pub fn foreach_system<S, Q>(self, system: S) -> Self
+    where
+        S: ForeachSystem<'data, Q>,
+        Q: ForeachQuery<'data>,
+    {
+        let system = FromForeachSystem::from(system);
+        self.system(system)
     }
 
     /// Finalizes the builder into a [schedule](Schedule).

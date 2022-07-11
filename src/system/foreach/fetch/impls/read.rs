@@ -2,7 +2,8 @@ use crate::component::{Component, StorageHolder};
 use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
-use crate::world::{Fetch, FetchMut, WorldData, WorldDataMut};
+use crate::system::foreach::fetch::Fetch;
+use crate::world::WorldDataMut;
 use crate::Entity;
 
 #[repr(transparent)]
@@ -19,7 +20,7 @@ where
 {
     type Item = &'data C;
 
-    fn new(world: WorldData<'data>) -> FetchResult<Self> {
+    unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
         let storage = world.components().get_storage().ok_or(FetchError)?;
         Ok(Self { storage })
     }
@@ -31,27 +32,8 @@ where
         Some(Box::new(iter))
     }
 
-    fn fetch(&self, entity: Entity) -> FetchResult<Self::Item> {
+    fn fetch(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
         self.storage.get(entity).ok_or(FetchError)
-    }
-}
-
-impl<'data, C> FetchMut<'data> for FetchRead<'data, C>
-where
-    C: Component,
-{
-    type Item = <Self as Fetch<'data>>::Item;
-
-    unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
-        Fetch::new(data.into())
-    }
-
-    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
-        Fetch::entities(self)
-    }
-
-    fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
-        Fetch::fetch(self, entity)
     }
 }
 
@@ -70,7 +52,7 @@ cfg_resource! {
     {
         type Item = marker::Resource<'data, R>;
 
-        fn new(world: WorldData<'data>) -> FetchResult<Self> {
+        unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
             let resource = world.resources().get().ok_or(FetchError)?;
             Ok(Self { resource })
         }
@@ -79,28 +61,9 @@ cfg_resource! {
             None
         }
 
-        fn fetch(&self, _: Entity) -> FetchResult<Self::Item> {
+        fn fetch(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
             let resource = marker::Resource::new(self.resource);
             Ok(resource)
-        }
-    }
-
-    impl<'data, R> FetchMut<'data> for FetchResourceRead<'data, R>
-    where
-        R: Resource,
-    {
-        type Item = <Self as Fetch<'data>>::Item;
-
-        unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
-            Fetch::new(data.into())
-        }
-
-        fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
-            Fetch::entities(self)
-        }
-
-        fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
-            Fetch::fetch(self, entity)
         }
     }
 }

@@ -2,6 +2,7 @@ use crate::component::Component;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::*;
+use crate::system::foreach::{ForeachHolder, Query as ForeachQuery};
 use crate::world::query;
 use crate::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 
@@ -37,6 +38,13 @@ where
     Q: query::QueryMut<'data>,
 {
     type Fetch = FetchViewMut<'data, Q>;
+}
+
+impl<'data, Q> Query<'data> for ForeachHolder<'data, Q>
+where
+    Q: ForeachQuery<'data>,
+{
+    type Fetch = FetchForeachHolder<'data, Q>;
 }
 
 cfg_resource! {

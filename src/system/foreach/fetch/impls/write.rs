@@ -2,7 +2,8 @@ use crate::component::{Component, StorageHolderMut};
 use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
-use crate::world::{FetchMut, WorldDataMut};
+use crate::system::foreach::fetch::Fetch;
+use crate::world::WorldDataMut;
 use crate::Entity;
 
 #[repr(transparent)]
@@ -13,7 +14,7 @@ where
     storage: StorageHolderMut<'data, C>,
 }
 
-impl<'data, C> FetchMut<'data> for FetchWrite<'data, C>
+impl<'data, C> Fetch<'data> for FetchWrite<'data, C>
 where
     C: Component,
 {
@@ -32,7 +33,7 @@ where
         Some(Box::new(iter))
     }
 
-    fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
+    fn fetch(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
         self.storage.get_mut(entity).ok_or(FetchError)
     }
 }
@@ -46,7 +47,7 @@ cfg_resource! {
         resource: &'data mut R,
     }
 
-    impl<'data, R> FetchMut<'data> for FetchResourceWrite<'data, R>
+    impl<'data, R> Fetch<'data> for FetchResourceWrite<'data, R>
     where
         R: Resource,
     {
@@ -62,7 +63,7 @@ cfg_resource! {
             None
         }
 
-        fn fetch_mut(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
+        fn fetch(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
             let resource = marker::ResourceMut::new(self.resource);
             Ok(resource)
         }
