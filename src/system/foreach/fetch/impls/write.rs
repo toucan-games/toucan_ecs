@@ -1,6 +1,8 @@
 use crate::component::Component;
 use crate::error::{FetchError, FetchResult};
-use crate::fetch::{FetchResourceWrite, FetchWrite};
+#[cfg(feature = "resource")]
+use crate::fetch::FetchResourceWrite;
+use crate::fetch::FetchWrite;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::Fetch;

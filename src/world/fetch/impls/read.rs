@@ -1,6 +1,8 @@
 use crate::component::Component;
 use crate::error::{FetchError, FetchResult};
-use crate::fetch::{FetchRead, FetchResourceRead};
+use crate::fetch::FetchRead;
+#[cfg(feature = "resource")]
+use crate::fetch::FetchResourceRead;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::world::{Fetch, FetchMut, WorldData, WorldDataMut};

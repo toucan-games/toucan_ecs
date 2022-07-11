@@ -2,6 +2,7 @@ use crate::component::Component;
 use crate::fetch::{FetchForeachHolder, FetchView, FetchViewMut, FetchViewOne, FetchViewOneMut};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
+#[cfg(feature = "resource")]
 use crate::system::fetch::*;
 use crate::system::foreach::{ForeachHolder, Query as ForeachQuery};
 use crate::world::query;

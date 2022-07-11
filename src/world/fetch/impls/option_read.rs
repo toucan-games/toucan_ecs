@@ -1,7 +1,9 @@
 use crate::component::Component;
 use crate::entity::Entity;
 use crate::error::FetchResult;
-use crate::fetch::{FetchOptionRead, FetchResourceOptionRead};
+use crate::fetch::FetchOptionRead;
+#[cfg(feature = "resource")]
+use crate::fetch::FetchResourceOptionRead;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::world::{Fetch, FetchMut, WorldData, WorldDataMut};
