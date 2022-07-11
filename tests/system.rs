@@ -1,8 +1,12 @@
 use std::fmt::Debug;
 
 use components::{Mass, Position, Velocity};
+#[cfg(feature = "resource")]
+use resources::SimpleResource;
 use toucan_ecs::component::Component;
-use toucan_ecs::system::Schedule;
+#[cfg(feature = "resource")]
+use toucan_ecs::resource::marker::ResourceMut;
+use toucan_ecs::system::{Schedule, System};
 use toucan_ecs::world::query::Query;
 use toucan_ecs::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 use toucan_ecs::Entity;
@@ -18,14 +22,21 @@ fn for_each_component_system(
     position: &mut Position,
     velocity: &Velocity,
     mass: Option<&Mass>,
+    mut resource: ResourceMut<SimpleResource>,
 ) {
     position.x += 10.0;
+    let inner = {
+        let inner = resource.inner();
+        resource.set_inner(inner + 1);
+        resource.inner()
+    };
     println!(
-        "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}",
+        "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}, inner: {}",
         entity,
         position,
         velocity,
         mass.as_deref(),
+        inner,
     );
 }
 
@@ -84,9 +95,18 @@ fn system() {
         println!("Some var is {}", local_var)
     };
 
+    struct MySystem;
+
+    impl<'data> System<'data, ()> for MySystem {
+        fn run(&mut self, _: ()) {
+            println!("You can create your own systems")
+        }
+    }
+
     let mut schedule = Schedule::builder()
         .system(|| println!("Hello, World"))
         .system(|| println!("Result of sum is {}", 2 + 2))
+        .system(MySystem)
         .system(local_system)
         .system(view_one_system::<Position>)
         .system(view_one_mut_system)
@@ -101,7 +121,8 @@ fn system() {
 #[cfg(feature = "resource")]
 #[cfg(not(miri))]
 fn for_each_system() {
-    use resources::SimpleResource;
+    use std::fs::File;
+    use std::io::Read;
     use toucan_ecs::resource::marker::Resource;
 
     let mut world = utils::prepare_for_view();
@@ -109,6 +130,14 @@ fn for_each_system() {
 
     let mut schedule = Schedule::builder()
         .system::<_, (_,)>(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .system::<_, (_,)>(|file: Option<ResourceMut<File>>| {
+            println!("Is some file: {}", file.is_some());
+            if let Some(mut file) = file {
+                let mut contents = String::new();
+                file.read_to_string(&mut contents).expect("not valid UTF-8");
+                println!("file contents: {}", contents);
+            }
+        })
         .system(for_each_component_system)
         .build();
     schedule.run(&mut world);

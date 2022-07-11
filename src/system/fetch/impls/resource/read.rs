@@ -1,18 +1,11 @@
-#[cfg(feature = "resource")]
 use std::marker::PhantomData;
 
-#[cfg(feature = "resource")]
-use crate::error::FetchError;
-#[cfg(feature = "resource")]
-use crate::error::FetchResult;
-#[cfg(feature = "resource")]
+use crate::error::{FetchError, FetchResult};
 use crate::resource::{marker, Resource};
-#[cfg(feature = "resource")]
 use crate::system::fetch::Fetch;
-#[cfg(feature = "resource")]
 use crate::World;
 
-#[cfg(feature = "resource")]
+#[repr(transparent)]
 pub struct FetchResourceRead<R>
 where
     R: Resource,
@@ -20,7 +13,6 @@ where
     _ph: PhantomData<R>,
 }
 
-#[cfg(feature = "resource")]
 impl<'data, R> Fetch<'data> for FetchResourceRead<R>
 where
     R: Resource,
