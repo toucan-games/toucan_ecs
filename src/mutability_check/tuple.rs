@@ -25,5 +25,5 @@ macro_rules! impl_mutability_check {
     };
 }
 
-// `QueryMut` implemented for tuples of size 12 and less
+// `MutabilityCheck` is implemented for tuples of size 12 and less
 mutability_check!(A, B, C, D, E, F, G, H, I, J, K, L);

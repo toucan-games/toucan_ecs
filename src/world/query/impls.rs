@@ -78,6 +78,13 @@ cfg_resource! {
         type Fetch = FetchResourceRead<'data, R>;
     }
 
+    impl<'data, R> Query<'data> for Option<marker::Resource<'data, R>>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceOptionRead<'data, R>;
+    }
+
     impl<'data, R> QueryMut<'data> for marker::Resource<'data, R>
     where
         R: Resource,
@@ -85,10 +92,24 @@ cfg_resource! {
         type Fetch = FetchResourceReadMut<'data, R>;
     }
 
+    impl<'data, R> QueryMut<'data> for Option<marker::Resource<'data, R>>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceOptionReadMut<'data, R>;
+    }
+
     impl<'data, R> QueryMut<'data> for marker::ResourceMut<'data, R>
     where
         R: Resource,
     {
         type Fetch = FetchResourceWriteMut<'data, R>;
+    }
+
+    impl<'data, R> QueryMut<'data> for Option<marker::ResourceMut<'data, R>>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceOptionWriteMut<'data, R>;
     }
 }

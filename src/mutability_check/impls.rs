@@ -46,7 +46,7 @@ impl<'data, C> MutabilityCheck for Option<&'data C>
 where
     C: Component,
 {
-    const MUTABLE: bool = false;
+    const MUTABLE: bool = <&'data C>::MUTABLE;
 
     fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
@@ -57,7 +57,7 @@ impl<'data, C> MutabilityCheck for Option<&'data mut C>
 where
     C: Component,
 {
-    const MUTABLE: bool = true;
+    const MUTABLE: bool = <&'data mut C>::MUTABLE;
 
     fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
@@ -93,6 +93,30 @@ where
     R: Resource,
 {
     const MUTABLE: bool = true;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
+    }
+}
+
+#[cfg(feature = "resource")]
+impl<'data, R> MutabilityCheck for Option<marker::Resource<'data, R>>
+where
+    R: Resource,
+{
+    const MUTABLE: bool = marker::Resource::<'data, R>::MUTABLE;
+
+    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+        multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
+    }
+}
+
+#[cfg(feature = "resource")]
+impl<'data, R> MutabilityCheck for Option<marker::ResourceMut<'data, R>>
+where
+    R: Resource,
+{
+    const MUTABLE: bool = marker::ResourceMut::<'data, R>::MUTABLE;
 
     fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
