@@ -130,6 +130,7 @@ fn for_each_system() {
 
     let mut schedule = Schedule::builder()
         .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .foreach_system(|| println!("Will be repeated for each entity"))
         .system(|file: Option<ResourceMut<File>>| {
             println!("Is some file: {}", file.is_some());
             if let Some(mut file) = file {

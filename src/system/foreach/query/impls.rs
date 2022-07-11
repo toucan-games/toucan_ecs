@@ -7,6 +7,10 @@ use crate::Entity;
 
 use super::Query;
 
+impl<'data> Query<'data> for () {
+    type Fetch = ();
+}
+
 impl<'data> Query<'data> for Entity {
     type Fetch = FetchEntity;
 }
