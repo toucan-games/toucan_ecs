@@ -12,6 +12,7 @@ mod components;
 mod resources;
 mod utils;
 
+#[cfg(feature = "resource")]
 fn for_each_component_system(
     entity: Entity,
     position: &mut Position,

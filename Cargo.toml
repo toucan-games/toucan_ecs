@@ -31,6 +31,10 @@ harness = false
 name = "view"
 harness = false
 
+[[example]]
+name = "life"
+required-features = ["resource"]
+
 [features]
 resource = []
 

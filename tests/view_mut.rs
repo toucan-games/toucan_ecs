@@ -1,5 +1,3 @@
-use rand::{thread_rng, Rng};
-
 use components::{Mass, Position, Velocity};
 use toucan_ecs::component::marker::Not;
 use toucan_ecs::Entity;
@@ -71,6 +69,7 @@ fn complex_view_mut() {
 #[test]
 #[cfg(feature = "resource")]
 fn complex_resource_view_mut() {
+    use rand::{thread_rng, Rng};
     use resources::SimpleResource;
     use toucan_ecs::resource::marker::ResourceMut;
 
