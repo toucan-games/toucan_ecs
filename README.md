@@ -11,10 +11,8 @@ Provides basic features, such as:
 - create and destroy entities;
 - attach, get or remove components from the entity;
 - use entry of the entity to modify it;
-- view components of different types;
-- view components immutably or mutably.
-
-For now library provides nothing for systems (are responsible for logic). You are free to create your own system!
+- view components of different types immutably or mutably;
+- use systems to get and update data efficiently.
 
 ## Feature flags
 

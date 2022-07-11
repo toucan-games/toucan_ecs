@@ -13,9 +13,8 @@
 //! - attach, get or remove components from the entity;
 //! - use [entry](crate::world::Entry) of the entity to modify it;
 //! - view components of different types
-//! [immutably][crate::world::World::view()] or [mutably][crate::world::World::view_mut()].
-//!
-//! todo describe systems
+//! [immutably][crate::world::World::view()] or [mutably][crate::world::World::view_mut()];
+//! - use [systems](crate::system::System) to get and update data efficiently.
 //!
 //! # Examples
 //!
@@ -96,6 +95,41 @@
 //!     position.x += 1.0;
 //!     println!("position is {:?}, mass is {:?}", position, mass.as_deref());
 //! }
+//! ```
+//!
+//! ## Use systems to get and update data
+//!
+//! ```
+//! use toucan_ecs::{Entity, World};
+//! use toucan_ecs::system::Schedule;
+//! use toucan_ecs::resource::marker::Resource;
+//!
+//! #[derive(Copy, Clone)]
+//! struct Name(&'static str);
+//!
+//! #[derive(Copy, Clone)]
+//! struct ID(u32);
+//!
+//! // notice no `Copy` and `Clone`
+//! struct MyResource(i32);
+//!
+//! let mut world = World::new();
+//! // create new resource of this world
+//! world.create_resource(MyResource(128));
+//!
+//! let mut schedule = Schedule::builder()
+//!     .system(|| println!("Hello, World"))
+//!     // this system will be executed once
+//!     .system(|resource: Resource<MyResource>| println!("Resource value: {}", resource.0))
+//!     // this system will be executed for each entity with `Name` and `ID` components
+//!     .foreach_system(|name: &Name, id: &mut ID| {
+//!         id.0 += 100;
+//!         println!("Changed ID: {}", id.0);
+//!     })
+//!     .build();
+//!
+//! // execute all the systems in schedule
+//! schedule.run(&mut world);
 //! ```
 
 pub use entity::Entity;
