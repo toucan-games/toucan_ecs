@@ -6,14 +6,14 @@ use crate::world::{FetchMut, WorldDataMut};
 use crate::Entity;
 
 #[repr(transparent)]
-pub struct FetchOptionWriteMut<'data, C>
+pub struct FetchOptionWrite<'data, C>
 where
     C: Component,
 {
     storage: Option<StorageHolderMut<'data, C>>,
 }
 
-impl<'data, C> FetchMut<'data> for FetchOptionWriteMut<'data, C>
+impl<'data, C> FetchMut<'data> for FetchOptionWrite<'data, C>
 where
     C: Component,
 {
@@ -38,14 +38,14 @@ where
 
 cfg_resource! {
     #[repr(transparent)]
-    pub struct FetchResourceOptionWriteMut<'data, R>
+    pub struct FetchResourceOptionWrite<'data, R>
     where
         R: Resource,
     {
         resource: Option<&'data mut R>,
     }
 
-    impl<'data, R> FetchMut<'data> for FetchResourceOptionWriteMut<'data, R>
+    impl<'data, R> FetchMut<'data> for FetchResourceOptionWrite<'data, R>
     where
         R: Resource,
     {

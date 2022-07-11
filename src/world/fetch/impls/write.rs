@@ -6,14 +6,14 @@ use crate::world::{FetchMut, WorldDataMut};
 use crate::Entity;
 
 #[repr(transparent)]
-pub struct FetchWriteMut<'data, C>
+pub struct FetchWrite<'data, C>
 where
     C: Component,
 {
     storage: StorageHolderMut<'data, C>,
 }
 
-impl<'data, C> FetchMut<'data> for FetchWriteMut<'data, C>
+impl<'data, C> FetchMut<'data> for FetchWrite<'data, C>
 where
     C: Component,
 {
@@ -25,7 +25,6 @@ where
         Ok(Self { storage })
     }
 
-    // noinspection DuplicatedCode
     fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
         let iter = self.storage.iter().map(|(entity, _)| entity);
         Some(Box::new(iter))
@@ -38,14 +37,14 @@ where
 
 cfg_resource! {
     #[repr(transparent)]
-    pub struct FetchResourceWriteMut<'data, R>
+    pub struct FetchResourceWrite<'data, R>
     where
         R: Resource,
     {
         resource: &'data mut R,
     }
 
-    impl<'data, R> FetchMut<'data> for FetchResourceWriteMut<'data, R>
+    impl<'data, R> FetchMut<'data> for FetchResourceWrite<'data, R>
     where
         R: Resource,
     {

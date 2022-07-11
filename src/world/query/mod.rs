@@ -16,7 +16,7 @@
 
 pub(crate) use checked::CheckedQuery;
 
-use crate::mutability_check::{MutabilityCheck as QuerySealed, MutabilityCheck as QueryMutSealed};
+use crate::mutability_check::MutabilityCheck as Sealed;
 
 use super::fetch::{Fetch, FetchMut};
 
@@ -35,7 +35,7 @@ type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
-pub trait Query<'data>: 'data + QuerySealed + From<QueryItem<'data, Self>> {
+pub trait Query<'data>: 'data + Sealed + From<QueryItem<'data, Self>> {
     #[doc(hidden)]
     type Fetch: Fetch<'data>;
 }
@@ -51,7 +51,7 @@ type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
-pub trait QueryMut<'data>: 'data + QueryMutSealed + From<QueryMutItem<'data, Self>> {
+pub trait QueryMut<'data>: 'data + Sealed + From<QueryMutItem<'data, Self>> {
     #[doc(hidden)]
     type Fetch: FetchMut<'data>;
 }

@@ -22,7 +22,7 @@
 
 pub(crate) use checked::CheckedQuery;
 
-use crate::mutability_check::MutabilityCheck as QuerySealed;
+use crate::mutability_check::MutabilityCheck as Sealed;
 
 use super::Fetch;
 
@@ -40,7 +40,7 @@ type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 /// Type which can be queried by the [system](crate::system::System).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
-pub trait Query<'data>: 'data + QuerySealed + From<QueryItem<'data, Self>> {
+pub trait Query<'data>: 'data + Sealed + From<QueryItem<'data, Self>> {
     #[doc(hidden)]
     type Fetch: Fetch<'data>;
 }

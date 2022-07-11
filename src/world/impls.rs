@@ -977,6 +977,19 @@ pub struct WorldData<'data> {
     resources: &'data ResourceRegistry,
 }
 
+impl<'data> From<WorldDataMut<'data>> for WorldData<'data> {
+    fn from(data: WorldDataMut<'data>) -> Self {
+        // SAFETY: we construct immutable view over mutable one with the same lifetime
+        unsafe {
+            Self {
+                components: data.components(),
+                #[cfg(feature = "resource")]
+                resources: data.resources(),
+            }
+        }
+    }
+}
+
 impl<'data> WorldData<'data> {
     pub fn components(self) -> &'data ComponentRegistry {
         self.components

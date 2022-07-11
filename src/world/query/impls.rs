@@ -21,7 +21,21 @@ where
     type Fetch = FetchRead<'data, C>;
 }
 
+impl<'data, C> QueryMut<'data> for &'data C
+where
+    C: Component,
+{
+    type Fetch = FetchRead<'data, C>;
+}
+
 impl<'data, C> Query<'data> for Option<&'data C>
+where
+    C: Component,
+{
+    type Fetch = FetchOptionRead<'data, C>;
+}
+
+impl<'data, C> QueryMut<'data> for Option<&'data C>
 where
     C: Component,
 {
@@ -35,43 +49,36 @@ where
     type Fetch = FetchNot<'data, C>;
 }
 
-impl<'data, C> QueryMut<'data> for &'data C
+impl<'data, C> QueryMut<'data> for Not<C>
 where
     C: Component,
 {
-    type Fetch = FetchReadMut<'data, C>;
+    type Fetch = FetchNot<'data, C>;
 }
 
 impl<'data, C> QueryMut<'data> for &'data mut C
 where
     C: Component,
 {
-    type Fetch = FetchWriteMut<'data, C>;
-}
-
-impl<'data, C> QueryMut<'data> for Option<&'data C>
-where
-    C: Component,
-{
-    type Fetch = FetchOptionReadMut<'data, C>;
+    type Fetch = FetchWrite<'data, C>;
 }
 
 impl<'data, C> QueryMut<'data> for Option<&'data mut C>
 where
     C: Component,
 {
-    type Fetch = FetchOptionWriteMut<'data, C>;
-}
-
-impl<'data, C> QueryMut<'data> for Not<C>
-where
-    C: Component,
-{
-    type Fetch = FetchNotMut<'data, C>;
+    type Fetch = FetchOptionWrite<'data, C>;
 }
 
 cfg_resource! {
     impl<'data, R> Query<'data> for marker::Resource<'data, R>
+    where
+        R: Resource,
+    {
+        type Fetch = FetchResourceRead<'data, R>;
+    }
+
+    impl<'data, R> QueryMut<'data> for marker::Resource<'data, R>
     where
         R: Resource,
     {
@@ -85,31 +92,24 @@ cfg_resource! {
         type Fetch = FetchResourceOptionRead<'data, R>;
     }
 
-    impl<'data, R> QueryMut<'data> for marker::Resource<'data, R>
-    where
-        R: Resource,
-    {
-        type Fetch = FetchResourceReadMut<'data, R>;
-    }
-
     impl<'data, R> QueryMut<'data> for Option<marker::Resource<'data, R>>
     where
         R: Resource,
     {
-        type Fetch = FetchResourceOptionReadMut<'data, R>;
+        type Fetch = FetchResourceOptionRead<'data, R>;
     }
 
     impl<'data, R> QueryMut<'data> for marker::ResourceMut<'data, R>
     where
         R: Resource,
     {
-        type Fetch = FetchResourceWriteMut<'data, R>;
+        type Fetch = FetchResourceWrite<'data, R>;
     }
 
     impl<'data, R> QueryMut<'data> for Option<marker::ResourceMut<'data, R>>
     where
         R: Resource,
     {
-        type Fetch = FetchResourceOptionWriteMut<'data, R>;
+        type Fetch = FetchResourceOptionWrite<'data, R>;
     }
 }

@@ -2,7 +2,7 @@ use crate::component::{Component, StorageHolder};
 use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
-use crate::world::{Fetch, WorldData};
+use crate::world::{Fetch, FetchMut, WorldData, WorldDataMut};
 use crate::Entity;
 
 #[repr(transparent)]
@@ -13,19 +13,36 @@ where
     storage: StorageHolder<'data, C>,
 }
 
+impl<'data, C> FetchMut<'data> for FetchRead<'data, C>
+where
+    C: Component,
+{
+    type Item = <Self as Fetch<'data>>::Item;
+
+    unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
+        Fetch::new(data.into())
+    }
+
+    fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+        Fetch::entities(self)
+    }
+
+    fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
+        Fetch::fetch(self, entity)
+    }
+}
+
 impl<'data, C> Fetch<'data> for FetchRead<'data, C>
 where
     C: Component,
 {
     type Item = &'data C;
 
-    // noinspection DuplicatedCode
     fn new(world: WorldData<'data>) -> FetchResult<Self> {
         let storage = world.components().get_storage().ok_or(FetchError)?;
         Ok(Self { storage })
     }
 
-    // noinspection DuplicatedCode
     fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
         let iter = self.storage.iter();
         let iter = iter.map(|(entity, _)| entity);
@@ -64,6 +81,25 @@ cfg_resource! {
         fn fetch(&self, _: Entity) -> FetchResult<Self::Item> {
             let resource = marker::Resource::new(self.resource);
             Ok(resource)
+        }
+    }
+
+    impl<'data, R> FetchMut<'data> for FetchResourceRead<'data, R>
+    where
+        R: Resource,
+    {
+        type Item = <Self as Fetch<'data>>::Item;
+
+        unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
+            Fetch::new(data.into())
+        }
+
+        fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
+            Fetch::entities(self)
+        }
+
+        fn fetch_mut(&mut self, entity: Entity) -> FetchResult<Self::Item> {
+            Fetch::fetch(self, entity)
         }
     }
 }
