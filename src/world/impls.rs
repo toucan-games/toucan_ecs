@@ -6,7 +6,7 @@ use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 use crate::resource::{Registry as ResourceRegistry, Resource};
 use crate::world::Entry;
 
-use super::query::{CheckedQuery, Query, QueryMut};
+use super::query::{Query, QueryMut};
 use super::view::{View, ViewMut, ViewOne, ViewOneMut};
 
 /// Storage of the entities and all the data attached to them.
@@ -939,7 +939,7 @@ impl World {
     where
         Q: QueryMut<'data>,
     {
-        ViewMut::new(self, CheckedQuery::new())
+        ViewMut::new(self)
     }
 
     pub(crate) fn components(&self) -> &ComponentRegistry {

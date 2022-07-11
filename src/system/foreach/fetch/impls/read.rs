@@ -1,18 +1,11 @@
-use crate::component::{Component, StorageHolder};
+use crate::component::Component;
+use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
+use crate::fetch::{FetchRead, FetchResourceRead};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::Fetch;
-use crate::world::WorldDataMut;
-use crate::Entity;
-
-#[repr(transparent)]
-pub struct FetchRead<'data, C>
-where
-    C: Component,
-{
-    storage: StorageHolder<'data, C>,
-}
+use crate::world::{FetchMut, WorldDataMut};
 
 impl<'data, C> Fetch<'data> for FetchRead<'data, C>
 where
@@ -20,41 +13,31 @@ where
 {
     type Item = &'data C;
 
-    unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
-        let storage = world.components().get_storage().ok_or(FetchError)?;
-        Ok(Self { storage })
+    unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
+        Self::new(data.into()).ok_or(FetchError)
     }
 
     // noinspection DuplicatedCode
     fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
-        let iter = self.storage.iter();
-        let iter = iter.map(|(entity, _)| entity);
-        Some(Box::new(iter))
+        let iter = self.entities()?;
+        let iter = Box::new(iter);
+        Some(iter)
     }
 
     fn fetch(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
-        self.storage.get(entity).ok_or(FetchError)
+        self.fetch_mut(entity)
     }
 }
 
 cfg_resource! {
-    #[repr(transparent)]
-    pub struct FetchResourceRead<'data, R>
-    where
-        R: Resource,
-    {
-        resource: &'data R,
-    }
-
     impl<'data, R> Fetch<'data> for FetchResourceRead<'data, R>
     where
         R: Resource,
     {
         type Item = marker::Resource<'data, R>;
 
-        unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
-            let resource = world.resources().get().ok_or(FetchError)?;
-            Ok(Self { resource })
+        unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
+            Self::new(data.into()).ok_or(FetchError)
         }
 
         fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item=Entity> + Send + Sync + 'data>> {
@@ -62,8 +45,7 @@ cfg_resource! {
         }
 
         fn fetch(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
-            let resource = marker::Resource::new(self.resource);
-            Ok(resource)
+            Ok(FetchResourceRead::fetch(self))
         }
     }
 }

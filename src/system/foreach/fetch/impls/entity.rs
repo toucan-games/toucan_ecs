@@ -1,9 +1,8 @@
+use crate::entity::Entity;
 use crate::error::FetchResult;
+use crate::fetch::FetchEntity;
 use crate::system::foreach::fetch::Fetch;
 use crate::world::WorldDataMut;
-use crate::Entity;
-
-pub struct FetchEntity;
 
 impl<'data> Fetch<'data> for FetchEntity {
     type Item = Entity;

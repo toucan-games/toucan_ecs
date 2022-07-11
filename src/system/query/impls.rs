@@ -1,4 +1,5 @@
 use crate::component::Component;
+use crate::fetch::{FetchForeachHolder, FetchView, FetchViewMut, FetchViewOne, FetchViewOneMut};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::fetch::*;

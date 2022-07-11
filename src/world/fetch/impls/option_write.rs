@@ -1,17 +1,10 @@
-use crate::component::{Component, StorageHolderMut};
+use crate::component::Component;
+use crate::entity::Entity;
 use crate::error::FetchResult;
+use crate::fetch::{FetchOptionWrite, FetchResourceOptionWrite};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::world::{FetchMut, WorldDataMut};
-use crate::Entity;
-
-#[repr(transparent)]
-pub struct FetchOptionWrite<'data, C>
-where
-    C: Component,
-{
-    storage: Option<StorageHolderMut<'data, C>>,
-}
 
 impl<'data, C> FetchMut<'data> for FetchOptionWrite<'data, C>
 where
@@ -19,10 +12,8 @@ where
 {
     type Item = Option<&'data mut C>;
 
-    unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
-        // SAFETY: must be checked by the caller.
-        let storage = world.components_mut().get_storage_mut();
-        Ok(Self { storage })
+    unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
+        Ok(Self::new(data))
     }
 
     fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item = Entity> + Send + Sync + 'data>> {
@@ -30,31 +21,19 @@ where
     }
 
     fn fetch_mut(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
-        let storage = self.storage.as_mut();
-        let item = storage.and_then(|storage| storage.get_mut(entity));
-        Ok(item)
+        self.fetch_mut(entity)
     }
 }
 
 cfg_resource! {
-    #[repr(transparent)]
-    pub struct FetchResourceOptionWrite<'data, R>
-    where
-        R: Resource,
-    {
-        resource: Option<&'data mut R>,
-    }
-
     impl<'data, R> FetchMut<'data> for FetchResourceOptionWrite<'data, R>
     where
         R: Resource,
     {
         type Item = Option<marker::ResourceMut<'data, R>>;
 
-        unsafe fn new(world: WorldDataMut<'data>) -> FetchResult<Self> {
-            // SAFETY: must be checked by the caller.
-            let resource = world.resources_mut().get_mut();
-            Ok(Self { resource })
+        unsafe fn new(data: WorldDataMut<'data>) -> FetchResult<Self> {
+            Ok(Self::new(data))
         }
 
         fn entities(&self) -> Option<Box<dyn ExactSizeIterator<Item=Entity> + Send + Sync + 'data>> {
@@ -62,8 +41,7 @@ cfg_resource! {
         }
 
         fn fetch_mut(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
-            let resource = self.resource.as_mut().map(|it| marker::ResourceMut::new(*it));
-            Ok(resource)
+            Ok(self.fetch_mut())
         }
     }
 }
