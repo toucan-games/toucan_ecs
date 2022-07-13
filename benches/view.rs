@@ -35,9 +35,9 @@ fn setup() -> World {
 fn view(criterion: &mut Criterion) {
     fn routine(world: World) {
         let view = world.view::<(&Position, Option<&Velocity>, &Mass)>();
-        view.for_each(|item| {
-            black_box(item);
-        });
+        for item in view {
+            let _ = black_box(item);
+        }
     }
 
     criterion.bench_function("view world", |bencher| {
@@ -48,9 +48,14 @@ fn view(criterion: &mut Criterion) {
 fn view_mut(criterion: &mut Criterion) {
     fn routine(mut world: World) {
         let view = world.view_mut::<(&mut Position, Option<&mut Velocity>, &mut Mass)>();
-        view.for_each(|item| {
-            black_box(item);
-        });
+        for item in view {
+            let (position, mut velocity, mass) = black_box(item);
+            position.x -= 1.0;
+            if let Some(velocity) = velocity.as_deref_mut() {
+                velocity.dy += 1.0;
+            }
+            mass.0 += 1.0;
+        }
     }
 
     criterion.bench_function("view mut world", |bencher| {
