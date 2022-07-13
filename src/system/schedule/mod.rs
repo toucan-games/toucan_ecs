@@ -23,8 +23,9 @@ impl<'data> Schedule<'data> {
         ScheduleBuilder::new()
     }
 
-    /// Executes all the systems inside of schedule.
-    pub fn run(&mut self, world: &'data mut World) {
+    /// Executes all the systems inside of schedule
+    /// in the order of their addition.
+    pub fn run(&mut self, world: &mut World) {
         self.systems.iter_mut().for_each(|system| system.run(world))
     }
 }

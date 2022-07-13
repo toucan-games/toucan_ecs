@@ -3,15 +3,15 @@ use std::io::{stdin, stdout, Write};
 use rand::{thread_rng, Rng};
 
 use field::{Alive, Field, Point, WatchAfter};
-use toucan_ecs::{Entity, World};
+use print::print_field;
+use toucan_ecs::system::Schedule;
+use toucan_ecs::World;
 
 mod field;
+mod print;
 mod utils;
 
-type Error = Box<dyn std::error::Error + 'static>;
-type Result<T> = std::result::Result<T, Error>;
-
-fn main() -> Result<()> {
+fn main() -> utils::Result<()> {
     let mut world = World::new();
 
     let mut stdin = stdin().lock();
@@ -37,25 +37,20 @@ fn main() -> Result<()> {
 
     println!("Generating the field...");
     let range: Vec<_> = (0..field_width).collect();
-    let entities = range
-        .iter()
-        .map(|x| {
-            range.iter().map(|y| {
-                let point = Point { x: *x, y: *y };
-                let alive = thread_rng().gen_bool(probability);
-                let alive = Alive { alive };
-                (point, alive)
-            })
-        })
-        .flatten();
-    world.extend_with(entities);
-
-    println!("Field generation was completed!");
-    for (entity, point, alive) in world.view::<(Entity, &Point, &Alive)>() {
-        println!(
-            "entity: {:?}, point: {:?}, alive: {}",
-            entity, point, alive.alive
-        );
+    for &x in range.iter() {
+        for &y in range.iter() {
+            let mut builder = world.entity().with(Point { x, y });
+            if thread_rng().gen_bool(probability) {
+                builder = builder.with(Alive);
+            }
+            builder.build();
+        }
     }
+    drop(range);
+    println!("Field generation was completed!");
+
+    let mut schedule = Schedule::builder().system(print_field).build();
+    schedule.run(&mut world);
+
     Ok(())
 }

@@ -19,9 +19,7 @@ pub struct Point {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub struct Alive {
-    pub alive: bool,
-}
+pub struct Alive;
 
 #[derive(Copy, Clone, Debug)]
 pub struct WatchAfter;

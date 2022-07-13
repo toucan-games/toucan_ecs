@@ -1,7 +1,8 @@
 use std::io::BufRead;
 use std::str::FromStr;
 
-use crate::Result;
+pub type Error = Box<dyn std::error::Error + 'static>;
+pub type Result<T> = std::result::Result<T, Error>;
 
 pub fn read_and_parse<T, R>(buf_read: &mut T) -> Result<R>
 where
