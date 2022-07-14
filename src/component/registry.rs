@@ -1,8 +1,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use crate::component::storage::Storage;
-use crate::component::storage::{DefaultStorage, ErasedStorageHolder};
+use crate::component::storage::{ErasedStorageHolder, Storage};
 use crate::component::{Component, ComponentSet, ComponentTypeId};
 use crate::entity::Entity;
 use crate::hash::TypeIdHasher;
@@ -133,12 +132,13 @@ impl Registry {
         self.storages.contains_key(&type_id)
     }
 
+    // noinspection RsUnnecessaryQualifications
     fn create_storage<C>(&mut self)
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let storage = DefaultStorage::<C>::default();
+        let storage = C::Storage::default();
         self.storages.insert(type_id, storage.into());
     }
 }
