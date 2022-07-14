@@ -68,39 +68,9 @@ impl<'data> Entry<'data> {
         self.world.is_entity_empty(self.entity)
     }
 
-    /// Attaches exactly one component to the entity.
-    ///
-    /// This function does not panic because it registers component type automatically.
-    ///
-    /// To attach multiple components of different types to the entity at once,
-    /// use [`attach`][Entry::attach()] associated function.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
-    /// # use toucan_ecs::world::{World, Entry};
-    /// # let mut world = World::new();
-    /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
-    /// struct Name(&'static str);
-    ///
-    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
-    /// assert_eq!(entry.get().as_deref(), Some(&Name("Hello, World")));
-    /// ```
-    pub fn attach_one<C>(&mut self, component: C)
-    where
-        C: Component,
-    {
-        self.world.attach_one(self.entity, component);
-    }
-
-    /// Attaches set of components to the entity.
+    /// Attaches one component or set of components to the entity.
     ///
     /// This function does not panic because it registers components' types automatically.
-    ///
-    /// To attach component of exactly one type to the entity,
-    /// use [`attach_one`][Entry::attach_one()] associated function.
     ///
     /// # Examples
     ///
@@ -125,38 +95,7 @@ impl<'data> Entry<'data> {
         self.world.attach(self.entity, set)
     }
 
-    /// Returns `true` if component of generic type is attached to the entity.
-    ///
-    /// To check if the entity has components of multiple types,
-    /// use [`attached`][Entry::attached()] associated function.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::world::{World, Entry};
-    /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
-    /// # let mut world = World::new();
-    /// #[derive(Copy, Clone, Component)]
-    /// struct Name(&'static str);
-    ///
-    /// let mut entry = world.create_entry();
-    /// assert!(!entry.attached_one::<Name>());
-    ///
-    /// entry.attach_one(Name("Hello, World"));
-    /// assert!(entry.attached_one::<Name>());
-    /// ```
-    pub fn attached_one<C>(&self) -> bool
-    where
-        C: Component,
-    {
-        self.world.attached_one::<C>(self.entity)
-    }
-
-    /// Returns `true` if components in the generic set type are attached to the entity.
-    ///
-    /// To check if the entity has component of exactly one type,
-    /// use [`attached_one`][Entry::attached_one()] associated function.
+    /// Returns `true` if one component or set of components are attached to the entity.
     ///
     /// # Examples
     ///
@@ -184,38 +123,7 @@ impl<'data> Entry<'data> {
         self.world.attached::<S>(self.entity)
     }
 
-    /// Removes component of one type from the entity.
-    ///
-    /// To remove components of multiple types from the entity at once,
-    /// use [`remove`][Entry::remove()] associated function.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use toucan_ecs::world::{World, Entry};
-    /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
-    /// # let mut world = World::new();
-    /// #[derive(Copy, Clone, Component)]
-    /// struct Name(&'static str);
-    ///
-    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
-    /// assert!(entry.attached_one::<Name>());
-    ///
-    /// entry.remove_one::<Name>();
-    /// assert!(!entry.attached_one::<Name>());
-    /// ```
-    pub fn remove_one<C>(&mut self)
-    where
-        C: Component,
-    {
-        self.world.remove_one::<C>(self.entity)
-    }
-
-    /// Removes components of multiple types from the entity.
-    ///
-    /// To remove component of one type from the entity,
-    /// use [`remove_one`][Entry::remove_one()] associated function.
+    /// Removes one component or set of components from the entity.
     ///
     /// # Examples
     ///
@@ -245,8 +153,7 @@ impl<'data> Entry<'data> {
     /// It makes the entity effectively empty.
     ///
     /// To remove just a set of components from the entity,
-    /// use [`remove_one`][Entry::remove_one()] and [`remove`][Entry::remove()]
-    /// associated functions.
+    /// use [`remove`][Entry::remove()] associated functions.
     ///
     /// # Examples
     ///
@@ -282,7 +189,7 @@ impl<'data> Entry<'data> {
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
+    /// let mut entry = world.create_entry_with(Name("Hello, World"));
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
@@ -306,7 +213,7 @@ impl<'data> Entry<'data> {
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
-    /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
+    /// let mut entry = world.create_entry_with(Name("Hello, World"));
     /// let mut name = entry.get_mut::<Name>().unwrap();
     /// name.0 = "This name was changed";
     /// assert_ne!(*name, Name("Hello, World"));

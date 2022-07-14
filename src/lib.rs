@@ -58,9 +58,9 @@
 //!
 //! // Or reuse existing ones
 //! if let Some(mut entry) = world.entry(entity) {
-//!     entry.remove_one::<ID>();
+//!     entry.remove::<ID>();
 //! }
-//! assert!(!world.attached_one::<ID>(entity));
+//! assert!(!world.attached::<ID>(entity));
 //! ```
 //!
 //! ## View components with ease
@@ -87,11 +87,11 @@
 //!     let f = i as f32;
 //!     let position = Position { x: f / 10.0, y: -f / 10.0 };
 //!     let entity = world.create_with((position,));
-//!     assert!(world.attached_one::<Position>(entity));
+//!     assert!(world.attached::<Position>(entity));
 //!     if i % 2 != 0 {
 //!         let mass = Mass(f);
-//!         world.attach_one(entity, mass);
-//!         assert!(world.attached_one::<Mass>(entity));
+//!         world.attach(entity, mass);
+//!         assert!(world.attached::<Mass>(entity));
 //!     }
 //! }
 //!

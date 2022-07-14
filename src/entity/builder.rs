@@ -85,6 +85,6 @@ where
 {
     fn attach(self: Box<Self>, entity: Entity, registry: &mut Registry) {
         let component = *self;
-        registry.attach_one(entity, component)
+        registry.attach(entity, component)
     }
 }

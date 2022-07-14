@@ -29,12 +29,12 @@ impl Registry {
         }
     }
 
-    pub fn attach_one<C>(&mut self, entity: Entity, component: C)
+    pub(super) fn attach_one<C>(&mut self, entity: Entity, component: C)
     where
         C: Component,
     {
         self.register::<C>();
-        let storage = self.get_storage_mut::<C>().unwrap();
+        let storage: &mut C::Storage = self.get_storage_mut::<C>().unwrap();
         storage.attach(entity, component);
     }
 
@@ -45,7 +45,7 @@ impl Registry {
         set.attach(self, entity)
     }
 
-    pub fn attached_one<C>(&self, entity: Entity) -> bool
+    pub(super) fn attached_one<C>(&self, entity: Entity) -> bool
     where
         C: Component,
     {
@@ -68,7 +68,7 @@ impl Registry {
             .all(|storage| !storage.attached(entity))
     }
 
-    pub fn remove_one<C>(&mut self, entity: Entity)
+    pub(super) fn remove_one<C>(&mut self, entity: Entity)
     where
         C: Component,
     {
@@ -113,7 +113,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        Some(storage.as_storage_ref::<C>())
+        Some(storage.as_storage_ref())
     }
 
     pub fn get_storage_mut<C>(&mut self) -> Option<&mut C::Storage>
@@ -122,7 +122,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        Some(storage.as_storage_mut::<C>())
+        Some(storage.as_storage_mut())
     }
 
     pub fn has_storage<C>(&self) -> bool

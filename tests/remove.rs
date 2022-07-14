@@ -17,15 +17,15 @@ fn remove_one() {
     };
     let entity = world.create_with(set);
     assert!(world.contains(entity));
-    assert!(world.attached_one::<Position>(entity));
-    assert!(world.attached_one::<Velocity>(entity));
-    assert!(world.attached_one::<Mass>(entity));
+    assert!(world.attached::<Position>(entity));
+    assert!(world.attached::<Velocity>(entity));
+    assert!(world.attached::<Mass>(entity));
 
-    world.remove_one::<Position>(entity);
-    assert!(world.attached_one::<Position>(entity).not());
+    world.remove::<Position>(entity);
+    assert!(world.attached::<Position>(entity).not());
 
-    world.remove_one::<Velocity>(entity);
-    assert!(world.attached_one::<Velocity>(entity).not());
+    world.remove::<Velocity>(entity);
+    assert!(world.attached::<Velocity>(entity).not());
 
     println!("Mass: {:?}", *world.get::<Mass>(entity).unwrap())
 }
@@ -43,8 +43,8 @@ fn remove() {
     let entity = world.create_with(set);
 
     world.remove::<(Position, Velocity)>(entity);
-    assert!(world.attached_one::<Position>(entity).not());
-    assert!(world.attached_one::<Velocity>(entity).not());
+    assert!(world.attached::<Position>(entity).not());
+    assert!(world.attached::<Velocity>(entity).not());
 
     println!("Mass: {:?}", *world.get::<Mass>(entity).unwrap())
 }

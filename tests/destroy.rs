@@ -31,7 +31,7 @@ fn destroy_with_data() {
 
     world.destroy(entity);
     assert!(world.contains(entity).not());
-    assert!(world.attached_one::<Position>(entity).not());
-    assert!(world.attached_one::<Velocity>(entity).not());
-    assert!(world.attached_one::<Mass>(entity).not());
+    assert!(world.attached::<Position>(entity).not());
+    assert!(world.attached::<Velocity>(entity).not());
+    assert!(world.attached::<Mass>(entity).not());
 }

@@ -25,6 +25,7 @@ where
     }
 
     pub fn entities(&self) -> Option<impl ExactSizeIterator<Item = Entity> + Send + Sync + 'data> {
+        // SAFETY: component data won't be accessed
         let iter: Box<DynIter<'data, C>> = unsafe { transmute(self.storage.iter()) };
         let iter = iter.map(|(entity, _)| entity);
         Some(iter)

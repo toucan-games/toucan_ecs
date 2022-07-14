@@ -24,9 +24,9 @@ fn create_with() {
     let entity = world.create_with(set);
 
     assert!(world.contains(entity));
-    assert!(world.attached_one::<Position>(entity));
-    assert!(world.attached_one::<Velocity>(entity));
-    assert!(world.attached_one::<Mass>(entity));
+    assert!(world.attached::<Position>(entity));
+    assert!(world.attached::<Velocity>(entity));
+    assert!(world.attached::<Mass>(entity));
 }
 
 #[test]

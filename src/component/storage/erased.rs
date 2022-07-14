@@ -20,15 +20,17 @@ impl ErasedStorageHolder {
         self.0.clear()
     }
 
-    pub fn as_storage_ref<C>(&self) -> &C::Storage
+    pub fn as_storage_ref<C, S>(&self) -> &S
     where
+        S: Storage<Item = C>,
         C: Component,
     {
         self.0.as_ref().downcast_ref().expect("downcast error")
     }
 
-    pub fn as_storage_mut<C>(&mut self) -> &mut C::Storage
+    pub fn as_storage_mut<C, S>(&mut self) -> &mut S
     where
+        S: Storage<Item = C>,
         C: Component,
     {
         self.0.as_mut().downcast_mut().expect("downcast error")

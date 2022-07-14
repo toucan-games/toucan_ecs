@@ -38,7 +38,7 @@ pub type DynIterMut<'data, C> =
 /// This can be overridden by manual implementation of the [`Component`](Component) trait
 /// or by `#[component(storage = "...")]` helper attribute:
 ///
-/// ```
+/// ```text
 /// // TODO: write an example
 /// ```
 pub trait Storage: Default + Send + Sync + 'static {

@@ -32,11 +32,11 @@ pub fn prepare_for_complex_view() -> World {
         };
         let mass = Mass(f);
         let entity = world.create();
-        world.attach_one(entity, position);
+        world.attach(entity, position);
         if i % 2 == 0 {
-            world.attach_one(entity, velocity);
+            world.attach(entity, velocity);
         } else {
-            world.attach_one(entity, mass);
+            world.attach(entity, mass);
         }
     }
 

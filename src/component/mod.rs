@@ -2,8 +2,31 @@
 
 pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
-pub use toucan_ecs_derive::Component;
 pub(crate) use type_id::ComponentTypeId;
+
+/// Derive macro that implements [`Component`] trait.
+///
+/// # Examples
+///
+/// Use default storage type:
+///
+/// ```
+/// use toucan_ecs::component::Component;
+/// use toucan_ecs::component::storage::DefaultStorage;
+///
+/// #[derive(Copy, Clone, Component)]
+/// pub struct Position {
+///     x: f32,
+///     y: f32,
+/// }
+/// ```
+///
+/// Use custom storage type:
+///
+/// ```text
+/// // TODO: write an example
+/// ```
+pub use toucan_ecs_derive::Component;
 
 mod registry;
 mod set;

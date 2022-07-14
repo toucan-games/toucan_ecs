@@ -20,13 +20,13 @@ fn extend() {
 fn extend_with_one() {
     let mut world = World::new();
 
-    let entities = world.extend_with_one([Mass(0.0); 10]).to_vec();
+    let entities = world.extend_with([Mass(0.0); 10]).to_vec();
     assert!(!world.is_empty());
     assert_eq!(entities.len(), 10);
 
     for entity in entities {
         assert!(!world.is_entity_empty(entity));
-        assert!(world.attached_one::<Mass>(entity));
+        assert!(world.attached::<Mass>(entity));
     }
 }
 

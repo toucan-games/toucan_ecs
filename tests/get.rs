@@ -6,7 +6,7 @@ mod components;
 #[test]
 fn get() {
     let mut world = World::new();
-    let entity = world.create_with_one(Velocity {
+    let entity = world.create_with(Velocity {
         dx: 10.0,
         dy: -10.0,
     });
@@ -24,7 +24,7 @@ fn get() {
 #[test]
 fn get_mut() {
     let mut world = World::new();
-    let entity = world.create_with_one(Velocity {
+    let entity = world.create_with(Velocity {
         dx: 10.0,
         dy: -10.0,
     });
@@ -42,7 +42,7 @@ fn get_mut() {
 #[test]
 fn get_mut_and_mutate() {
     let mut world = World::new();
-    let entity = world.create_with_one(Velocity {
+    let entity = world.create_with(Velocity {
         dx: 10.0,
         dy: -10.0,
     });
