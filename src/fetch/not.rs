@@ -1,7 +1,8 @@
 use std::marker::PhantomData;
 
 use crate::component::marker::Not;
-use crate::component::{Component, StorageHolder};
+use crate::component::storage::Storage;
+use crate::component::Component;
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::world::WorldData;
@@ -11,7 +12,7 @@ pub struct FetchNot<'data, C>
 where
     C: Component,
 {
-    storage: Option<StorageHolder<'data, C>>,
+    storage: Option<&'data C::Storage>,
 }
 
 impl<'data, C> FetchNot<'data, C>
@@ -19,7 +20,7 @@ where
     C: Component,
 {
     pub fn new(data: WorldData<'data>) -> Self {
-        let storage = data.components().get_storage();
+        let storage = data.components().get_storage::<C>();
         Self { storage }
     }
 

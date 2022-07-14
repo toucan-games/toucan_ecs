@@ -1,5 +1,6 @@
-use crate::component::{Component, Iter, StorageHolder};
-use crate::Entity;
+use crate::component::storage::{DynIter, Storage};
+use crate::component::Component;
+use crate::entity::Entity;
 
 /// Iterator which returns *entity* of the world
 /// with **shared** *borrow* of component attached to it.
@@ -10,15 +11,15 @@ pub struct ViewOne<'data, C>
 where
     C: Component,
 {
-    iter: Option<Box<Iter<'data, C>>>,
+    iter: Option<Box<DynIter<'data, C>>>,
 }
 
 impl<'data, C> ViewOne<'data, C>
 where
     C: Component,
 {
-    pub(crate) fn new(storage: Option<StorageHolder<'data, C>>) -> Self {
-        let iter = storage.as_ref().map(StorageHolder::iter);
+    pub(crate) fn new(storage: Option<&'data C::Storage>) -> Self {
+        let iter = storage.map(Storage::iter);
         Self { iter }
     }
 }

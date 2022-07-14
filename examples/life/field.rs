@@ -1,3 +1,6 @@
+use toucan_ecs::component::storage::DefaultStorage;
+use toucan_ecs::component::Component;
+
 pub struct Field {
     width: u16,
 }
@@ -12,14 +15,14 @@ impl Field {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Component, Debug)]
 pub struct Point {
     pub x: u16,
     pub y: u16,
 }
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Component, Debug)]
 pub struct Alive;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Component, Debug)]
 pub struct WatchAfter;

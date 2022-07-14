@@ -1,4 +1,4 @@
-use toucan_ecs::World;
+use toucan_ecs::world::World;
 
 #[test]
 fn new() {

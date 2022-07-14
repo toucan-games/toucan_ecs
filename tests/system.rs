@@ -4,12 +4,12 @@ use components::{Mass, Position, Velocity};
 #[cfg(feature = "resource")]
 use resources::SimpleResource;
 use toucan_ecs::component::Component;
+use toucan_ecs::entity::Entity;
 #[cfg(feature = "resource")]
 use toucan_ecs::resource::marker::ResourceMut;
 use toucan_ecs::system::{Schedule, System};
 use toucan_ecs::world::query::Query;
 use toucan_ecs::world::view::{View, ViewMut, ViewOne, ViewOneMut};
-use toucan_ecs::Entity;
 
 mod components;
 #[cfg(feature = "resource")]

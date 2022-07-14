@@ -3,7 +3,7 @@ use crate::error::FetchResult;
 use crate::fetch::FetchViewOne;
 use crate::system::fetch::Fetch;
 use crate::world::view::ViewOne;
-use crate::World;
+use crate::world::World;
 
 impl<'data, C> Fetch<'data> for FetchViewOne<C>
 where

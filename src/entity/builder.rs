@@ -2,8 +2,9 @@ use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
 use crate::component::{Component, ComponentTypeId, Registry};
+use crate::entity::Entity;
 use crate::hash::TypeIdHasher;
-use crate::{Entity, World};
+use crate::world::World;
 
 /// Allows for building the new entity with **builder** pattern.
 ///

@@ -21,7 +21,7 @@
 //! ## Create and destroy entities
 //!
 //! ```
-//! use toucan_ecs::World;
+//! use toucan_ecs::world::World;
 //!
 //! let mut world = World::new();
 //!
@@ -35,12 +35,14 @@
 //! ## Use entries to simplify access to the entity's data
 //!
 //! ```
-//! use toucan_ecs::World;
+//! use toucan_ecs::component::Component;
+//! use toucan_ecs::component::storage::DefaultStorage;
+//! use toucan_ecs::world::World;
 //!
-//! #[derive(Copy, Clone)]
+//! #[derive(Copy, Clone, Component)]
 //! struct Name(&'static str);
 //!
-//! #[derive(Copy, Clone)]
+//! #[derive(Copy, Clone, Component)]
 //! struct ID(u32);
 //!
 //! let mut world = World::new();
@@ -64,15 +66,18 @@
 //! ## View components with ease
 //!
 //! ```
-//! use toucan_ecs::{Entity, World};
+//! use toucan_ecs::component::Component;
+//! use toucan_ecs::component::storage::DefaultStorage;
+//! use toucan_ecs::entity::Entity;
+//! use toucan_ecs::world::World;
 //!
-//! #[derive(Debug, Copy, Clone)]
+//! #[derive(Debug, Copy, Clone, Component)]
 //! struct Position {
 //!     x: f32,
 //!     y: f32,
 //! }
 //!
-//! #[derive(Debug, Copy, Clone)]
+//! #[derive(Debug, Copy, Clone, Component)]
 //! struct Mass(f32);
 //!
 //! let mut world = World::new();
@@ -100,14 +105,17 @@
 //! ## Use systems to get and update data
 //!
 //! ```
-//! use toucan_ecs::{Entity, World};
+//! use toucan_ecs::component::Component;
+//! use toucan_ecs::component::storage::DefaultStorage;
+//! use toucan_ecs::entity::Entity;
+//! use toucan_ecs::world::World;
 //! use toucan_ecs::system::Schedule;
 //! use toucan_ecs::resource::marker::Resource;
 //!
-//! #[derive(Copy, Clone)]
+//! #[derive(Copy, Clone, Component)]
 //! struct Name(&'static str);
 //!
-//! #[derive(Copy, Clone)]
+//! #[derive(Copy, Clone, Component)]
 //! struct ID(u32);
 //!
 //! // notice no `Copy` and `Clone`
@@ -131,9 +139,6 @@
 //! // execute all the systems in schedule
 //! schedule.run(&mut world);
 //! ```
-
-pub use entity::Entity;
-pub use world::World;
 
 #[macro_use]
 mod macros;

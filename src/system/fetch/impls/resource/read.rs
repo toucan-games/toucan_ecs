@@ -3,7 +3,7 @@ use std::marker::PhantomData;
 use crate::error::{FetchError, FetchResult};
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
-use crate::World;
+use crate::world::World;
 
 #[repr(transparent)]
 pub struct FetchResourceRead<R>

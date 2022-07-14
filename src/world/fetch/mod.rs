@@ -1,7 +1,7 @@
 pub use impls::*;
 
+use crate::entity::Entity;
 use crate::error::FetchResult;
-use crate::Entity;
 
 use super::{WorldData, WorldDataMut};
 

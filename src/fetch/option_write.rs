@@ -1,4 +1,5 @@
-use crate::component::{Component, StorageHolderMut};
+use crate::component::storage::Storage;
+use crate::component::Component;
 use crate::entity::Entity;
 use crate::error::FetchResult;
 #[cfg(feature = "resource")]
@@ -10,7 +11,7 @@ pub struct FetchOptionWrite<'data, C>
 where
     C: Component,
 {
-    storage: Option<StorageHolderMut<'data, C>>,
+    storage: Option<&'data mut C::Storage>,
 }
 
 impl<'data, C> FetchOptionWrite<'data, C>
@@ -18,7 +19,7 @@ where
     C: Component,
 {
     pub unsafe fn new(world: WorldDataMut<'data>) -> Self {
-        let storage = world.components_mut().get_storage_mut();
+        let storage = world.components_mut().get_storage_mut::<C>();
         Self { storage }
     }
 

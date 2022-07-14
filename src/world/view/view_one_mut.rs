@@ -1,5 +1,6 @@
-use crate::component::{Component, IterMut, StorageHolderMut};
-use crate::Entity;
+use crate::component::storage::{DynIterMut, Storage};
+use crate::component::Component;
+use crate::entity::Entity;
 
 /// Iterator which returns *entity* of the world
 /// with **unique** *borrow* of component attached to it.
@@ -10,15 +11,15 @@ pub struct ViewOneMut<'data, C>
 where
     C: Component,
 {
-    iter: Option<Box<IterMut<'data, C>>>,
+    iter: Option<Box<DynIterMut<'data, C>>>,
 }
 
 impl<'data, C> ViewOneMut<'data, C>
 where
     C: Component,
 {
-    pub(crate) fn new(storage: Option<StorageHolderMut<'data, C>>) -> Self {
-        let iter = storage.map(StorageHolderMut::iter_mut);
+    pub(crate) fn new(storage: Option<&'data mut C::Storage>) -> Self {
+        let iter = storage.map(Storage::iter_mut);
         Self { iter }
     }
 }

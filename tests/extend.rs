@@ -1,5 +1,5 @@
 use components::{Mass, Position};
-use toucan_ecs::World;
+use toucan_ecs::world::World;
 
 mod components;
 

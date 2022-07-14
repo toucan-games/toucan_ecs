@@ -1,6 +1,6 @@
 use components::{Mass, Position, Velocity};
 use toucan_ecs::component::marker::Not;
-use toucan_ecs::Entity;
+use toucan_ecs::entity::Entity;
 
 mod components;
 #[cfg(feature = "resource")]

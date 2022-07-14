@@ -1,4 +1,5 @@
 use crate::component::Component;
+use crate::entity::Entity;
 use crate::error::FetchResult;
 use crate::fetch::FetchOptionWrite;
 #[cfg(feature = "resource")]
@@ -7,7 +8,6 @@ use crate::fetch::FetchResourceOptionWrite;
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::Fetch;
 use crate::world::WorldDataMut;
-use crate::Entity;
 
 impl<'data, C> Fetch<'data> for FetchOptionWrite<'data, C>
 where

@@ -5,7 +5,7 @@ use rand::{thread_rng, Rng};
 use field::{Alive, Field, Point, WatchAfter};
 use print::print_field;
 use toucan_ecs::system::Schedule;
-use toucan_ecs::World;
+use toucan_ecs::world::World;
 
 mod field;
 mod print;

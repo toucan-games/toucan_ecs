@@ -47,24 +47,26 @@ where
 #[cfg(test)]
 mod tests {
     use crate::component::marker::Not;
+    use crate::component::storage::DefaultStorage;
+    use crate::component::Component;
 
     use super::*;
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, Component)]
     struct Position(f32, f32, f32);
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, Component)]
     struct Velocity(f32, f32, f32);
 
-    #[derive(Copy, Clone)]
+    #[derive(Copy, Clone, Component)]
     struct Mass(f32);
 
     #[test]
     fn one_type() {
         check::<&Position>();
         check::<(&Position,)>();
-        check::<(&Position, Not<&Position>)>();
-        check::<(Not<&Position>, &Position, Option<&Position>)>();
+        check::<(&Position, Not<Position>)>();
+        check::<(Not<Position>, &Position, Option<&Position>)>();
 
         check::<&mut Position>();
         check::<(&mut Position,)>();
@@ -79,7 +81,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "multiple mutable borrows occur")]
     fn one_type_mutable_borrows() {
-        check::<(Option<&mut Position>, Not<&Position>, &mut Position)>();
+        check::<(Option<&mut Position>, Not<Position>, &mut Position)>();
     }
 
     #[test]
@@ -87,7 +89,7 @@ mod tests {
         check::<&Velocity>();
         check::<(&Velocity,)>();
         check::<(&Position, &Velocity)>();
-        check::<(&Position, Not<&Velocity>, Option<&Position>)>();
+        check::<(&Position, Not<Velocity>, Option<&Position>)>();
         check::<(
             &Position,
             &Velocity,

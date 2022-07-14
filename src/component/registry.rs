@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use crate::component::storage::{
-    ErasedStorageHolder, StorageHolder, StorageHolderMut, StorageImpl,
-};
+use crate::component::storage::Storage;
+use crate::component::storage::{DefaultStorage, ErasedStorageHolder};
 use crate::component::{Component, ComponentSet, ComponentTypeId};
+use crate::entity::Entity;
 use crate::hash::TypeIdHasher;
-use crate::Entity;
 
 #[derive(Default)]
 #[repr(transparent)]
@@ -18,7 +17,7 @@ impl Registry {
     pub fn clear(&mut self) {
         self.storages
             .values_mut()
-            .for_each(|storage| storage.clear());
+            .for_each(ErasedStorageHolder::clear);
     }
 
     pub fn register<C>(&mut self)
@@ -35,7 +34,7 @@ impl Registry {
         C: Component,
     {
         self.register::<C>();
-        let mut storage = self.get_storage_mut().unwrap();
+        let storage = self.get_storage_mut::<C>().unwrap();
         storage.attach(entity, component);
     }
 
@@ -74,7 +73,7 @@ impl Registry {
         C: Component,
     {
         let storage = self.get_storage_mut::<C>();
-        if let Some(mut storage) = storage {
+        if let Some(storage) = storage {
             storage.remove(entity)
         }
     }
@@ -104,26 +103,26 @@ impl Registry {
     where
         C: Component,
     {
-        let mut storage = self.get_storage_mut::<C>()?;
+        let storage = self.get_storage_mut::<C>()?;
         storage.get_mut(entity)
     }
 
-    pub fn get_storage<C>(&self) -> Option<StorageHolder<C>>
+    pub fn get_storage<C>(&self) -> Option<&C::Storage>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        Some(storage.into())
+        Some(storage.as_storage_ref::<C>())
     }
 
-    pub fn get_storage_mut<C>(&mut self) -> Option<StorageHolderMut<C>>
+    pub fn get_storage_mut<C>(&mut self) -> Option<&mut C::Storage>
     where
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        Some(storage.into())
+        Some(storage.as_storage_mut::<C>())
     }
 
     pub fn has_storage<C>(&self) -> bool
@@ -139,7 +138,7 @@ impl Registry {
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let storage = StorageImpl::<C>::default();
+        let storage = DefaultStorage::<C>::default();
         self.storages.insert(type_id, storage.into());
     }
 }

@@ -1,7 +1,7 @@
 pub use impls::*;
 
 use crate::error::FetchResult;
-use crate::World;
+use crate::world::World;
 
 mod impls;
 mod tuple;

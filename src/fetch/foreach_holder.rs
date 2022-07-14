@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use crate::system::foreach::{ForeachHolder, Query};
-use crate::World;
+use crate::world::World;
 
 #[repr(transparent)]
 pub struct FetchForeachHolder<'data, Q>

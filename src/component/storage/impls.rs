@@ -13,7 +13,9 @@ slotmap::new_key_type! {
     struct ComponentKey;
 }
 
-pub struct StorageImpl<C>
+/// Default type of storage which can store any type of component
+/// efficient enough for usual use cases.
+pub struct DefaultStorage<C>
 where
     C: Component,
 {
@@ -21,7 +23,7 @@ where
     entity_to_key: SecondaryMap<Entity, ComponentKey>,
 }
 
-impl<C> Default for StorageImpl<C>
+impl<C> Default for DefaultStorage<C>
 where
     C: Component,
 {
@@ -33,7 +35,7 @@ where
     }
 }
 
-impl<C> Storage for StorageImpl<C>
+impl<C> Storage for DefaultStorage<C>
 where
     C: Component,
 {
@@ -72,13 +74,13 @@ where
         self.components.clear();
     }
 
-    fn iter(&self) -> Box<storage::Iter<Self::Item>> {
+    fn iter(&self) -> Box<storage::DynIter<Self::Item>> {
         let iter = self.components.iter();
         let iter = Iter { iter };
         Box::new(iter)
     }
 
-    fn iter_mut(&mut self) -> Box<storage::IterMut<Self::Item>> {
+    fn iter_mut(&mut self) -> Box<storage::DynIterMut<Self::Item>> {
         let iter_mut = self.components.iter_mut();
         let iter_mut = IterMut { iter_mut };
         Box::new(iter_mut)

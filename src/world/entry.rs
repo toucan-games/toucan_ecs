@@ -1,5 +1,6 @@
 use crate::component::{Component, ComponentSet};
-use crate::{Entity, World};
+use crate::entity::Entity;
+use crate::world::World;
 
 /// Entry of the specific [entity](Entity).
 ///
@@ -8,8 +9,9 @@ use crate::{Entity, World};
 /// you can do it only once.
 ///
 /// You can retrieve this from
-/// [`World::create_entry`][crate::World::create_entry()] to create new entity and easily access it
-/// or from [`World::entry`][crate::World::entry()] if an entity was created earlier.
+/// [`World::create_entry`][crate::world::World::create_entry()] to create new entity and easily
+/// access it or from [`World::entry`][crate::world::World::entry()]
+/// if an entity was created earlier.
 pub struct Entry<'data> {
     entity: Entity,
     world: &'data mut World,
@@ -25,8 +27,7 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -43,8 +44,7 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// let entity = entry.entity();
@@ -59,8 +59,7 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
     /// # let mut world = World::new();
     /// let mut entry = world.create_entry();
     /// assert!(entry.is_empty());
@@ -79,10 +78,11 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
+    /// # use toucan_ecs::world::{World, Entry};
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
     /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
@@ -105,13 +105,14 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct ID(u32);
     ///
     /// let mut entry = world.create_entry_with((Name("Hello, World"), ID(42)));
@@ -132,10 +133,11 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
     /// let mut entry = world.create_entry();
@@ -159,13 +161,14 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
+    /// # use toucan_ecs::world::{World, Entry};
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct ID(u32);
     ///
     /// let mut entry = world.create_entry();
@@ -189,10 +192,11 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
     /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
@@ -216,13 +220,14 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct ID(u32);
     ///
     /// let mut entry = world.create_entry_with((Name("Hello, World"), ID(42)));
@@ -246,13 +251,14 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
-    /// #[derive(Copy, Clone)]
+    /// #[derive(Copy, Clone, Component)]
     /// struct ID(u32);
     ///
     /// let mut entry = world.create_entry_with((Name("Hello, World"), ID(42)));
@@ -269,10 +275,11 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
     /// let mut entry = world.create_entry_with_one(Name("Hello, World"));
@@ -292,10 +299,11 @@ impl<'data> Entry<'data> {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::World;
-    /// # use toucan_ecs::world::Entry;
+    /// # use toucan_ecs::world::{World, Entry};
+    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
-    /// #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+    /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
     /// let mut entry = world.create_entry_with_one(Name("Hello, World"));

@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::component::Component;
 use crate::world::view::ViewOne;
-use crate::World;
+use crate::world::World;
 
 pub struct FetchViewOne<C>
 where
@@ -17,7 +17,7 @@ where
 {
     pub unsafe fn fetch(world: *mut World) -> ViewOne<'data, C> {
         let world = &*world;
-        let storage = world.components().get_storage();
+        let storage = world.components().get_storage::<C>();
         ViewOne::new(storage)
     }
 }

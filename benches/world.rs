@@ -1,7 +1,7 @@
 use criterion::{criterion_group, criterion_main, BatchSize, Criterion};
 
 use components::{Mass, Position, Velocity};
-use toucan_ecs::World;
+use toucan_ecs::world::World;
 
 mod components;
 

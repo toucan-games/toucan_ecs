@@ -1,7 +1,7 @@
 use std::ops::Not;
 
 use components::{Mass, Position, Velocity};
-use toucan_ecs::World;
+use toucan_ecs::world::World;
 
 mod components;
 

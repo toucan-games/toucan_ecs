@@ -1,15 +1,16 @@
-use crate::component::{Component, StorageHolder};
+use crate::component::storage::Storage;
+use crate::component::Component;
+use crate::entity::Entity;
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::world::WorldData;
-use crate::Entity;
 
 #[repr(transparent)]
 pub struct FetchOptionRead<'data, C>
 where
     C: Component,
 {
-    storage: Option<StorageHolder<'data, C>>,
+    storage: Option<&'data C::Storage>,
 }
 
 impl<'data, C> FetchOptionRead<'data, C>
@@ -17,7 +18,7 @@ where
     C: Component,
 {
     pub fn new(data: WorldData<'data>) -> Self {
-        let storage = data.components().get_storage();
+        let storage = data.components().get_storage::<C>();
         Self { storage }
     }
 

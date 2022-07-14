@@ -1,6 +1,6 @@
 use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
-use crate::World;
+use crate::world::World;
 
 impl<'data> Fetch<'data> for () {
     type Item = ();

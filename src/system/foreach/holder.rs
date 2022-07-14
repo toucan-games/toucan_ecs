@@ -3,7 +3,7 @@ use std::mem::transmute;
 use crate::entity::Entities;
 use crate::system::foreach::fetch::Fetch;
 use crate::system::foreach::CheckedQuery;
-use crate::World;
+use crate::world::World;
 
 use super::query::Query;
 

@@ -2,23 +2,57 @@
 
 pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
-pub(crate) use storage::{Iter, IterMut, Storage, StorageHolder, StorageHolderMut};
+pub use toucan_ecs_derive::Component;
 pub(crate) use type_id::ComponentTypeId;
 
 mod registry;
 mod set;
-mod storage;
 mod type_id;
 
 pub mod marker;
+pub mod storage;
 
 /// Trait for data that can be attached to the entity.
 ///
-/// This trait is implemented for all the types which implement [`Copy`], [`Send`], [`Sync`] traits
-/// and contain no non-static references.
+/// This trait must be implemented for the types which implement
+/// [`Copy`], [`Send`], [`Sync`] traits and contain no non-static references.
 ///
 /// It implements [`Copy`] trait to ensure that type does not manage some resource
 /// because copyable types cannot implement [`Drop`].
-pub trait Component: Copy + Send + Sync + 'static {}
-
-impl<T> Component for T where T: Copy + Send + Sync + 'static {}
+///
+/// ## How can I implement `Component`?
+///
+/// You can implement this trait with derive macro:
+///
+/// ```
+/// use toucan_ecs::component::Component;
+/// use toucan_ecs::component::storage::DefaultStorage;
+///
+/// #[derive(Copy, Clone, Component)]
+/// pub struct Position {
+///     x: f32,
+///     y: f32,
+/// }
+/// ```
+///
+/// or manually (equivalent to the derive macro usage above):
+///
+/// ```
+/// use toucan_ecs::component::Component;
+/// use toucan_ecs::component::storage::DefaultStorage;
+///
+/// #[derive(Copy, Clone)]
+/// pub struct Position {
+///     x: f32,
+///     y: f32,
+/// }
+///
+/// impl Component for Position {
+///     type Storage = DefaultStorage<Self>;
+/// }
+/// ```
+pub trait Component: Copy + Send + Sync + 'static {
+    /// Type of storage which will be used by the crate
+    /// to store this type of component.
+    type Storage: storage::Storage<Item = Self>;
+}
