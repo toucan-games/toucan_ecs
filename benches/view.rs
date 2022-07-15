@@ -21,11 +21,11 @@ fn setup() -> World {
         let mass = Mass(f);
 
         let mut entry = world.create_entry();
-        entry.attach_one(position);
+        entry.attach(position);
         if i % 2 == 0 {
-            entry.attach_one(velocity);
+            entry.attach(velocity);
         } else {
-            entry.attach_one(mass);
+            entry.attach(mass);
         }
     }
 
@@ -36,7 +36,7 @@ fn view(criterion: &mut Criterion) {
     fn routine(world: World) {
         let view = world.view::<(&Position, Option<&Velocity>, &Mass)>();
         for item in view {
-            let _ = black_box(item);
+            let _item = black_box(item);
         }
     }
 
