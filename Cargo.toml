@@ -14,7 +14,7 @@ edition = "2021"
 slotmap = "1.0.6"
 as-any = "0.3.0"
 multimap = { version = "0.8.3", default-features = false }
-toucan_ecs_derive = { path = "toucan_ecs_derive" }
+toucan_ecs_derive = { path = "toucan_ecs_derive", optional = true }
 
 [dev-dependencies]
 criterion = { version = "0.3.5", features = ["html_reports"] }
@@ -37,11 +37,13 @@ name = "life"
 required-features = ["resource"]
 
 [features]
+default = ["resource", "derive"]
 resource = []
+derive = ["toucan_ecs_derive"]
 
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [package.metadata.playground]
-features = ["resource"]
+features = ["resource", "derive"]

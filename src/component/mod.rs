@@ -2,54 +2,57 @@
 
 pub(crate) use registry::Registry;
 pub(crate) use set::ComponentSet;
-/// Derive macro that implements [`Component`] trait.
-///
-/// # Examples
-///
-/// Use default storage type:
-///
-/// ```
-/// use toucan_ecs::component::Component;
-///
-/// #[derive(Copy, Clone, Component)]
-/// pub struct Position {
-///     x: f32,
-///     y: f32,
-/// }
-/// ```
-///
-/// Use custom storage type:
-///
-/// ```
-/// use toucan_ecs::component::Component;
-/// use toucan_ecs::component::storage::{DynIter, DynIterMut, Storage};
-/// use toucan_ecs::entity::Entity;
-///
-/// #[derive(Copy, Clone, Component)]
-/// #[component(storage = "CustomStorage")]
-/// pub struct Position {
-///     x: f32,
-///     y: f32,
-/// }
-///
-/// #[derive(Default)]
-/// pub struct CustomStorage;
-///
-/// impl Storage for CustomStorage {
-///     type Item = Position;
-///
-///     fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
-///     fn attached(&self, entity: Entity) -> bool { unimplemented!() }
-///     fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
-///     fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
-///     fn remove(&mut self, entity: Entity) { unimplemented!() }
-///     fn clear(&mut self) { unimplemented!() }
-///     fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
-///     fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
-/// }
-/// ```
-pub use toucan_ecs_derive::Component;
 pub(crate) use type_id::ComponentTypeId;
+
+cfg_derive! {
+    /// Derive macro that implements [`Component`] trait.
+    ///
+    /// # Examples
+    ///
+    /// Use default storage type:
+    ///
+    /// ```
+    /// use toucan_ecs::component::Component;
+    ///
+    /// #[derive(Copy, Clone, Component)]
+    /// pub struct Position {
+    ///     x: f32,
+    ///     y: f32,
+    /// }
+    /// ```
+    ///
+    /// Use custom storage type:
+    ///
+    /// ```
+    /// use toucan_ecs::component::Component;
+    /// use toucan_ecs::component::storage::{DynIter, DynIterMut, Storage};
+    /// use toucan_ecs::entity::Entity;
+    ///
+    /// #[derive(Copy, Clone, Component)]
+    /// #[component(storage = "CustomStorage")]
+    /// pub struct Position {
+    ///     x: f32,
+    ///     y: f32,
+    /// }
+    ///
+    /// #[derive(Default)]
+    /// pub struct CustomStorage;
+    ///
+    /// impl Storage for CustomStorage {
+    ///     type Item = Position;
+    ///
+    ///     fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
+    ///     fn attached(&self, entity: Entity) -> bool { unimplemented!() }
+    ///     fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
+    ///     fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
+    ///     fn remove(&mut self, entity: Entity) { unimplemented!() }
+    ///     fn clear(&mut self) { unimplemented!() }
+    ///     fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
+    ///     fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
+    /// }
+    /// ```
+    pub use toucan_ecs_derive::Component;
+}
 
 mod registry;
 mod set;

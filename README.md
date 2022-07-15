@@ -18,9 +18,10 @@ Provides basic features, such as:
 
 This library contains some feature flags:
 
-| Feature name | Description                                |
-|--------------|--------------------------------------------|
-| `resource`   | Store resources in the world and view them |
+| Feature name | Description                                                        |
+|--------------|--------------------------------------------------------------------|
+| `resource`   | Store resources in the world and view them                         |
+| `derive`     | Allows to use derive macro to implement `Component` trait for type |
 
 ## License
 

@@ -7,3 +7,13 @@ macro_rules! cfg_resource {
         )*
     };
 }
+
+macro_rules! cfg_derive {
+    ($($item:item)*) => {
+        $(
+            #[cfg(feature = "derive")]
+            #[cfg_attr(docsrs, doc(cfg(feature = "derive")))]
+            $item
+        )*
+    };
+}
