@@ -18,11 +18,11 @@ pub fn component_derive(input: TokenStream) -> TokenStream {
     let DeriveInput { ident, .. } = input;
 
     let storage = match &storage[..] {
-        &[] => quote! { DefaultStorage<Self> },
+        &[] => quote! { toucan_ecs::component::storage::DefaultStorage<Self> },
         storage => quote! { #( #storage )* },
     };
     let output = quote! {
-        impl Component for #ident {
+        impl toucan_ecs::component::Component for #ident {
             type Storage = #storage;
         }
     };

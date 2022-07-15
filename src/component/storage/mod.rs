@@ -25,7 +25,6 @@ pub type DynIterMut<'data, C> =
 ///
 /// ```
 /// use toucan_ecs::component::Component;
-/// use toucan_ecs::component::storage::DefaultStorage;
 ///
 /// // Uses `DefaultStorage` type of storage
 /// #[derive(Copy, Clone, Component)]
@@ -38,8 +37,34 @@ pub type DynIterMut<'data, C> =
 /// This can be overridden by manual implementation of the [`Component`](Component) trait
 /// or by `#[component(storage = "...")]` helper attribute:
 ///
-/// ```text
-/// // TODO: write an example
+/// ```
+/// use toucan_ecs::component::Component;
+/// use toucan_ecs::component::storage::{DynIter, DynIterMut, Storage};
+/// use toucan_ecs::entity::Entity;
+///
+/// // Uses `CustomStorage` type of storage
+/// #[derive(Copy, Clone, Component)]
+/// #[component(storage = "CustomStorage")]
+/// pub struct Velocity {
+///     dx: f32,
+///     dy: f32,
+/// }
+///
+/// #[derive(Default)]
+/// pub struct CustomStorage;
+///
+/// impl Storage for CustomStorage {
+///     type Item = Velocity;
+///
+///     fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
+///     fn attached(&self, entity: Entity) -> bool { unimplemented!() }
+///     fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
+///     fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
+///     fn remove(&mut self, entity: Entity) { unimplemented!() }
+///     fn clear(&mut self) { unimplemented!() }
+///     fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
+///     fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
+/// }
 /// ```
 pub trait Storage: Default + Send + Sync + 'static {
     /// Type of component which is stored by this storage.

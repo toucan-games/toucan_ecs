@@ -77,7 +77,6 @@ impl<'data> Entry<'data> {
     /// ```
     /// # use toucan_ecs::world::{World, Entry};
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
@@ -101,7 +100,6 @@ impl<'data> Entry<'data> {
     ///
     /// ```
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # use toucan_ecs::world::{World, Entry};
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Component)]
@@ -130,7 +128,6 @@ impl<'data> Entry<'data> {
     /// ```
     /// # use toucan_ecs::world::{World, Entry};
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
@@ -160,7 +157,6 @@ impl<'data> Entry<'data> {
     /// ```
     /// # use toucan_ecs::world::{World, Entry};
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
@@ -184,7 +180,6 @@ impl<'data> Entry<'data> {
     /// ```
     /// # use toucan_ecs::world::{World, Entry};
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
@@ -208,7 +203,6 @@ impl<'data> Entry<'data> {
     /// ```
     /// # use toucan_ecs::world::{World, Entry};
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// # let mut world = World::new();
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);

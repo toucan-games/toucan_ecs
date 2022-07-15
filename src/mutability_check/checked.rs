@@ -52,14 +52,26 @@ mod tests {
 
     use super::*;
 
-    #[derive(Copy, Clone, Component)]
+    #[derive(Copy, Clone)]
     struct Position(f32, f32, f32);
 
-    #[derive(Copy, Clone, Component)]
+    impl Component for Position {
+        type Storage = DefaultStorage<Self>;
+    }
+
+    #[derive(Copy, Clone)]
     struct Velocity(f32, f32, f32);
 
-    #[derive(Copy, Clone, Component)]
+    impl Component for Velocity {
+        type Storage = DefaultStorage<Self>;
+    }
+
+    #[derive(Copy, Clone)]
     struct Mass(f32);
+
+    impl Component for Mass {
+        type Storage = DefaultStorage<Self>;
+    }
 
     #[test]
     fn one_type() {

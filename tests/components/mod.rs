@@ -1,4 +1,3 @@
-use toucan_ecs::component::storage::DefaultStorage;
 use toucan_ecs::component::Component;
 
 #[derive(Copy, Clone, Component, Debug, PartialEq)]

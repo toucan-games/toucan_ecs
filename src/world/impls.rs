@@ -94,7 +94,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -143,7 +142,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -193,7 +191,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Position {
     ///     x: f32,
@@ -242,7 +239,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -407,7 +403,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -434,7 +429,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -461,7 +455,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -505,7 +498,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -536,7 +528,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -561,7 +552,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
@@ -586,7 +576,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
@@ -666,7 +655,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
@@ -697,7 +685,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
@@ -728,7 +715,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
@@ -772,7 +758,6 @@ impl World {
     /// ```should_panic
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct ID(u32);
     ///
@@ -790,7 +775,6 @@ impl World {
     /// ```
     /// # use toucan_ecs::world::World;
     /// # use toucan_ecs::component::Component;
-    /// # use toucan_ecs::component::storage::DefaultStorage;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
