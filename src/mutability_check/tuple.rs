@@ -18,7 +18,7 @@ macro_rules! impl_mutability_check {
         {
             const MUTABLE: bool = $($types::MUTABLE)||*;
 
-            fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+            fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
                 $($types::extend_before_check(multimap);)*
             }
         }

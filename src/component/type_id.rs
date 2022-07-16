@@ -3,7 +3,7 @@ use std::any::TypeId;
 use super::Component;
 
 #[repr(transparent)]
-#[derive(Eq, PartialEq, Hash, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
 pub struct ComponentTypeId(TypeId);
 
 impl ComponentTypeId {

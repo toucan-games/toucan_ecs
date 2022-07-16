@@ -146,6 +146,7 @@ mod error;
 mod fetch;
 mod hash;
 mod mutability_check;
+mod type_id;
 
 pub mod component;
 pub mod entity;

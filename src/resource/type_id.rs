@@ -3,7 +3,7 @@ use std::any::TypeId;
 use super::Resource;
 
 #[repr(transparent)]
-#[derive(Eq, PartialEq, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
 pub struct ResourceTypeId(TypeId);
 
 impl ResourceTypeId {

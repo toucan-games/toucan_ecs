@@ -12,13 +12,13 @@ use super::*;
 impl MutabilityCheck for () {
     const MUTABLE: bool = false;
 
-    fn extend_before_check(_: &mut MultiMap<TypeId, bool>) {}
+    fn extend_before_check(_: &mut MultiMap<DataTypeId, bool>) {}
 }
 
 impl MutabilityCheck for Entity {
     const MUTABLE: bool = false;
 
-    fn extend_before_check(_: &mut MultiMap<TypeId, bool>) {}
+    fn extend_before_check(_: &mut MultiMap<DataTypeId, bool>) {}
 }
 
 impl<'data, C> MutabilityCheck for &'data C
@@ -27,7 +27,7 @@ where
 {
     const MUTABLE: bool = false;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
     }
 }
@@ -38,7 +38,7 @@ where
 {
     const MUTABLE: bool = true;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
     }
 }
@@ -49,7 +49,7 @@ where
 {
     const MUTABLE: bool = <&'data C>::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
     }
 }
@@ -60,7 +60,7 @@ where
 {
     const MUTABLE: bool = <&'data mut C>::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
     }
 }
@@ -71,7 +71,7 @@ where
 {
     const MUTABLE: bool = false;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE)
     }
 }
@@ -83,7 +83,7 @@ where
 {
     const MUTABLE: bool = false;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
     }
 }
@@ -95,7 +95,7 @@ where
 {
     const MUTABLE: bool = true;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
     }
 }
@@ -107,7 +107,7 @@ where
 {
     const MUTABLE: bool = marker::Resource::<'data, R>::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
     }
 }
@@ -119,7 +119,7 @@ where
 {
     const MUTABLE: bool = marker::ResourceMut::<'data, R>::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
     }
 }
@@ -130,7 +130,7 @@ where
 {
     const MUTABLE: bool = false;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE);
     }
 }
@@ -141,7 +141,7 @@ where
 {
     const MUTABLE: bool = true;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ComponentTypeId::of::<C>().into(), Self::MUTABLE);
     }
 }
@@ -152,7 +152,7 @@ where
 {
     const MUTABLE: bool = Q::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         Q::extend_before_check(multimap)
     }
 }
@@ -163,7 +163,7 @@ where
 {
     const MUTABLE: bool = Q::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         Q::extend_before_check(multimap)
     }
 }
@@ -174,7 +174,7 @@ where
 {
     const MUTABLE: bool = Q::MUTABLE;
 
-    fn extend_before_check(multimap: &mut MultiMap<TypeId, bool>) {
+    fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         Q::extend_before_check(multimap)
     }
 }
