@@ -1,16 +1,6 @@
 use super::*;
 
 macro_rules! foreach_fetch_mut {
-    ($head:ident $(,)?) => {
-        impl_foreach_fetch_mut!($head);
-    };
-    ($head:ident, $($tail:ident),* $(,)?) => {
-        impl_foreach_fetch_mut!($head, $($tail),*);
-        foreach_fetch_mut!($($tail),*);
-    };
-}
-
-macro_rules! impl_foreach_fetch_mut {
     ($($types:ident),*) => {
         impl<'data, $($types),*> Fetch<'data> for ($($types,)*)
         where
@@ -41,3 +31,14 @@ macro_rules! impl_foreach_fetch_mut {
 
 // `FetchMut` implemented for tuples of size 12 and less
 foreach_fetch_mut!(A, B, C, D, E, F, G, H, I, J, K, L);
+foreach_fetch_mut!(A, B, C, D, E, F, G, H, I, J, K);
+foreach_fetch_mut!(A, B, C, D, E, F, G, H, I, J);
+foreach_fetch_mut!(A, B, C, D, E, F, G, H, I);
+foreach_fetch_mut!(A, B, C, D, E, F, G, H);
+foreach_fetch_mut!(A, B, C, D, E, F, G);
+foreach_fetch_mut!(A, B, C, D, E, F);
+foreach_fetch_mut!(A, B, C, D, E);
+foreach_fetch_mut!(A, B, C, D);
+foreach_fetch_mut!(A, B, C);
+foreach_fetch_mut!(A, B);
+foreach_fetch_mut!(A);

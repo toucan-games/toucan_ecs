@@ -1,20 +1,10 @@
 use super::*;
 
 macro_rules! system {
-    ($head:ident $(,)?) => {
-        impl_system!($head);
-    };
-    ($head:ident, $($tail:ident),* $(,)?) => {
-        impl_system!($head, $($tail),*);
-        system!($($tail),*);
-    };
-}
-
-macro_rules! impl_system {
     ($($types:ident),*) => {
-        impl<'data, F, $($types),*> System<'data, ($($types,)*)> for F
+        impl<'data, Fn, $($types),*> System<'data, ($($types,)*)> for Fn
         where
-            F: FnMut($($types,)*) + 'data,
+            Fn: FnMut($($types,)*) + 'data,
             ($($types,)*): Query<'data>,
         {
             #[allow(non_snake_case)]
@@ -27,4 +17,15 @@ macro_rules! impl_system {
 }
 
 // `System` implemented for functions with argument count of 12 and less
-system!(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12);
+system!(A, B, C, D, E, F, G, H, I, J, K, L);
+system!(A, B, C, D, E, F, G, H, I, J, K);
+system!(A, B, C, D, E, F, G, H, I, J);
+system!(A, B, C, D, E, F, G, H, I);
+system!(A, B, C, D, E, F, G, H);
+system!(A, B, C, D, E, F, G);
+system!(A, B, C, D, E, F);
+system!(A, B, C, D, E);
+system!(A, B, C, D);
+system!(A, B, C);
+system!(A, B);
+system!(A);

@@ -1,16 +1,6 @@
 use super::*;
 
 macro_rules! fetch {
-    ($head:ident $(,)?) => {
-        impl_fetch!($head);
-    };
-    ($head:ident, $($tail:ident),* $(,)?) => {
-        impl_fetch!($head, $($tail),*);
-        fetch!($($tail),*);
-    };
-}
-
-macro_rules! impl_fetch {
     ($($types:ident),*) => {
         impl<'data, $($types),*> Fetch<'data> for ($($types,)*)
         where
@@ -41,18 +31,19 @@ macro_rules! impl_fetch {
 
 // `Fetch` implemented for tuples of size 12 and less
 fetch!(A, B, C, D, E, F, G, H, I, J, K, L);
+fetch!(A, B, C, D, E, F, G, H, I, J, K);
+fetch!(A, B, C, D, E, F, G, H, I, J);
+fetch!(A, B, C, D, E, F, G, H, I);
+fetch!(A, B, C, D, E, F, G, H);
+fetch!(A, B, C, D, E, F, G);
+fetch!(A, B, C, D, E, F);
+fetch!(A, B, C, D, E);
+fetch!(A, B, C, D);
+fetch!(A, B, C);
+fetch!(A, B);
+fetch!(A);
 
 macro_rules! fetch_mut {
-    ($head:ident $(,)?) => {
-        impl_fetch_mut!($head);
-    };
-    ($head:ident, $($tail:ident),* $(,)?) => {
-        impl_fetch_mut!($head, $($tail),*);
-        fetch_mut!($($tail),*);
-    };
-}
-
-macro_rules! impl_fetch_mut {
     ($($types:ident),*) => {
         impl<'data, $($types),*> FetchMut<'data> for ($($types,)*)
         where
@@ -83,3 +74,14 @@ macro_rules! impl_fetch_mut {
 
 // `FetchMut` implemented for tuples of size 12 and less
 fetch_mut!(A, B, C, D, E, F, G, H, I, J, K, L);
+fetch_mut!(A, B, C, D, E, F, G, H, I, J, K);
+fetch_mut!(A, B, C, D, E, F, G, H, I, J);
+fetch_mut!(A, B, C, D, E, F, G, H, I);
+fetch_mut!(A, B, C, D, E, F, G, H);
+fetch_mut!(A, B, C, D, E, F, G);
+fetch_mut!(A, B, C, D, E, F);
+fetch_mut!(A, B, C, D, E);
+fetch_mut!(A, B, C, D);
+fetch_mut!(A, B, C);
+fetch_mut!(A, B);
+fetch_mut!(A);

@@ -1,8 +1,13 @@
+//! Contains derive macro for [`toucan_ecs`] crate.
+//!
+//! [`toucan_ecs`]: https://crates.io/crates/toucan_ecs
+
 use proc_macro::TokenStream;
 
 use darling::FromDeriveInput;
+use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
-use syn::{parse_macro_input, DeriveInput, Path};
+use syn::{parse_macro_input, DeriveInput, Error, Path, Result};
 
 #[derive(FromDeriveInput, Default)]
 #[darling(default, attributes(component), forward_attrs(allow, doc, cfg))]
@@ -13,8 +18,14 @@ struct Options {
 
 #[proc_macro_derive(Component, attributes(component))]
 pub fn component_derive(input: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(input);
-    let Options { storage } = Options::from_derive_input(&input).expect("Wrong storage format");
+    let input = parse_macro_input!(input as DeriveInput);
+    expand(input)
+        .unwrap_or_else(Error::into_compile_error)
+        .into()
+}
+
+fn expand(input: DeriveInput) -> Result<TokenStream2> {
+    let Options { storage } = Options::from_derive_input(&input)?;
     let DeriveInput {
         ident, generics, ..
     } = input;
@@ -30,5 +41,5 @@ pub fn component_derive(input: TokenStream) -> TokenStream {
             type Storage = #storage;
         }
     };
-    output.into()
+    Ok(output)
 }
