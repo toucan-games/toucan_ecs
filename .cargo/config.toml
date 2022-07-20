@@ -1,2 +1,3 @@
 [build]
-rustdocflags = ["--cfg", "docsrs"]
+# Uncomment this to build documentation with `doc_cfg` feature
+#rustdocflags = ["--cfg", "docsrs"]
