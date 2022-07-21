@@ -43,8 +43,7 @@ where
         let fetch = self.fetch.as_ref()?;
         loop {
             let entity = self.entities.next()?;
-            let result = fetch.fetch(entity);
-            match result {
+            match fetch.fetch(entity) {
                 Ok(item) => return Some(item.into()),
                 Err(_) => continue,
             }
