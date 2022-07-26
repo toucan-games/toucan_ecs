@@ -20,8 +20,8 @@ where
 {
     type Item = ViewMut<'data, Q>;
 
-    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
-        let world = &mut *world;
-        Ok(ViewMut::new(world, false))
+    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
+        let view_mut = ViewMut::new(world, false);
+        Ok(view_mut)
     }
 }

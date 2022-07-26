@@ -2,10 +2,10 @@ use std::collections::HashSet;
 
 pub use impls::*;
 
-use crate::component::ComponentTypeId;
+use crate::component::{ComponentTypeId, Registry};
 use crate::entity::{Entity, Iter};
 use crate::error::FetchResult;
-use crate::world::{World, WorldData};
+use crate::world::WorldData;
 
 mod impls;
 mod tuple;
@@ -57,7 +57,7 @@ pub trait Fetch<'data>: Sized + Send + Sync + 'data {
 
     fn push_fetch_data(data: WorldData<'data>, fetch_data: &mut HashSet<FetchData>);
 
-    fn register(world: &mut World);
+    fn register(registry: &mut Registry);
 
     fn new(data: WorldData<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self>;
 

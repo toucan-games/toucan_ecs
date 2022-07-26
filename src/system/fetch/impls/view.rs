@@ -20,8 +20,8 @@ where
 {
     type Item = View<'data, Q>;
 
-    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
-        let world = &*world;
-        Ok(View::new(world))
+    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
+        let view = View::new(world, false);
+        Ok(view)
     }
 }

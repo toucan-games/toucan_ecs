@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use atomicell::Ref;
+
 use crate::component::Component;
 use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
@@ -20,9 +22,10 @@ where
 {
     type Item = ViewOne<'data, C>;
 
-    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
-        let world = &*world;
-        let storage = world.components().get_storage::<C>();
-        Ok(ViewOne::new(storage))
+    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
+        let storage = world.components().get_storage_guarded::<C>();
+        let storage = storage.map(Ref::leak);
+        let view_one = ViewOne::new(storage);
+        Ok(view_one)
     }
 }

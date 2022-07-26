@@ -4,11 +4,11 @@ use atomicell::Ref;
 
 use crate::component::marker::Not;
 use crate::component::storage::Storage;
-use crate::component::{Component, ComponentTypeId};
+use crate::component::{Component, ComponentTypeId, Registry};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::{World, WorldData};
+use crate::world::WorldData;
 
 #[repr(transparent)]
 pub struct FetchNot<'data, C>
@@ -26,8 +26,8 @@ where
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
 
-    fn register(world: &mut World) {
-        world.register::<C>();
+    fn register(registry: &mut Registry) {
+        registry.register::<C>();
     }
 
     fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {

@@ -54,6 +54,7 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
+        // SAFETY: safe to use inside of the crate
         let resource = unsafe { resource.try_borrow_unguarded() }
             .expect("resource was already borrowed as mutable");
         let resource = resource.downcast_ref().expect("downcast error");
@@ -94,5 +95,11 @@ impl Registry {
             |erased| erased.downcast_mut().expect("downcast error"),
         );
         Some(resource)
+    }
+
+    pub(crate) fn undo_leak(&mut self) {
+        for resource in self.resources.values_mut() {
+            resource.undo_leak();
+        }
     }
 }

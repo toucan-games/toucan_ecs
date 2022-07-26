@@ -1,4 +1,5 @@
 use std::marker::PhantomData;
+use std::mem::transmute;
 
 use crate::system::fetch::Fetch;
 use crate::system::{Query, System};
@@ -33,9 +34,10 @@ where
 {
     // noinspection RsUnnecessaryQualifications
     fn run(&mut self, world: &mut World) {
+        // SAFETY: `world` contains data which is alive for `'data` lifetime
+        let world = unsafe { transmute(world) };
         let system = &mut self.0;
-        // SAFETY: was checked because of CheckedQuery struct was constructed
-        let args = unsafe { Q::Fetch::fetch(world) };
+        let args = Q::Fetch::fetch(world);
         if let Ok(args) = args {
             let args = args.into();
             system.run(args)

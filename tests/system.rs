@@ -119,7 +119,6 @@ fn system() {
 
 #[test]
 #[cfg(feature = "resource")]
-#[cfg(not(miri))]
 fn for_each_system() {
     use std::fs::File;
     use std::io::Read;

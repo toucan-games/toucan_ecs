@@ -3,13 +3,13 @@ use std::collections::HashSet;
 use atomicell::RefMut;
 
 use crate::component::storage::Storage;
-use crate::component::{Component, ComponentTypeId};
+use crate::component::{Component, ComponentTypeId, Registry};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::{World, WorldData};
+use crate::world::WorldData;
 
 #[repr(transparent)]
 pub struct FetchOptionWrite<'data, C>
@@ -27,8 +27,8 @@ where
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
 
-    fn register(world: &mut World) {
-        world.register::<C>();
+    fn register(registry: &mut Registry) {
+        registry.register::<C>();
     }
 
     fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
@@ -82,7 +82,7 @@ cfg_resource! {
 
         fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
 
-        fn register(_: &mut World) {}
+        fn register(_: &mut Registry) {}
 
         fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
             let resource = data.resources().get_mut_guarded();

@@ -19,8 +19,8 @@ where
 {
     type Item = ForeachHolder<'data, Q>;
 
-    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
-        let world = &mut *world;
-        Ok(ForeachHolder::new(world))
+    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
+        let foreach_holder = ForeachHolder::new(world, false);
+        Ok(foreach_holder)
     }
 }

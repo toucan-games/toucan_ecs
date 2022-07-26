@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use atomicell::Ref;
+
 use crate::error::FetchResult;
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
@@ -19,9 +21,9 @@ where
 {
     type Item = Option<marker::Resource<'data, R>>;
 
-    unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
-        let world = &*world;
-        let resource = world.get_resource().map(marker::Resource::new);
+    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
+        let resource = world.resources().get_guarded().map(Ref::leak);
+        let resource = resource.map(marker::Resource::new);
         Ok(resource)
     }
 }

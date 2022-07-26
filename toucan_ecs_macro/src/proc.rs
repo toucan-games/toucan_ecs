@@ -34,8 +34,8 @@ pub fn fetch(input: Vec<Ident>) -> Result<TokenStream> {
                 #( #input::push_fetch_data(data, fetch_data); )*
             }
 
-            fn register(world: &mut World) {
-                #( #input::register(world); )*
+            fn register(registry: &mut Registry) {
+                #( #input::register(registry); )*
             }
 
             #[allow(non_snake_case)]
@@ -87,5 +87,5 @@ pub fn fetch(input: Vec<Ident>) -> Result<TokenStream> {
             }
         }
     };
-    Ok(output.into())
+    Ok(output)
 }

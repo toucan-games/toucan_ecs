@@ -69,10 +69,7 @@ impl Registry {
     pub fn is_entity_empty(&self, entity: Entity) -> bool {
         self.storages
             .values()
-            .map(|it| unsafe {
-                it.try_borrow_unguarded()
-                    .expect("storage was already borrowed as mutable")
-            })
+            .map(AtomicCell::borrow)
             .all(|storage| !storage.attached(entity))
     }
 
@@ -122,6 +119,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
+        // SAFETY: safe to use inside of the crate
         let storage = unsafe { storage.try_borrow_unguarded() }
             .expect("storage was already borrowed as mutable");
         Some(storage.as_storage_ref())

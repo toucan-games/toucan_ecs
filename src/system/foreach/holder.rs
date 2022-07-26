@@ -5,6 +5,10 @@ use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrateg
 use crate::system::foreach::Query;
 use crate::world::World;
 
+// TODO: turn into the lending iterator because resources' mutable references could be copied freely
+//  (or remove possibility of querying resources in the query
+//  and provide more safe variant with world splitting
+//  [on components and resources if `resource` feature enabled])
 pub struct ForeachHolder<'data, Q>
 where
     Q: Query<'data>,
@@ -17,8 +21,17 @@ impl<'data, Q> ForeachHolder<'data, Q>
 where
     Q: Query<'data>,
 {
-    // noinspection RsUnnecessaryQualifications, DuplicatedCode
-    pub(crate) fn new(world: &'data mut World) -> Self {
+    // noinspection RsUnnecessaryQualifications
+    pub(crate) fn new(world: &'data World, undo_leak: bool) -> Self {
+        {
+            let mut components = world.components_mut_guarded();
+            let mut resources = world.resources_mut_guarded();
+            if undo_leak {
+                components.undo_leak();
+                resources.undo_leak();
+            }
+            Q::Fetch::register(&mut *components);
+        }
         let (entities, data) = world.split();
         let optimal = find_optimal::<'data, Q::Fetch>(data).map(FetchData::into_type_id);
         let fetch = Q::Fetch::new(data, optimal).ok();
@@ -33,15 +46,16 @@ where
 {
     type Item = Q;
 
-    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
         loop {
+            // SAFETY: returned data is valid for `'data` lifetime and no not overlap
             let fetch: &'data mut Q::Fetch = unsafe { transmute(self.fetch.as_mut()?) };
+            // SAFETY: returned data is valid for `'data` lifetime and no not overlap
             let entities: &'data mut entity::Iter = unsafe { transmute(&mut self.entities) };
             let strategy = fetch
                 .is_iter()
                 .then_some(FetchStrategy::Optimized)
-                .unwrap_or_else(|| FetchStrategy::All(entities));
+                .unwrap_or(FetchStrategy::All(entities));
             let result = fetch.fetch_iter(strategy);
             match result {
                 Ok(item) => {
