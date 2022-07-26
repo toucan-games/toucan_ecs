@@ -760,7 +760,6 @@ impl World {
     /// struct ID(u32);
     ///
     /// let mut world = World::new();
-    /// # world.register::<ID>(); // FIXME: there is no panic if we remove this
     ///
     /// // immutable ID reference and mutable one of the same type are illegal
     /// for (id, mut mut_id) in world.view_mut::<(&ID, &mut ID)>() {

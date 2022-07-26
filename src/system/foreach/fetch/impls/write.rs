@@ -9,7 +9,7 @@ use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::{World, WorldData};
 
 pub enum FetchWrite<'data, C>
 where
@@ -34,6 +34,10 @@ where
             let data = FetchData::new(type_id, len);
             fetch_data.insert(data);
         }
+    }
+
+    fn register(world: &mut World) {
+        world.register::<C>();
     }
 
     fn new(data: WorldData<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
@@ -105,6 +109,8 @@ cfg_resource! {
         type Item = marker::ResourceMut<'data, R>;
 
         fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+
+        fn register(_: &mut World) {}
 
         fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
             let resource = data.resources().get_mut_guarded().ok_or(FetchError)?;

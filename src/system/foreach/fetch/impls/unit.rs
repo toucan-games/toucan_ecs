@@ -4,12 +4,14 @@ use crate::component::ComponentTypeId;
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::{World, WorldData};
 
 impl<'data> Fetch<'data> for () {
     type Item = ();
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+
+    fn register(_: &mut World) {}
 
     fn new(_: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
         Ok(())

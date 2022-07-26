@@ -8,7 +8,7 @@ use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::{World, WorldData};
 
 #[repr(transparent)]
 pub struct FetchNot<'data, C>
@@ -25,6 +25,10 @@ where
     type Item = Not<C>;
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+
+    fn register(world: &mut World) {
+        world.register::<C>();
+    }
 
     fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
         let storage = data.components().get_storage_guarded::<C>();

@@ -9,7 +9,7 @@ use crate::error::{FetchError, FetchResult};
 #[cfg(feature = "resource")]
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::{World, WorldData};
 
 #[repr(transparent)]
 pub struct FetchOptionRead<'data, C>
@@ -26,6 +26,10 @@ where
     type Item = Option<&'data C>;
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+
+    fn register(world: &mut World) {
+        world.register::<C>();
+    }
 
     fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
         let storage = data.components().get_storage_guarded::<C>();
@@ -77,6 +81,8 @@ cfg_resource! {
         type Item = Option<marker::Resource<'data, R>>;
 
         fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+
+        fn register(_: &mut World) {}
 
         fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
             let resource = data.resources().get_guarded();

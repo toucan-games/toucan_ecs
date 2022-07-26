@@ -34,6 +34,10 @@ pub fn fetch(input: Vec<Ident>) -> Result<TokenStream> {
                 #( #input::push_fetch_data(data, fetch_data); )*
             }
 
+            fn register(world: &mut World) {
+                #( #input::register(world); )*
+            }
+
             #[allow(non_snake_case)]
             fn new(data: WorldData<'data>, mut optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
                 #(

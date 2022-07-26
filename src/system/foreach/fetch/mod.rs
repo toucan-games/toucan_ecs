@@ -5,7 +5,7 @@ pub use impls::*;
 use crate::component::ComponentTypeId;
 use crate::entity::{Entity, Iter};
 use crate::error::FetchResult;
-use crate::world::WorldData;
+use crate::world::{World, WorldData};
 
 mod impls;
 mod tuple;
@@ -56,6 +56,8 @@ pub trait Fetch<'data>: Sized + Send + Sync + 'data {
     type Item: Send + Sync + 'data;
 
     fn push_fetch_data(data: WorldData<'data>, fetch_data: &mut HashSet<FetchData>);
+
+    fn register(world: &mut World);
 
     fn new(data: WorldData<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self>;
 

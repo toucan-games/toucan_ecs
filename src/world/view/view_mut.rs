@@ -30,6 +30,7 @@ where
         if undo_leak {
             world.components_mut().undo_leak();
         }
+        Q::Fetch::register(world);
         let (entities, data) = world.split();
         let optimal = find_optimal::<'data, Q::Fetch>(data).map(FetchData::into_type_id);
         let fetch = Q::Fetch::new(data, optimal).ok();
