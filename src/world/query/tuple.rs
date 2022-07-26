@@ -1,3 +1,5 @@
+use crate::system::foreach::QueryItem;
+
 use super::*;
 
 macro_rules! query {
@@ -6,9 +8,7 @@ macro_rules! query {
         where
             Self: From<($(QueryItem<'data, $types>,)*)>,
             $($types: Query<'data>,)*
-        {
-            type Fetch = ($($types::Fetch,)*);
-        }
+        {}
     };
 }
 
@@ -30,11 +30,9 @@ macro_rules! query_mut {
     ($($types:ident),*) => {
         impl<'data, $($types),*> QueryMut<'data> for ($($types,)*)
         where
-            Self: From<($(QueryMutItem<'data, $types>,)*)>,
+            Self: From<($(QueryItem<'data, $types>,)*)>,
             $($types: QueryMut<'data>,)*
-        {
-            type Fetch = ($($types::Fetch,)*);
-        }
+        {}
     };
 }
 

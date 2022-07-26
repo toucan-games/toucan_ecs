@@ -1,5 +1,6 @@
+use std::marker::PhantomData;
+
 use crate::system::fetch::Fetch;
-use crate::system::query::CheckedQuery;
 use crate::system::{Query, System};
 use crate::world::World;
 
@@ -25,7 +26,7 @@ trait Holdable<'data>: 'data {
     fn run(&mut self, world: &mut World);
 }
 
-impl<'data, S, Q> Holdable<'data> for (S, CheckedQuery<'data, Q>)
+impl<'data, S, Q> Holdable<'data> for (S, PhantomData<Q>)
 where
     S: System<'data, Q>,
     Q: Query<'data>,

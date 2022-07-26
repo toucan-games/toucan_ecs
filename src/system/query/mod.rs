@@ -20,13 +20,10 @@
 //! [view_one]: crate::world::view::ViewOne
 //! [view_one_mut]: crate::world::view::ViewOneMut
 
-pub(crate) use checked::CheckedQuery;
+use sealed::Sealed;
 
-use crate::mutability_check::MutabilityCheck as Sealed;
+use crate::system::fetch::Fetch;
 
-use super::fetch::Fetch;
-
-mod checked;
 mod impls;
 mod tuple;
 
@@ -40,7 +37,11 @@ type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 /// Type which can be queried by the [system](crate::system::System).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
-pub trait Query<'data>: 'data + Sealed + From<QueryItem<'data, Self>> {
+pub trait Query<'data>: Sealed + From<QueryItem<'data, Self>> + 'data {
     #[doc(hidden)]
     type Fetch: Fetch<'data>;
+}
+
+mod sealed {
+    pub trait Sealed {}
 }

@@ -1,17 +1,15 @@
 use std::mem::transmute;
 
-use crate::entity::Entities;
-use crate::system::foreach::fetch::Fetch;
-use crate::system::foreach::CheckedQuery;
+use crate::entity;
+use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrategy};
+use crate::system::foreach::Query;
 use crate::world::World;
-
-use super::query::Query;
 
 pub struct ForeachHolder<'data, Q>
 where
     Q: Query<'data>,
 {
-    entities: Entities<'data>,
+    entities: entity::Iter<'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -19,17 +17,12 @@ impl<'data, Q> ForeachHolder<'data, Q>
 where
     Q: Query<'data>,
 {
-    // noinspection RsUnnecessaryQualifications
+    // noinspection RsUnnecessaryQualifications, DuplicatedCode
     pub(crate) fn new(world: &'data mut World) -> Self {
-        let _checked = CheckedQuery::<'data, Q>::new();
-        let (entities, data) = world.split_mut();
-        // SAFETY: query was checked by `CheckedQuery`
-        let fetch = unsafe { Q::Fetch::new(data) }.ok();
-        let entities = fetch
-            .as_ref()
-            .and_then(Fetch::entities)
-            .map(Entities::Optimized)
-            .unwrap_or_else(|| Entities::All(entities.iter()));
+        let (entities, data) = world.split();
+        let optimal = find_optimal::<'data, Q::Fetch>(data).map(FetchData::into_type_id);
+        let fetch = Q::Fetch::new(data, optimal).ok();
+        let entities = entities.iter();
         Self { entities, fetch }
     }
 }
@@ -40,14 +33,21 @@ where
 {
     type Item = Q;
 
+    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let entity = self.entities.next()?;
-            // SAFETY: no GATs?
-            let fetch = unsafe { transmute::<_, &'data mut Q::Fetch>(self.fetch.as_mut()?) };
-            let result = fetch.fetch(entity);
+            let fetch: &'data mut Q::Fetch = unsafe { transmute(self.fetch.as_mut()?) };
+            let entities: &'data mut entity::Iter = unsafe { transmute(&mut self.entities) };
+            let strategy = fetch
+                .is_iter()
+                .then_some(FetchStrategy::Optimized)
+                .unwrap_or_else(|| FetchStrategy::All(entities));
+            let result = fetch.fetch_iter(strategy);
             match result {
-                Ok(item) => return Some(item.into()),
+                Ok(item) => {
+                    let (_, item) = item?;
+                    return Some(item.into());
+                }
                 Err(_) => continue,
             }
         }

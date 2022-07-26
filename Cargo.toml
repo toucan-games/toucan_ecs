@@ -14,11 +14,12 @@ edition = "2021"
 slotmap = "1.0.6"
 as-any = "0.3.0"
 multimap = { version = "0.8.3", default-features = false }
-toucan_ecs_derive = { path = "toucan_ecs_derive", optional = true }
+atomicell = "0.1.2"
+toucan_ecs_macro = { path = "toucan_ecs_macro" }
 
 [dev-dependencies]
 criterion = { version = "0.3.5", features = ["html_reports"] }
-crossterm = "0.23.2"
+crossterm = "0.24.0"
 rand = "0.8.5"
 
 [lib]
@@ -37,9 +38,8 @@ name = "life"
 required-features = ["resource"]
 
 [features]
-default = ["resource", "derive"]
+default = ["resource"]
 resource = []
-derive = ["toucan_ecs_derive"]
 
 [package.metadata.docs.rs]
 all-features = true

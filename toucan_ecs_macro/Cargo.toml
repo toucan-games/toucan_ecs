@@ -1,7 +1,7 @@
 [package]
-name = "toucan_ecs_derive"
+name = "toucan_ecs_macro"
 version = "0.1.0"
-description = "Derive macros for `toucan_ecs` crate"
+description = "Macros for `toucan_ecs` crate"
 authors = ["tuguzT <timurka.tugushev@gmail.com>"]
 repository = "https://github.com/toucan-rust/toucan_ecs"
 license = "MIT OR Apache-2.0"

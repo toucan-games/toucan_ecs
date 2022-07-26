@@ -18,17 +18,16 @@ Provides basic features, such as:
 
 This library contains some feature flags:
 
-| Feature name | Description                                                        |
-|--------------|--------------------------------------------------------------------|
-| `resource`   | Store resources in the world and view them                         |
-| `derive`     | Allows to use derive macro to implement `Component` trait for type |
+| Feature name | Description                                |
+|--------------|--------------------------------------------|
+| `resource`   | Store resources in the world and view them |
 
 ## License
 
 Licensed under either of
 
-* Apache License, Version 2.0,
-  ([docs/LICENSE-APACHE-2.0](/docs/LICENSE-APACHE-2.0) or http://www.apache.org/licenses/LICENSE-2.0)
-* MIT license ([docs/LICENSE-MIT](/docs/LICENSE-MIT) or http://opensource.org/licenses/MIT)
+- Apache License, Version 2.0,
+  ([docs/LICENSE-APACHE-2.0](/docs/LICENSE-APACHE-2.0) or <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([docs/LICENSE-MIT](/docs/LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
 
 at your option.

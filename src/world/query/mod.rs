@@ -14,44 +14,19 @@
 //! [components]: crate::component::Component
 //! [resources]: crate::resource::Resource
 
-pub(crate) use checked::CheckedQuery;
+use crate::system::foreach;
 
-use crate::mutability_check::MutabilityCheck as Sealed;
-
-use super::fetch::{Fetch, FetchMut};
-
-mod checked;
 mod impls;
 mod tuple;
-
-#[cfg(doc)]
-#[doc(hidden)]
-pub type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
-
-#[cfg(not(doc))]
-type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data>>::Item;
 
 /// Type which can be queried by **shared** [view](crate::world::view::View)
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
-pub trait Query<'data>: 'data + Sealed + From<QueryItem<'data, Self>> {
-    #[doc(hidden)]
-    type Fetch: Fetch<'data>;
-}
-
-#[cfg(doc)]
-#[doc(hidden)]
-pub type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>::Item;
-
-#[cfg(not(doc))]
-type QueryMutItem<'data, Q> = <<Q as QueryMut<'data>>::Fetch as FetchMut<'data>>::Item;
+pub trait Query<'data>: QueryMut<'data> {}
 
 /// Type which can be queried by **mutable** [view](crate::world::view::ViewMut)
 /// of the [world](crate::world::World).
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
-pub trait QueryMut<'data>: 'data + Sealed + From<QueryMutItem<'data, Self>> {
-    #[doc(hidden)]
-    type Fetch: FetchMut<'data>;
-}
+pub trait QueryMut<'data>: foreach::Query<'data> {}

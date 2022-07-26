@@ -12,9 +12,9 @@ use crate::world::World;
 /// based on some conditions which can change at runtime.
 ///
 /// Note that this struct is *lazy* and does nothing unless being built.
-/// Entity will be actually created on [`build`][build] function call.
+/// Entity will be actually created on [`build`] function call.
 ///
-/// [build]: EntityBuilder::build()
+/// [`build`]: EntityBuilder::build()
 #[must_use = "Please call .build() on this to finish building the new entity"]
 pub struct EntityBuilder<'data> {
     world: &'data mut World,
@@ -30,12 +30,12 @@ impl<'data> EntityBuilder<'data> {
     }
 
     /// Saves provided component in temporary storage to attach it later
-    /// on [`build`][build] function call.
+    /// on [`build`] function call.
     ///
     /// Repeated function call with the same type of component
     /// will replace previous value with new one.
     ///
-    /// [build]: EntityBuilder::build()
+    /// [`build`]: EntityBuilder::build()
     pub fn with<C>(mut self, component: C) -> Self
     where
         C: Component,

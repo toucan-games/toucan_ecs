@@ -1,5 +1,3 @@
-use std::marker::PhantomData;
-
 use crate::component::{Component, ComponentSet, Registry as ComponentRegistry};
 use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
@@ -762,6 +760,7 @@ impl World {
     /// struct ID(u32);
     ///
     /// let mut world = World::new();
+    /// # world.register::<ID>(); // FIXME: there is no panic if we remove this
     ///
     /// // immutable ID reference and mutable one of the same type are illegal
     /// for (id, mut mut_id) in world.view_mut::<(&ID, &mut ID)>() {
@@ -794,7 +793,7 @@ impl World {
     where
         Q: QueryMut<'data>,
     {
-        ViewMut::new(self)
+        ViewMut::new(self, true)
     }
 
     pub(crate) fn components(&self) -> &ComponentRegistry {
@@ -813,16 +812,6 @@ impl World {
         };
         (&self.entities, data)
     }
-
-    pub(crate) fn split_mut(&mut self) -> (&EntityRegistry, WorldDataMut) {
-        let data = WorldDataMut {
-            components: &mut self.components,
-            #[cfg(feature = "resource")]
-            resources: &mut self.resources,
-            _ph: PhantomData,
-        };
-        (&self.entities, data)
-    }
 }
 
 #[derive(Copy, Clone)]
@@ -830,19 +819,6 @@ pub struct WorldData<'data> {
     components: &'data ComponentRegistry,
     #[cfg(feature = "resource")]
     resources: &'data ResourceRegistry,
-}
-
-impl<'data> From<WorldDataMut<'data>> for WorldData<'data> {
-    fn from(data: WorldDataMut<'data>) -> Self {
-        // SAFETY: we construct immutable view over mutable one with the same lifetime
-        unsafe {
-            Self {
-                components: data.components(),
-                #[cfg(feature = "resource")]
-                resources: data.resources(),
-            }
-        }
-    }
 }
 
 impl<'data> WorldData<'data> {
@@ -853,45 +829,5 @@ impl<'data> WorldData<'data> {
     #[cfg(feature = "resource")]
     pub fn resources(self) -> &'data ResourceRegistry {
         self.resources
-    }
-}
-
-#[derive(Copy, Clone)]
-pub struct WorldDataMut<'data> {
-    components: *mut ComponentRegistry,
-    #[cfg(feature = "resource")]
-    resources: *mut ResourceRegistry,
-    _ph: PhantomData<&'data ()>,
-}
-
-impl<'data> WorldDataMut<'data> {
-    /// # Safety
-    ///
-    /// This function should be called if and only if mutability soundness was checked.
-    pub unsafe fn components(self) -> &'data ComponentRegistry {
-        &*self.components
-    }
-
-    /// # Safety
-    ///
-    /// This function should be called if and only if mutability soundness was checked.
-    pub unsafe fn components_mut(self) -> &'data mut ComponentRegistry {
-        &mut *self.components
-    }
-
-    /// # Safety
-    ///
-    /// This function should be called if and only if mutability soundness was checked.
-    #[cfg(feature = "resource")]
-    pub unsafe fn resources(self) -> &'data ResourceRegistry {
-        &*self.resources
-    }
-
-    /// # Safety
-    ///
-    /// This function should be called if and only if mutability soundness was checked.
-    #[cfg(feature = "resource")]
-    pub unsafe fn resources_mut(self) -> &'data mut ResourceRegistry {
-        &mut *self.resources
     }
 }

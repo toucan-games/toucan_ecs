@@ -1,21 +1,26 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
+use atomicell::{AtomicCell, Ref, RefMut};
+
 use crate::component::storage::{ErasedStorageHolder, Storage};
 use crate::component::{Component, ComponentSet, ComponentTypeId};
 use crate::entity::Entity;
 use crate::hash::TypeIdHasher;
 
+type StorageRefCell = AtomicCell<ErasedStorageHolder>;
+
 #[derive(Default)]
 #[repr(transparent)]
 pub struct Registry {
-    storages: HashMap<ComponentTypeId, ErasedStorageHolder, BuildHasherDefault<TypeIdHasher>>,
+    storages: HashMap<ComponentTypeId, StorageRefCell, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
     pub fn clear(&mut self) {
         self.storages
             .values_mut()
+            .map(AtomicCell::get_mut)
             .for_each(ErasedStorageHolder::clear);
     }
 
@@ -64,6 +69,10 @@ impl Registry {
     pub fn is_entity_empty(&self, entity: Entity) -> bool {
         self.storages
             .values()
+            .map(|it| unsafe {
+                it.try_borrow_unguarded()
+                    .expect("storage was already borrowed as mutable")
+            })
             .all(|storage| !storage.attached(entity))
     }
 
@@ -87,6 +96,7 @@ impl Registry {
     pub fn remove_all(&mut self, entity: Entity) {
         self.storages
             .values_mut()
+            .map(AtomicCell::get_mut)
             .for_each(|storage| storage.remove(entity))
     }
 
@@ -112,7 +122,19 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
+        let storage = unsafe { storage.try_borrow_unguarded() }
+            .expect("storage was already borrowed as mutable");
         Some(storage.as_storage_ref())
+    }
+
+    pub(crate) fn get_storage_guarded<C>(&self) -> Option<Ref<C::Storage>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.get(&type_id)?;
+        let storage = Ref::map(storage.borrow(), ErasedStorageHolder::as_storage_ref);
+        Some(storage)
     }
 
     pub fn get_storage_mut<C>(&mut self) -> Option<&mut C::Storage>
@@ -121,7 +143,17 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        Some(storage.as_storage_mut())
+        Some(storage.get_mut().as_storage_mut())
+    }
+
+    pub(crate) fn get_storage_mut_guarded<C>(&self) -> Option<RefMut<C::Storage>>
+    where
+        C: Component,
+    {
+        let type_id = ComponentTypeId::of::<C>();
+        let storage = self.storages.get(&type_id)?;
+        let storage = RefMut::map(storage.borrow_mut(), ErasedStorageHolder::as_storage_mut);
+        Some(storage)
     }
 
     pub fn has_storage<C>(&self) -> bool
@@ -139,6 +171,13 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = C::Storage::default();
-        self.storages.insert(type_id, storage.into());
+        let erased = storage.into();
+        self.storages.insert(type_id, AtomicCell::new(erased));
+    }
+
+    pub(crate) fn undo_leak(&mut self) {
+        for storage in self.storages.values_mut() {
+            storage.undo_leak();
+        }
     }
 }

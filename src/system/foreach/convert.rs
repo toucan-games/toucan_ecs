@@ -33,6 +33,8 @@ where
     Q: Query<'data>,
 {
     fn run(&mut self, holder: ForeachHolder<'data, Q>) {
-        holder.for_each(|item| self.system.run(item))
+        for args in holder {
+            self.system.run(args)
+        }
     }
 }

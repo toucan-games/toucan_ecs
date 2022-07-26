@@ -1,50 +1,6 @@
-use std::marker::PhantomData;
-use std::ops::{Deref, DerefMut};
-
 use as_any::{AsAny, Downcast};
 
 use super::Resource;
-
-#[repr(transparent)]
-pub struct ResourceHolder<R>
-where
-    R: Resource,
-{
-    erased: ErasedResourceHolder,
-    _ph: PhantomData<R>,
-}
-
-impl<R> DerefMut for ResourceHolder<R>
-where
-    R: Resource,
-{
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        self.erased.downcast_mut().expect("downcast error")
-    }
-}
-
-impl<R> Deref for ResourceHolder<R>
-where
-    R: Resource,
-{
-    type Target = R;
-
-    fn deref(&self) -> &Self::Target {
-        self.erased.downcast_ref().expect("downcast error")
-    }
-}
-
-impl<R> From<ErasedResourceHolder> for ResourceHolder<R>
-where
-    R: Resource,
-{
-    fn from(erased: ErasedResourceHolder) -> Self {
-        Self {
-            erased,
-            _ph: PhantomData,
-        }
-    }
-}
 
 #[repr(transparent)]
 pub struct ErasedResourceHolder(Box<dyn Holdable>);
@@ -62,15 +18,6 @@ impl ErasedResourceHolder {
         R: Resource,
     {
         self.0.as_mut().downcast_mut()
-    }
-}
-
-impl<R> From<ResourceHolder<R>> for ErasedResourceHolder
-where
-    R: Resource,
-{
-    fn from(holder: ResourceHolder<R>) -> Self {
-        holder.erased
     }
 }
 

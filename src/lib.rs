@@ -36,7 +36,6 @@
 //!
 //! ```
 //! use toucan_ecs::component::Component;
-//! use toucan_ecs::component::storage::DefaultStorage;
 //! use toucan_ecs::world::World;
 //!
 //! #[derive(Copy, Clone, Component)]
@@ -67,7 +66,6 @@
 //!
 //! ```
 //! use toucan_ecs::component::Component;
-//! use toucan_ecs::component::storage::DefaultStorage;
 //! use toucan_ecs::entity::Entity;
 //! use toucan_ecs::world::World;
 //!
@@ -106,7 +104,6 @@
 //!
 //! ```
 //! use toucan_ecs::component::Component;
-//! use toucan_ecs::component::storage::DefaultStorage;
 //! use toucan_ecs::entity::Entity;
 //! use toucan_ecs::world::World;
 //! use toucan_ecs::system::Schedule;
@@ -143,9 +140,7 @@
 #[macro_use]
 mod macros;
 mod error;
-mod fetch;
 mod hash;
-mod mutability_check;
 mod type_id;
 
 pub mod component;

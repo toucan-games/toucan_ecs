@@ -1,7 +1,8 @@
+use std::marker::PhantomData;
+
 use holder::ErasedSystemHolder;
 
 use crate::system::foreach::{ForeachSystem, FromForeachSystem, Query as ForeachQuery};
-use crate::system::query::CheckedQuery;
 use crate::world::World;
 
 use super::{Query, System};
@@ -26,7 +27,10 @@ impl<'data> Schedule<'data> {
     /// Executes all the systems inside of schedule
     /// in the order of their addition.
     pub fn run(&mut self, world: &mut World) {
-        self.systems.iter_mut().for_each(|system| system.run(world))
+        for system in self.systems.iter_mut() {
+            system.run(world);
+            world.components_mut().undo_leak();
+        }
     }
 }
 
@@ -59,8 +63,7 @@ impl<'data> ScheduleBuilder<'data> {
         S: System<'data, Q>,
         Q: Query<'data>,
     {
-        let checked_query = CheckedQuery::new();
-        let erased = (system, checked_query).into();
+        let erased = (system, PhantomData).into();
         self.systems.push(erased);
         self
     }

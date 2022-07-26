@@ -1,18 +1,18 @@
 //! Utilities for [foreach systems](ForeachSystem) - special kind
 //! of [systems](crate::system::System).
 
-pub(crate) use checked::CheckedQuery;
 pub use convert::FromForeachSystem;
 pub(crate) use holder::ForeachHolder;
 pub use query::Query;
+pub(crate) use query::QueryItem;
 
-mod checked;
 mod convert;
-mod fetch;
 mod holder;
 mod impls;
 mod query;
 mod tuple;
+
+pub(crate) mod fetch;
 
 /// Trait for special foreach systems in ECS.
 ///

@@ -1,6 +1,9 @@
-use crate::entity::Entities;
+use std::mem::transmute;
+
+use crate::entity;
+use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrategy};
 use crate::world::query::Query;
-use crate::world::{Fetch, World};
+use crate::world::World;
 
 /// Iterator which returns **shared** borrows of components.
 ///
@@ -12,7 +15,7 @@ pub struct View<'data, Q>
 where
     Q: Query<'data>,
 {
-    entities: Entities<'data>,
+    entities: entity::Iter<'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -20,15 +23,12 @@ impl<'data, Q> View<'data, Q>
 where
     Q: Query<'data>,
 {
-    // noinspection RsUnnecessaryQualifications
+    // noinspection RsUnnecessaryQualifications, DuplicatedCode
     pub(crate) fn new(world: &'data World) -> Self {
         let (entities, data) = world.split();
-        let fetch = Q::Fetch::new(data).ok();
-        let entities = fetch
-            .as_ref()
-            .and_then(Fetch::entities)
-            .map(Entities::Optimized)
-            .unwrap_or_else(|| Entities::All(entities.iter()));
+        let optimal = find_optimal::<'data, Q::Fetch>(data).map(FetchData::into_type_id);
+        let fetch = Q::Fetch::new(data, optimal).ok();
+        let entities = entities.iter();
         Self { entities, fetch }
     }
 }
@@ -39,12 +39,21 @@ where
 {
     type Item = Q;
 
+    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
-        let fetch = self.fetch.as_ref()?;
         loop {
-            let entity = self.entities.next()?;
-            match fetch.fetch(entity) {
-                Ok(item) => return Some(item.into()),
+            let fetch: &'data mut Q::Fetch = unsafe { transmute(self.fetch.as_mut()?) };
+            let entities: &'data mut entity::Iter = unsafe { transmute(&mut self.entities) };
+            let strategy = fetch
+                .is_iter()
+                .then_some(FetchStrategy::Optimized)
+                .unwrap_or_else(|| FetchStrategy::All(entities));
+            let result = fetch.fetch_iter(strategy);
+            match result {
+                Ok(item) => {
+                    let (_, item) = item?;
+                    return Some(item.into());
+                }
                 Err(_) => continue,
             }
         }

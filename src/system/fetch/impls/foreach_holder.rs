@@ -1,8 +1,17 @@
+use std::marker::PhantomData;
+
 use crate::error::FetchResult;
-use crate::fetch::FetchForeachHolder;
 use crate::system::fetch::Fetch;
 use crate::system::foreach::{ForeachHolder, Query};
 use crate::world::World;
+
+#[repr(transparent)]
+pub struct FetchForeachHolder<'data, Q>
+where
+    Q: Query<'data>,
+{
+    _ph: PhantomData<&'data Q>,
+}
 
 impl<'data, Q> Fetch<'data> for FetchForeachHolder<'data, Q>
 where
@@ -11,6 +20,7 @@ where
     type Item = ForeachHolder<'data, Q>;
 
     unsafe fn fetch(world: *mut World) -> FetchResult<Self::Item> {
-        Ok(Self::fetch(world))
+        let world = &mut *world;
+        Ok(ForeachHolder::new(world))
     }
 }

@@ -1,8 +1,9 @@
 use std::mem::transmute;
 
-use crate::entity::Entities;
-use crate::world::query::{CheckedQuery, QueryMut};
-use crate::world::{FetchMut, World};
+use crate::entity;
+use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrategy};
+use crate::world::query::QueryMut;
+use crate::world::World;
 
 /// Iterator which returns **unique** borrows of components.
 ///
@@ -16,7 +17,7 @@ pub struct ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    entities: Entities<'data>,
+    entities: entity::Iter<'data>,
     fetch: Option<Q::Fetch>,
 }
 
@@ -24,16 +25,15 @@ impl<'data, Q> ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    pub(crate) fn new(world: &'data mut World) -> Self {
-        let _checked = CheckedQuery::<'data, Q>::new();
-        let (entities, data) = world.split_mut();
-        // SAFETY: query was checked by `CheckedQuery` earlier
-        let fetch = unsafe { Q::Fetch::new(data) }.ok();
-        let entities = fetch
-            .as_ref()
-            .and_then(FetchMut::entities)
-            .map(Entities::Optimized)
-            .unwrap_or_else(|| Entities::All(entities.iter()));
+    // noinspection RsUnnecessaryQualifications, DuplicatedCode
+    pub(crate) fn new(world: &'data mut World, undo_leak: bool) -> Self {
+        if undo_leak {
+            world.components_mut().undo_leak();
+        }
+        let (entities, data) = world.split();
+        let optimal = find_optimal::<'data, Q::Fetch>(data).map(FetchData::into_type_id);
+        let fetch = Q::Fetch::new(data, optimal).ok();
+        let entities = entities.iter();
         Self { entities, fetch }
     }
 }
@@ -44,14 +44,21 @@ where
 {
     type Item = Q;
 
+    // noinspection DuplicatedCode
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            let entity = self.entities.next()?;
-            // SAFETY: data returned from the fetch cannot overlap
-            // with each other because entities are unique, so are the borrows
             let fetch: &'data mut Q::Fetch = unsafe { transmute(self.fetch.as_mut()?) };
-            match fetch.fetch_mut(entity) {
-                Ok(item) => return Some(item.into()),
+            let entities: &'data mut entity::Iter = unsafe { transmute(&mut self.entities) };
+            let strategy = fetch
+                .is_iter()
+                .then_some(FetchStrategy::Optimized)
+                .unwrap_or_else(|| FetchStrategy::All(entities));
+            let result = fetch.fetch_iter(strategy);
+            match result {
+                Ok(item) => {
+                    let (_, item) = item?;
+                    return Some(item.into());
+                }
                 Err(_) => continue,
             }
         }
