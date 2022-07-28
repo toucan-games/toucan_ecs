@@ -2,6 +2,7 @@
 
 [![Crate](https://img.shields.io/crates/v/toucan_ecs.svg)](https://crates.io/crates/toucan_ecs)
 [![Docs](https://docs.rs/toucan_ecs/badge.svg)](https://docs.rs/toucan_ecs)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](/docs/LICENSE-MIT)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](/docs/LICENSE-APACHE-2.0)
 
 Simple and safe ECS library for Rust.
