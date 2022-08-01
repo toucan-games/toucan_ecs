@@ -63,40 +63,50 @@ where
     type Fetch = FetchOptionWrite<'data, C>;
 }
 
-cfg_resource! {
-    impl<'data, R> Sealed for marker::Resource<'data, R> where R: Resource {}
+#[cfg(feature = "resource")]
+impl<'data, R> Sealed for marker::Resource<'data, R> where R: Resource {}
 
-    impl<'data, R> Query<'data> for marker::Resource<'data, R>
-    where
-        R: Resource,
-    {
-        type Fetch = FetchResourceRead<'data, R>;
-    }
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+impl<'data, R> Query<'data> for marker::Resource<'data, R>
+where
+    R: Resource,
+{
+    type Fetch = FetchResourceRead<'data, R>;
+}
 
-    impl<'data, R> Sealed for Option<marker::Resource<'data, R>> where R: Resource {}
+#[cfg(feature = "resource")]
+impl<'data, R> Sealed for Option<marker::Resource<'data, R>> where R: Resource {}
 
-    impl<'data, R> Query<'data> for Option<marker::Resource<'data, R>>
-    where
-        R: Resource,
-    {
-        type Fetch = FetchResourceOptionRead<'data, R>;
-    }
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+impl<'data, R> Query<'data> for Option<marker::Resource<'data, R>>
+where
+    R: Resource,
+{
+    type Fetch = FetchResourceOptionRead<'data, R>;
+}
 
-    impl<'data, R> Sealed for marker::ResourceMut<'data, R> where R: Resource {}
+#[cfg(feature = "resource")]
+impl<'data, R> Sealed for marker::ResourceMut<'data, R> where R: Resource {}
 
-    impl<'data, R> Query<'data> for marker::ResourceMut<'data, R>
-    where
-        R: Resource,
-    {
-        type Fetch = FetchResourceWrite<'data, R>;
-    }
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+impl<'data, R> Query<'data> for marker::ResourceMut<'data, R>
+where
+    R: Resource,
+{
+    type Fetch = FetchResourceWrite<'data, R>;
+}
 
-    impl<'data, R> Sealed for Option<marker::ResourceMut<'data, R>> where R: Resource {}
+#[cfg(feature = "resource")]
+impl<'data, R> Sealed for Option<marker::ResourceMut<'data, R>> where R: Resource {}
 
-    impl<'data, R> Query<'data> for Option<marker::ResourceMut<'data, R>>
-    where
-        R: Resource,
-    {
-        type Fetch = FetchResourceOptionWrite<'data, R>;
-    }
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+impl<'data, R> Query<'data> for Option<marker::ResourceMut<'data, R>>
+where
+    R: Resource,
+{
+    type Fetch = FetchResourceOptionWrite<'data, R>;
 }

@@ -29,7 +29,8 @@ impl Registry {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        self.resources.insert(type_id, AtomicCell::new((resource, ).into()));
+        let holder = (resource,).into();
+        self.resources.insert(type_id, AtomicCell::new(holder));
     }
 
     pub fn destroy<R>(&mut self)
@@ -62,21 +63,20 @@ impl Registry {
     }
 
     pub fn get_guarded<R>(&self) -> Option<Ref<R>>
-        where
-            R: Resource,
+    where
+        R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
-        let resource = Ref::map(
-            resource.borrow(),
-            |erased| erased.downcast_ref().expect("downcast error"),
-        );
+        let resource = Ref::map(resource.borrow(), |erased| {
+            erased.downcast_ref().expect("downcast error")
+        });
         Some(resource)
     }
 
     pub fn get_mut<R>(&mut self) -> Option<&mut R>
-        where
-            R: Resource,
+    where
+        R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get_mut(&type_id)?;
@@ -85,15 +85,14 @@ impl Registry {
     }
 
     pub fn get_mut_guarded<R>(&self) -> Option<RefMut<R>>
-        where
-            R: Resource,
+    where
+        R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
-        let resource = RefMut::map(
-            resource.borrow_mut(),
-            |erased| erased.downcast_mut().expect("downcast error"),
-        );
+        let resource = RefMut::map(resource.borrow_mut(), |erased| {
+            erased.downcast_mut().expect("downcast error")
+        });
         Some(resource)
     }
 

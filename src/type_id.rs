@@ -15,10 +15,9 @@ impl From<ComponentTypeId> for DataTypeId {
     }
 }
 
-cfg_resource! {
-    impl From<ResourceTypeId> for DataTypeId {
-        fn from(type_id: ResourceTypeId) -> Self {
-            Self::Resource(type_id)
-        }
+#[cfg(feature = "resource")]
+impl From<ResourceTypeId> for DataTypeId {
+    fn from(type_id: ResourceTypeId) -> Self {
+        Self::Resource(type_id)
     }
 }

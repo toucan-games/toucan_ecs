@@ -21,11 +21,11 @@ impl ErasedResourceHolder {
     }
 }
 
-impl<R> From<(R, )> for ErasedResourceHolder
+impl<R> From<(R,)> for ErasedResourceHolder
 where
     R: Resource,
 {
-    fn from(resource: (R, )) -> Self {
+    fn from(resource: (R,)) -> Self {
         Self(Box::new(resource.0))
     }
 }

@@ -2,46 +2,43 @@ use std::collections::HashSet;
 
 use atomicell::Ref;
 
-use crate::component::storage::Storage;
-use crate::component::{Component, ComponentTypeId, Registry};
+use crate::component::{ComponentTypeId, Registry};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
+use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
 use crate::world::WorldData;
 
 #[repr(transparent)]
-pub struct FetchOptionRead<'data, C>
+pub struct FetchResourceRead<'data, R>
 where
-    C: Component,
+    R: Resource,
 {
-    storage: Option<Ref<'data, C::Storage>>,
+    resource: Ref<'data, R>,
 }
 
-impl<'data, C> Fetch<'data> for FetchOptionRead<'data, C>
+impl<'data, R> Fetch<'data> for FetchResourceRead<'data, R>
 where
-    C: Component,
+    R: Resource,
 {
-    type Item = Option<&'data C>;
+    type Item = marker::Resource<'data, R>;
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
 
-    fn register(registry: &mut Registry) {
-        registry.register::<C>();
-    }
+    fn register(_: &mut Registry) {}
 
     fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let storage = data.components().get_storage_guarded::<C>();
-        Ok(Self { storage })
+        let resource = data.resources().get_guarded().ok_or(FetchError)?;
+        Ok(Self { resource })
     }
 
     fn is_iter(&self) -> bool {
         false
     }
 
-    fn fetch_entity(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
-        let storage = self.storage.as_ref();
-        let item = storage.and_then(|it| it.get(entity));
-        Ok(item)
+    fn fetch_entity(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
+        let resource = marker::Resource::new(&*self.resource);
+        Ok(resource)
     }
 
     // noinspection DuplicatedCode

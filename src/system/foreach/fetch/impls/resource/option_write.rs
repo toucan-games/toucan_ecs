@@ -1,47 +1,44 @@
 use std::collections::HashSet;
 
-use atomicell::Ref;
+use atomicell::RefMut;
 
-use crate::component::storage::Storage;
-use crate::component::{Component, ComponentTypeId, Registry};
+use crate::component::{ComponentTypeId, Registry};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
+use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
 use crate::world::WorldData;
 
 #[repr(transparent)]
-pub struct FetchOptionRead<'data, C>
+pub struct FetchResourceOptionWrite<'data, R>
 where
-    C: Component,
+    R: Resource,
 {
-    storage: Option<Ref<'data, C::Storage>>,
+    resource: Option<RefMut<'data, R>>,
 }
 
-impl<'data, C> Fetch<'data> for FetchOptionRead<'data, C>
+impl<'data, R> Fetch<'data> for FetchResourceOptionWrite<'data, R>
 where
-    C: Component,
+    R: Resource,
 {
-    type Item = Option<&'data C>;
+    type Item = Option<marker::ResourceMut<'data, R>>;
 
     fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
 
-    fn register(registry: &mut Registry) {
-        registry.register::<C>();
-    }
+    fn register(_: &mut Registry) {}
 
     fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let storage = data.components().get_storage_guarded::<C>();
-        Ok(Self { storage })
+        let resource = data.resources().get_mut_guarded();
+        Ok(Self { resource })
     }
 
     fn is_iter(&self) -> bool {
         false
     }
 
-    fn fetch_entity(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
-        let storage = self.storage.as_ref();
-        let item = storage.and_then(|it| it.get(entity));
-        Ok(item)
+    fn fetch_entity(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
+        let resource = self.resource.as_deref_mut().map(marker::ResourceMut::new);
+        Ok(resource)
     }
 
     // noinspection DuplicatedCode

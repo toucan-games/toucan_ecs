@@ -137,16 +137,14 @@
 //! schedule.run(&mut world);
 //! ```
 
-#[macro_use]
-mod macros;
 mod error;
 mod hash;
 mod type_id;
 
 pub mod component;
 pub mod entity;
-cfg_resource! {
-    pub mod resource;
-}
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+pub mod resource;
 pub mod system;
 pub mod world;
