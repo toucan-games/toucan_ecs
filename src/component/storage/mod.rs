@@ -56,14 +56,15 @@ pub type DynIterMut<'data, C> =
 /// impl Storage for CustomStorage {
 ///     type Item = Velocity;
 ///
-///     fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
-///     fn attached(&self, entity: Entity) -> bool { unimplemented!() }
-///     fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
-///     fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
-///     fn remove(&mut self, entity: Entity) { unimplemented!() }
-///     fn clear(&mut self) { unimplemented!() }
-///     fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
-///     fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
+///     /* ... */
+/// #    fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
+/// #    fn attached(&self, entity: Entity) -> bool { unimplemented!() }
+/// #    fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
+/// #    fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
+/// #    fn remove(&mut self, entity: Entity) { unimplemented!() }
+/// #    fn clear(&mut self) { unimplemented!() }
+/// #    fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
+/// #    fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
 /// }
 /// ```
 pub trait Storage: Default + Send + Sync + 'static {
