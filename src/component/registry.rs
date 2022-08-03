@@ -1,26 +1,21 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use atomicell::{AtomicCell, Ref, RefMut};
-
 use crate::component::storage::{ErasedStorageHolder, Storage};
 use crate::component::{Component, ComponentSet, ComponentTypeId};
 use crate::entity::Entity;
 use crate::hash::TypeIdHasher;
 
-type StorageRefCell = AtomicCell<ErasedStorageHolder>;
-
 #[derive(Default)]
 #[repr(transparent)]
 pub struct Registry {
-    storages: HashMap<ComponentTypeId, StorageRefCell, BuildHasherDefault<TypeIdHasher>>,
+    storages: HashMap<ComponentTypeId, ErasedStorageHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
     pub fn clear(&mut self) {
         self.storages
             .values_mut()
-            .map(AtomicCell::get_mut)
             .for_each(ErasedStorageHolder::clear);
     }
 
@@ -28,17 +23,19 @@ impl Registry {
     where
         C: Component,
     {
-        if !self.has_storage::<C>() {
-            self.create_storage::<C>();
+        if self.has_storage::<C>() {
+            return;
         }
+        self.create_storage::<C>();
     }
 
+    // noinspection RsUnnecessaryQualifications
     pub(super) fn attach_one<C>(&mut self, entity: Entity, component: C)
     where
         C: Component,
     {
         self.register::<C>();
-        let storage: &mut C::Storage = self.get_storage_mut::<C>().unwrap();
+        let storage = self.get_storage_mut::<C>().unwrap();
         storage.attach(entity, component);
     }
 
@@ -69,7 +66,6 @@ impl Registry {
     pub fn is_entity_empty(&self, entity: Entity) -> bool {
         self.storages
             .values()
-            .map(AtomicCell::borrow)
             .all(|storage| !storage.attached(entity))
     }
 
@@ -93,7 +89,6 @@ impl Registry {
     pub fn remove_all(&mut self, entity: Entity) {
         self.storages
             .values_mut()
-            .map(AtomicCell::get_mut)
             .for_each(|storage| storage.remove(entity))
     }
 
@@ -119,19 +114,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get(&type_id)?;
-        // SAFETY: safe to use inside of the crate
-        let storage = unsafe { storage.try_borrow_unguarded() }
-            .expect("storage was already borrowed as mutable");
-        Some(storage.as_storage_ref())
-    }
-
-    pub(crate) fn get_storage_guarded<C>(&self) -> Option<Ref<C::Storage>>
-    where
-        C: Component,
-    {
-        let type_id = ComponentTypeId::of::<C>();
-        let storage = self.storages.get(&type_id)?;
-        let storage = Ref::map(storage.borrow(), ErasedStorageHolder::as_storage_ref);
+        let storage = storage.as_storage_ref().expect("downcast error");
         Some(storage)
     }
 
@@ -141,16 +124,7 @@ impl Registry {
     {
         let type_id = ComponentTypeId::of::<C>();
         let storage = self.storages.get_mut(&type_id)?;
-        Some(storage.get_mut().as_storage_mut())
-    }
-
-    pub(crate) fn get_storage_mut_guarded<C>(&self) -> Option<RefMut<C::Storage>>
-    where
-        C: Component,
-    {
-        let type_id = ComponentTypeId::of::<C>();
-        let storage = self.storages.get(&type_id)?;
-        let storage = RefMut::map(storage.borrow_mut(), ErasedStorageHolder::as_storage_mut);
+        let storage = storage.as_storage_mut().expect("downcast error");
         Some(storage)
     }
 
@@ -170,12 +144,18 @@ impl Registry {
         let type_id = ComponentTypeId::of::<C>();
         let storage = C::Storage::default();
         let erased = storage.into();
-        self.storages.insert(type_id, AtomicCell::new(erased));
+        self.storages.insert(type_id, erased);
     }
 
-    pub(crate) fn undo_leak(&mut self) {
-        for storage in self.storages.values_mut() {
-            storage.undo_leak();
-        }
+    pub(super) fn iter(
+        &self,
+    ) -> impl Iterator<Item = (&ComponentTypeId, &ErasedStorageHolder)> + '_ {
+        self.storages.iter()
+    }
+
+    pub(super) fn iter_mut(
+        &mut self,
+    ) -> impl Iterator<Item = (&ComponentTypeId, &mut ErasedStorageHolder)> + '_ {
+        self.storages.iter_mut()
     }
 }

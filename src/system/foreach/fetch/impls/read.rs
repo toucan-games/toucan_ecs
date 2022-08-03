@@ -1,19 +1,15 @@
-use std::collections::HashSet;
-
-use atomicell::Ref;
-
 use crate::component::storage::{DynIter, Storage};
-use crate::component::{Component, ComponentTypeId, Registry};
+use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::WorldRefs;
 
 pub enum FetchRead<'data, C>
 where
     C: Component,
 {
-    Storage(Ref<'data, C::Storage>),
+    Storage(&'data C::Storage),
     Iter(Box<DynIter<'data, C>>),
 }
 
@@ -24,27 +20,19 @@ where
     type Item = &'data C;
 
     // noinspection DuplicatedCode
-    fn push_fetch_data(data: WorldData<'data>, fetch_data: &mut HashSet<FetchData>) {
+    fn push_fetch_data(world: &WorldRefs<'data>, fetch_data: &mut Vec<FetchData>) {
         let type_id = ComponentTypeId::of::<C>();
-        let storage = data.components().get_storage::<C>();
+        let storage = world.get_storage_ref::<C>();
         if let Some(storage) = storage {
             let len = storage.iter().len();
             let data = FetchData::new(type_id, len);
-            fetch_data.insert(data);
+            fetch_data.push(data);
         }
     }
 
-    fn register(registry: &mut Registry) {
-        registry.register::<C>();
-    }
-
-    fn new(data: WorldData<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let storage = data
-            .components()
-            .get_storage_guarded::<C>()
-            .ok_or(FetchError)?;
+    fn new(data: &mut WorldRefs<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
+        let storage = data.move_storage_ref::<C>().ok_or(FetchError)?;
         if optimal == Some(ComponentTypeId::of::<C>()) {
-            let storage = Ref::leak(storage);
             let iter = storage.iter();
             Ok(Self::Iter(iter))
         } else {

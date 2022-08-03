@@ -8,8 +8,8 @@ macro_rules! system_fetch {
         {
             type Item = ($($types::Item,)*);
 
-            fn fetch(world: &'data World) -> FetchResult<Self::Item> {
-                Ok(($($types::fetch(world)?,)*))
+            fn fetch(entities: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
+                Ok(($($types::fetch(entities, data)?,)*))
             }
         }
     };

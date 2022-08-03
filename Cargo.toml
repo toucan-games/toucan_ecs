@@ -13,7 +13,6 @@ edition = "2021"
 [dependencies]
 slotmap = "1.0.6"
 as-any = "0.3.0"
-atomicell = "0.1.2"
 toucan_ecs_macro = { path = "toucan_ecs_macro" }
 
 [dev-dependencies]
@@ -45,4 +44,4 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [package.metadata.playground]
-features = ["resource", "derive"]
+features = ["resource"]

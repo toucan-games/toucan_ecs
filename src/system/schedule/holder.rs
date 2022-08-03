@@ -35,9 +35,12 @@ where
     // noinspection RsUnnecessaryQualifications
     fn run(&mut self, world: &mut World) {
         // SAFETY: `world` contains data which is alive for `'data` lifetime
-        let world = unsafe { transmute(world) };
+        let world: &'data mut World = unsafe { transmute(world) };
         let system = &mut self.0;
-        let args = Q::Fetch::fetch(world);
+
+        let (entities, mut data) = world.split_refs_mut();
+        let entities = entities.iter();
+        let args = Q::Fetch::fetch(&entities, &mut data);
         if let Ok(args) = args {
             let args = args.into();
             system.run(args)

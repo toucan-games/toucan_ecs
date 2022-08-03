@@ -1,6 +1,7 @@
+use crate::entity;
 use crate::system::foreach::ForeachHolder;
 use crate::world::query::Query;
-use crate::world::World;
+use crate::world::WorldRefs;
 
 /// Iterator which returns **shared** borrows of components.
 ///
@@ -20,8 +21,8 @@ impl<'data, Q> View<'data, Q>
 where
     Q: Query<'data>,
 {
-    pub(crate) fn new(world: &'data World, undo_leak: bool) -> Self {
-        let inner = ForeachHolder::new(world, undo_leak);
+    pub(crate) fn new(entities: entity::Iter<'data>, data: &mut WorldRefs<'data>) -> Self {
+        let inner = ForeachHolder::new(entities, data);
         Self { inner }
     }
 }

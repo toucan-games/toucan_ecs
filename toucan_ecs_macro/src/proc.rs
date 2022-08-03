@@ -30,16 +30,12 @@ pub fn fetch(input: Vec<Ident>) -> Result<TokenStream> {
         {
             type Item = (#( #input::Item, )*);
 
-            fn push_fetch_data(data: WorldData<'data>, fetch_data: &mut HashSet<FetchData>) {
-                #( #input::push_fetch_data(data, fetch_data); )*
-            }
-
-            fn register(registry: &mut Registry) {
-                #( #input::register(registry); )*
+            fn push_fetch_data(world: &WorldRefs<'data>, fetch_data: &mut Vec<FetchData>) {
+                #( #input::push_fetch_data(world, fetch_data); )*
             }
 
             #[allow(non_snake_case)]
-            fn new(data: WorldData<'data>, mut optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
+            fn new(data: &mut WorldRefs<'data>, mut optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
                 #(
                 let #input = #input::new(data, optimal)?;
                 // make sure that iterable fetch is unique

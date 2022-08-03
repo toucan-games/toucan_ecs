@@ -1,9 +1,10 @@
-use atomicell::{AtomicCell, RefMut};
-
-use crate::component::{Component, ComponentSet, Registry as ComponentRegistry};
+use crate::component::{
+    Component, ComponentSet, Registry as ComponentRegistry, RegistryRefs as StorageRefs,
+};
 use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
-use crate::resource::{Registry as ResourceRegistry, Resource};
+use crate::resource::{Registry as ResourceRegistry, RegistryRefs as ResourceRefs, Resource};
+use crate::world::world_refs::WorldRefs;
 use crate::world::Entry;
 
 use super::query::{Query, QueryMut};
@@ -18,9 +19,9 @@ use super::view::{View, ViewMut, ViewOne, ViewOneMut};
 /// view each component separately or group of components together.
 pub struct World {
     entities: EntityRegistry,
-    components: AtomicCell<ComponentRegistry>,
+    components: ComponentRegistry,
     #[cfg(feature = "resource")]
-    resources: AtomicCell<ResourceRegistry>,
+    resources: ResourceRegistry,
 }
 
 impl Default for World {
@@ -41,9 +42,9 @@ impl World {
     pub fn new() -> Self {
         Self {
             entities: EntityRegistry::default(),
-            components: AtomicCell::new(ComponentRegistry::default()),
+            components: ComponentRegistry::default(),
             #[cfg(feature = "resource")]
-            resources: AtomicCell::new(ResourceRegistry::default()),
+            resources: ResourceRegistry::default(),
         }
     }
 
@@ -87,7 +88,7 @@ impl World {
     where
         R: Resource,
     {
-        self.resources_mut().create(resource)
+        self.resources.create(resource)
     }
 
     /// Creates new entity with one component or set of components attached to it.
@@ -309,7 +310,7 @@ impl World {
     where
         R: Resource,
     {
-        self.resources().contains::<R>()
+        self.resources.contains::<R>()
     }
 
     /// Destroys the entity and removes all its attached components.
@@ -349,7 +350,7 @@ impl World {
     where
         R: Resource,
     {
-        self.resources_mut().destroy::<R>();
+        self.resources.destroy::<R>();
     }
 
     /// Returns `true` if the world does not contain any entity and any resource.
@@ -371,7 +372,7 @@ impl World {
     #[cfg(feature = "resource")]
     #[inline(always)]
     fn cfg_is_empty(&self) -> bool {
-        self.entities.is_empty() && self.resources().is_empty()
+        self.entities.is_empty() && self.resources.is_empty()
     }
 
     #[cfg(not(feature = "resource"))]
@@ -396,9 +397,9 @@ impl World {
     /// ```
     pub fn clear(&mut self) {
         self.entities.clear();
-        self.components_mut().clear();
+        self.components.clear();
         #[cfg(feature = "resource")]
-        self.resources_mut().clear();
+        self.resources.clear();
     }
 
     /// Registers new type of component to be stored in the world.
@@ -422,7 +423,7 @@ impl World {
     where
         C: Component,
     {
-        self.components_mut().register::<C>();
+        self.components.register::<C>();
     }
 
     /// Attaches one component or set of components to the entity.
@@ -450,7 +451,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.components_mut().attach(entity, set)
+        self.components.attach(entity, set)
     }
 
     /// Returns `true` if one component or set of components are attached to the entity.
@@ -478,7 +479,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.components().attached::<S>(entity)
+        self.components.attached::<S>(entity)
     }
 
     /// Returns `true` if the entity does not exist or does not contain any data attached to it.
@@ -493,7 +494,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn is_entity_empty(&self, entity: Entity) -> bool {
-        self.components().is_entity_empty(entity)
+        self.components.is_entity_empty(entity)
     }
 
     /// Removes one component or set of components from the entity.
@@ -519,7 +520,7 @@ impl World {
     where
         S: ComponentSet,
     {
-        self.components_mut().remove::<S>(entity);
+        self.components.remove::<S>(entity);
     }
 
     /// Removes all attached components from the entity.
@@ -546,7 +547,7 @@ impl World {
     /// assert!(world.is_entity_empty(entity));
     /// ```
     pub fn remove_all(&mut self, entity: Entity) {
-        self.components_mut().remove_all(entity);
+        self.components.remove_all(entity);
     }
 
     /// Retrieves the shared borrow for the component of one type attached to the entity.
@@ -570,7 +571,7 @@ impl World {
     where
         C: Component,
     {
-        self.components().get::<C>(entity)
+        self.components.get::<C>(entity)
     }
 
     /// Retrieves the unique borrow for the component of one type attached to the entity.
@@ -596,7 +597,7 @@ impl World {
     where
         C: Component,
     {
-        self.components_mut().get_mut::<C>(entity)
+        self.components.get_mut::<C>(entity)
     }
 
     /// Retrieves the shared borrow of the generic resource type.
@@ -620,7 +621,7 @@ impl World {
     where
         R: Resource,
     {
-        self.resources().get::<R>()
+        self.resources.get::<R>()
     }
 
     /// Retrieves the unique borrow of the generic resource type.
@@ -645,7 +646,7 @@ impl World {
     where
         R: Resource,
     {
-        self.resources_mut().get_mut::<R>()
+        self.resources.get_mut::<R>()
     }
 
     /// Creates a [view](ViewOne) of the component type.
@@ -673,7 +674,7 @@ impl World {
     where
         C: Component,
     {
-        let storage = self.components().get_storage::<C>();
+        let storage = self.components.get_storage::<C>();
         ViewOne::new(storage)
     }
 
@@ -704,7 +705,7 @@ impl World {
     where
         C: Component,
     {
-        let storage = self.components_mut().get_storage_mut::<C>();
+        let storage = self.components.get_storage_mut::<C>();
         ViewOneMut::new(storage)
     }
 
@@ -736,7 +737,9 @@ impl World {
     where
         Q: Query<'data>,
     {
-        View::new(self, true)
+        let (entities, mut data) = self.split_refs();
+        let entities = entities.iter();
+        View::new(entities, &mut data)
     }
 
     /// Creates a [view](ViewMut) of the multiple component types.
@@ -799,61 +802,56 @@ impl World {
     where
         Q: QueryMut<'data>,
     {
-        ViewMut::new(self, true)
+        let (entities, mut data) = self.split_refs_mut();
+        let entities = entities.iter();
+        ViewMut::new(entities, &mut data)
     }
 
     pub(crate) fn components(&self) -> &ComponentRegistry {
-        // SAFETY: safe to use inside of the crate
-        unsafe { self.components.try_borrow_unguarded() }
-            .expect("world components was already borrowed as mutable")
+        &self.components
     }
 
     pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
-        self.components.get_mut()
-    }
-
-    pub(crate) fn components_mut_guarded(&self) -> RefMut<ComponentRegistry> {
-        self.components.borrow_mut()
+        &mut self.components
     }
 
     pub(crate) fn resources(&self) -> &ResourceRegistry {
-        // SAFETY: safe to use inside of the crate
-        unsafe { self.resources.try_borrow_unguarded() }
-            .expect("world resources was already borrowed as mutable")
+        &self.resources
     }
 
     pub(crate) fn resources_mut(&mut self) -> &mut ResourceRegistry {
-        self.resources.get_mut()
+        &mut self.resources
     }
 
-    pub(crate) fn resources_mut_guarded(&self) -> RefMut<ResourceRegistry> {
-        self.resources.borrow_mut()
-    }
-
-    pub(crate) fn split(&self) -> (&EntityRegistry, WorldData) {
-        let data = WorldData {
-            components: self.components(),
-            #[cfg(feature = "resource")]
-            resources: self.resources(),
+    pub(crate) fn split_refs(&self) -> (&EntityRegistry, WorldRefs) {
+        let entities = &self.entities;
+        #[cfg(not(feature = "resource"))]
+        let refs = {
+            let storages = StorageRefs::from(&mut self.components);
+            WorldRefs::new(storages)
         };
-        (&self.entities, data)
-    }
-}
-
-#[derive(Copy, Clone)]
-pub struct WorldData<'data> {
-    components: &'data ComponentRegistry,
-    #[cfg(feature = "resource")]
-    resources: &'data ResourceRegistry,
-}
-
-impl<'data> WorldData<'data> {
-    pub fn components(self) -> &'data ComponentRegistry {
-        self.components
+        #[cfg(feature = "resource")]
+        let refs = {
+            let storages = StorageRefs::from(&self.components);
+            let resources = ResourceRefs::from(&self.resources);
+            WorldRefs::new(storages, resources)
+        };
+        (entities, refs)
     }
 
-    #[cfg(feature = "resource")]
-    pub fn resources(self) -> &'data ResourceRegistry {
-        self.resources
+    pub(crate) fn split_refs_mut(&mut self) -> (&EntityRegistry, WorldRefs) {
+        let entities = &self.entities;
+        #[cfg(not(feature = "resource"))]
+        let refs = {
+            let storages = StorageRefs::from(&mut self.components);
+            WorldRefs::new(storages)
+        };
+        #[cfg(feature = "resource")]
+        let refs = {
+            let storages = StorageRefs::from(&mut self.components);
+            let resources = ResourceRefs::from(&mut self.resources);
+            WorldRefs::new(storages, resources)
+        };
+        (entities, refs)
     }
 }

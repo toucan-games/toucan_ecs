@@ -1,9 +1,10 @@
 use std::marker::PhantomData;
 
+use crate::entity::Iter;
 use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
 use crate::system::foreach::{ForeachHolder, Query};
-use crate::world::World;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchForeachHolder<'data, Q>
@@ -19,8 +20,8 @@ where
 {
     type Item = ForeachHolder<'data, Q>;
 
-    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
-        let foreach_holder = ForeachHolder::new(world, false);
+    fn fetch(entities: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
+        let foreach_holder = ForeachHolder::new(entities.clone(), data);
         Ok(foreach_holder)
     }
 }

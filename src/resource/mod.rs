@@ -1,11 +1,13 @@
 //! Provides trait for resources and borrow types for them.
 
-use holder::ErasedResourceHolder;
+use erased::ErasedResourceHolder;
 pub(crate) use registry::Registry;
+pub(crate) use registry_refs::RegistryRefs;
 pub(crate) use type_id::ResourceTypeId;
 
-mod holder;
+mod erased;
 mod registry;
+mod registry_refs;
 mod type_id;
 
 pub mod marker;

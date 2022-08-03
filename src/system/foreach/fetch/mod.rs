@@ -1,11 +1,9 @@
-use std::collections::HashSet;
-
 pub use impls::*;
 
-use crate::component::{ComponentTypeId, Registry};
+use crate::component::ComponentTypeId;
 use crate::entity::{Entity, Iter};
 use crate::error::FetchResult;
-use crate::world::WorldData;
+use crate::world::WorldRefs;
 
 mod impls;
 mod tuple;
@@ -38,13 +36,14 @@ impl FetchData {
     }
 }
 
-pub fn find_optimal<'data, F>(data: WorldData<'data>) -> Option<FetchData>
+pub fn find_optimal<'data, F>(data: &WorldRefs<'data>) -> Option<FetchData>
 where
     F: Fetch<'data>,
 {
-    let mut fetch_data = HashSet::new();
+    let mut fetch_data = Vec::new();
     F::push_fetch_data(data, &mut fetch_data);
-    fetch_data.into_iter().min_by_key(FetchData::len)
+    fetch_data.sort_unstable_by_key(FetchData::len);
+    fetch_data.into_iter().next()
 }
 
 pub enum FetchStrategy<'data> {
@@ -55,11 +54,9 @@ pub enum FetchStrategy<'data> {
 pub trait Fetch<'data>: Sized + Send + Sync + 'data {
     type Item: Send + Sync + 'data;
 
-    fn push_fetch_data(data: WorldData<'data>, fetch_data: &mut HashSet<FetchData>);
+    fn push_fetch_data(data: &WorldRefs<'data>, fetch_data: &mut Vec<FetchData>);
 
-    fn register(registry: &mut Registry);
-
-    fn new(data: WorldData<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self>;
+    fn new(data: &mut WorldRefs<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self>;
 
     fn is_iter(&self) -> bool;
 

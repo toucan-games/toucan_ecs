@@ -1,20 +1,16 @@
-use std::collections::HashSet;
-
-use atomicell::Ref;
-
-use crate::component::{ComponentTypeId, Registry};
+use crate::component::ComponentTypeId;
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchResourceOptionRead<'data, R>
 where
     R: Resource,
 {
-    resource: Option<Ref<'data, R>>,
+    resource: Option<&'data R>,
 }
 
 impl<'data, R> Fetch<'data> for FetchResourceOptionRead<'data, R>
@@ -23,12 +19,10 @@ where
 {
     type Item = Option<marker::Resource<'data, R>>;
 
-    fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+    fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
-    fn register(_: &mut Registry) {}
-
-    fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let resource = data.resources().get_guarded();
+    fn new(data: &mut WorldRefs<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
+        let resource = data.move_resource_ref();
         Ok(Self { resource })
     }
 
@@ -37,7 +31,7 @@ where
     }
 
     fn fetch_entity(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
-        let resource = self.resource.as_deref().map(marker::Resource::new);
+        let resource = self.resource.map(marker::Resource::new);
         Ok(resource)
     }
 

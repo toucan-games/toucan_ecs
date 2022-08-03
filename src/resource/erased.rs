@@ -6,14 +6,14 @@ use super::Resource;
 pub struct ErasedResourceHolder(Box<dyn Holdable>);
 
 impl ErasedResourceHolder {
-    pub fn downcast_ref<R>(&self) -> Option<&R>
+    pub fn as_resource_ref<R>(&self) -> Option<&R>
     where
         R: Resource,
     {
         self.0.as_ref().downcast_ref()
     }
 
-    pub fn downcast_mut<R>(&mut self) -> Option<&mut R>
+    pub fn as_resource_mut<R>(&mut self) -> Option<&mut R>
     where
         R: Resource,
     {

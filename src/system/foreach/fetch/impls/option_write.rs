@@ -1,20 +1,16 @@
-use std::collections::HashSet;
-
-use atomicell::RefMut;
-
 use crate::component::storage::Storage;
-use crate::component::{Component, ComponentTypeId, Registry};
+use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchOptionWrite<'data, C>
 where
     C: Component,
 {
-    storage: Option<RefMut<'data, C::Storage>>,
+    storage: Option<&'data mut C::Storage>,
 }
 
 impl<'data, C> Fetch<'data> for FetchOptionWrite<'data, C>
@@ -23,14 +19,10 @@ where
 {
     type Item = Option<&'data mut C>;
 
-    fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+    fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
-    fn register(registry: &mut Registry) {
-        registry.register::<C>();
-    }
-
-    fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let storage = data.components().get_storage_mut_guarded::<C>();
+    fn new(data: &mut WorldRefs<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
+        let storage = data.move_storage_ref_mut::<C>();
         Ok(Self { storage })
     }
 
@@ -39,8 +31,8 @@ where
     }
 
     fn fetch_entity(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
-        let storage = self.storage.as_mut();
-        let item = storage.and_then(|it| it.get_mut(entity));
+        let storage = self.storage.as_deref_mut();
+        let item = storage.and_then(|storage| storage.get_mut(entity));
         Ok(item)
     }
 

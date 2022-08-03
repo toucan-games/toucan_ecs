@@ -1,11 +1,10 @@
 use std::marker::PhantomData;
 
-use atomicell::RefMut;
-
+use crate::entity::Iter;
 use crate::error::FetchResult;
 use crate::resource::{marker, Resource};
 use crate::system::fetch::Fetch;
-use crate::world::World;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchResourceOptionWrite<R>
@@ -21,8 +20,8 @@ where
 {
     type Item = Option<marker::ResourceMut<'data, R>>;
 
-    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
-        let resource = world.resources().get_mut_guarded().map(RefMut::leak);
+    fn fetch(_: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
+        let resource = data.move_resource_ref_mut();
         let resource = resource.map(marker::ResourceMut::new);
         Ok(resource)
     }

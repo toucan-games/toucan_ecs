@@ -1,20 +1,16 @@
-use std::collections::HashSet;
-
-use atomicell::RefMut;
-
-use crate::component::{ComponentTypeId, Registry};
+use crate::component::ComponentTypeId;
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::resource::{marker, Resource};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchResourceOptionWrite<'data, R>
 where
     R: Resource,
 {
-    resource: Option<RefMut<'data, R>>,
+    resource: Option<&'data mut R>,
 }
 
 impl<'data, R> Fetch<'data> for FetchResourceOptionWrite<'data, R>
@@ -23,12 +19,10 @@ where
 {
     type Item = Option<marker::ResourceMut<'data, R>>;
 
-    fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+    fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
-    fn register(_: &mut Registry) {}
-
-    fn new(data: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let resource = data.resources().get_mut_guarded();
+    fn new(data: &mut WorldRefs<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
+        let resource = data.move_resource_ref_mut();
         Ok(Self { resource })
     }
 

@@ -1,6 +1,7 @@
 //! Provides trait for components and borrow types for them.
 
 pub(crate) use registry::Registry;
+pub(crate) use registry_refs::RegistryRefs;
 pub(crate) use set::ComponentSet;
 /// Derive macro that implements [`Component`] trait.
 ///
@@ -52,6 +53,7 @@ pub use toucan_ecs_macro::Component;
 pub(crate) use type_id::ComponentTypeId;
 
 mod registry;
+mod registry_refs;
 mod set;
 mod type_id;
 

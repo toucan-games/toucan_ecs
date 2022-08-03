@@ -29,8 +29,6 @@ impl<'data> Schedule<'data> {
     pub fn run(&mut self, world: &mut World) {
         for system in self.systems.iter_mut() {
             system.run(world);
-            world.components_mut().undo_leak();
-            world.resources_mut().undo_leak();
         }
     }
 }

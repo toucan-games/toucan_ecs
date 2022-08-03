@@ -1,10 +1,8 @@
-use std::collections::HashSet;
-
-use crate::component::{ComponentTypeId, Registry};
+use crate::component::ComponentTypeId;
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
-use crate::world::WorldData;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchEntity;
@@ -12,11 +10,9 @@ pub struct FetchEntity;
 impl<'data> Fetch<'data> for FetchEntity {
     type Item = Entity;
 
-    fn push_fetch_data(_: WorldData<'data>, _: &mut HashSet<FetchData>) {}
+    fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
-    fn register(_: &mut Registry) {}
-
-    fn new(_: WorldData<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
+    fn new(_: &mut WorldRefs<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
         Ok(Self)
     }
 

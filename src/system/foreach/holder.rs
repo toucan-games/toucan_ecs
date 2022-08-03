@@ -3,7 +3,7 @@ use std::mem::transmute;
 use crate::entity;
 use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrategy};
 use crate::system::foreach::Query;
-use crate::world::World;
+use crate::world::WorldRefs;
 
 // TODO: turn into the lending iterator because resources' mutable references could be copied freely
 //  (or remove possibility of querying resources in the query
@@ -22,20 +22,9 @@ where
     Q: Query<'data>,
 {
     // noinspection RsUnnecessaryQualifications
-    pub(crate) fn new(world: &'data World, undo_leak: bool) -> Self {
-        {
-            let mut components = world.components_mut_guarded();
-            let mut resources = world.resources_mut_guarded();
-            if undo_leak {
-                components.undo_leak();
-                resources.undo_leak();
-            }
-            Q::Fetch::register(&mut *components);
-        }
-        let (entities, data) = world.split();
-        let optimal = find_optimal::<'data, Q::Fetch>(data).map(FetchData::into_type_id);
+    pub(crate) fn new(entities: entity::Iter<'data>, data: &mut WorldRefs<'data>) -> Self {
+        let optimal = find_optimal::<Q::Fetch>(data).map(FetchData::into_type_id);
         let fetch = Q::Fetch::new(data, optimal).ok();
-        let entities = entities.iter();
         Self { entities, fetch }
     }
 }
@@ -49,9 +38,11 @@ where
     fn next(&mut self) -> Option<Self::Item> {
         loop {
             // SAFETY: returned data is valid for `'data` lifetime and no not overlap
-            let fetch: &'data mut Q::Fetch = unsafe { transmute(self.fetch.as_mut()?) };
-            // SAFETY: returned data is valid for `'data` lifetime and no not overlap
-            let entities: &'data mut entity::Iter = unsafe { transmute(&mut self.entities) };
+            let (fetch, entities) = unsafe {
+                let fetch: &'data mut Q::Fetch = transmute(self.fetch.as_mut()?);
+                let entities: &'data mut entity::Iter = transmute(&mut self.entities);
+                (fetch, entities)
+            };
             let strategy = fetch
                 .is_iter()
                 .then_some(FetchStrategy::Optimized)

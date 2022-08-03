@@ -1,18 +1,14 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use atomicell::{AtomicCell, Ref, RefMut};
-
 use crate::hash::TypeIdHasher;
 
 use super::{ErasedResourceHolder, Resource, ResourceTypeId};
 
-type ResourceRefCell = AtomicCell<ErasedResourceHolder>;
-
 #[derive(Default)]
 #[repr(transparent)]
 pub struct Registry {
-    resources: HashMap<ResourceTypeId, ResourceRefCell, BuildHasherDefault<TypeIdHasher>>,
+    resources: HashMap<ResourceTypeId, ErasedResourceHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl Registry {
@@ -29,8 +25,8 @@ impl Registry {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        let holder = (resource,).into();
-        self.resources.insert(type_id, AtomicCell::new(holder));
+        let erased = (resource,).into();
+        self.resources.insert(type_id, erased);
     }
 
     pub fn destroy<R>(&mut self)
@@ -55,22 +51,7 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get(&type_id)?;
-        // SAFETY: safe to use inside of the crate
-        let resource = unsafe { resource.try_borrow_unguarded() }
-            .expect("resource was already borrowed as mutable");
-        let resource = resource.downcast_ref().expect("downcast error");
-        Some(resource)
-    }
-
-    pub fn get_guarded<R>(&self) -> Option<Ref<R>>
-    where
-        R: Resource,
-    {
-        let type_id = ResourceTypeId::of::<R>();
-        let resource = self.resources.get(&type_id)?;
-        let resource = Ref::map(resource.borrow(), |erased| {
-            erased.downcast_ref().expect("downcast error")
-        });
+        let resource = resource.as_resource_ref().expect("downcast error");
         Some(resource)
     }
 
@@ -80,25 +61,19 @@ impl Registry {
     {
         let type_id = ResourceTypeId::of::<R>();
         let resource = self.resources.get_mut(&type_id)?;
-        let resource = resource.get_mut().downcast_mut().expect("downcast error");
+        let resource = resource.as_resource_mut().expect("downcast error");
         Some(resource)
     }
 
-    pub fn get_mut_guarded<R>(&self) -> Option<RefMut<R>>
-    where
-        R: Resource,
-    {
-        let type_id = ResourceTypeId::of::<R>();
-        let resource = self.resources.get(&type_id)?;
-        let resource = RefMut::map(resource.borrow_mut(), |erased| {
-            erased.downcast_mut().expect("downcast error")
-        });
-        Some(resource)
+    pub(super) fn iter(
+        &self,
+    ) -> impl Iterator<Item = (&ResourceTypeId, &ErasedResourceHolder)> + '_ {
+        self.resources.iter()
     }
 
-    pub(crate) fn undo_leak(&mut self) {
-        for resource in self.resources.values_mut() {
-            resource.undo_leak();
-        }
+    pub(super) fn iter_mut(
+        &mut self,
+    ) -> impl Iterator<Item = (&ResourceTypeId, &mut ErasedResourceHolder)> + '_ {
+        self.resources.iter_mut()
     }
 }

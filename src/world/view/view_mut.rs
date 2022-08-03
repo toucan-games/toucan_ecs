@@ -1,6 +1,7 @@
+use crate::entity;
 use crate::system::foreach::ForeachHolder;
 use crate::world::query::QueryMut;
-use crate::world::World;
+use crate::world::WorldRefs;
 
 /// Iterator which returns **unique** borrows of components.
 ///
@@ -20,8 +21,8 @@ impl<'data, Q> ViewMut<'data, Q>
 where
     Q: QueryMut<'data>,
 {
-    pub(crate) fn new(world: &'data World, undo_leak: bool) -> Self {
-        let inner = ForeachHolder::new(world, undo_leak);
+    pub(crate) fn new(entities: entity::Iter<'data>, data: &mut WorldRefs<'data>) -> Self {
+        let inner = ForeachHolder::new(entities, data);
         Self { inner }
     }
 }

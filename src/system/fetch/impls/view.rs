@@ -1,10 +1,11 @@
 use std::marker::PhantomData;
 
+use crate::entity::Iter;
 use crate::error::FetchResult;
 use crate::system::fetch::Fetch;
 use crate::world::query::Query;
 use crate::world::view::View;
-use crate::world::World;
+use crate::world::WorldRefs;
 
 #[repr(transparent)]
 pub struct FetchView<'data, Q>
@@ -20,8 +21,8 @@ where
 {
     type Item = View<'data, Q>;
 
-    fn fetch(world: &'data World) -> FetchResult<Self::Item> {
-        let view = View::new(world, false);
+    fn fetch(entities: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
+        let view = View::new(entities.clone(), data);
         Ok(view)
     }
 }

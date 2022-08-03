@@ -36,6 +36,7 @@ impl Registry {
 }
 
 #[repr(transparent)]
+#[derive(Clone)]
 pub struct Iter<'data>(Keys<'data, Entity, ()>);
 
 impl<'data> Iterator for Iter<'data> {

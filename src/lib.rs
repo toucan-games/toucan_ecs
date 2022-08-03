@@ -139,7 +139,7 @@
 
 mod error;
 mod hash;
-mod type_id;
+mod ref_kind;
 
 pub mod component;
 pub mod entity;
