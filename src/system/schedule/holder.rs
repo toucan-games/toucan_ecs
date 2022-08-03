@@ -1,7 +1,7 @@
-use std::marker::PhantomData;
 use std::mem::transmute;
 
 use crate::system::fetch::Fetch;
+use crate::system::query::CheckedQuery;
 use crate::system::{Query, System};
 use crate::world::World;
 
@@ -27,7 +27,7 @@ trait Holdable<'data>: 'data {
     fn run(&mut self, world: &mut World);
 }
 
-impl<'data, S, Q> Holdable<'data> for (S, PhantomData<Q>)
+impl<'data, S, Q> Holdable<'data> for (S, CheckedQuery<'data, Q>)
 where
     S: System<'data, Q>,
     Q: Query<'data>,
@@ -36,7 +36,7 @@ where
     fn run(&mut self, world: &mut World) {
         // SAFETY: `world` contains data which is alive for `'data` lifetime
         let world: &'data mut World = unsafe { transmute(world) };
-        let system = &mut self.0;
+        let (system, _) = self;
 
         let (entities, mut data) = world.split_refs_mut();
         let entities = entities.iter();

@@ -2,11 +2,6 @@ use super::*;
 
 macro_rules! foreach_query {
     ($($types:ident),*) => {
-        impl<$($types),*> Sealed for ($($types,)*)
-        where
-            $($types: Sealed,)*
-        {}
-
         impl<'data, $($types),*> Query<'data> for ($($types,)*)
         where
             Self: From<($(QueryItem<'data, $types>,)*)>,

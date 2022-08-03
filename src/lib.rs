@@ -139,7 +139,9 @@
 
 mod error;
 mod hash;
+mod mutability_check;
 mod ref_kind;
+mod type_id;
 
 pub mod component;
 pub mod entity;

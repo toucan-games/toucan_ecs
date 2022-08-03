@@ -2,7 +2,7 @@ use std::mem::transmute;
 
 use crate::entity;
 use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrategy};
-use crate::system::foreach::Query;
+use crate::system::foreach::query::{CheckedQuery, Query};
 use crate::world::WorldRefs;
 
 // TODO: turn into the lending iterator because resources' mutable references could be copied freely
@@ -23,6 +23,7 @@ where
 {
     // noinspection RsUnnecessaryQualifications
     pub(crate) fn new(entities: entity::Iter<'data>, data: &mut WorldRefs<'data>) -> Self {
+        let _checked = CheckedQuery::<'data, Q>::new();
         let optimal = find_optimal::<Q::Fetch>(data).map(FetchData::into_type_id);
         let fetch = Q::Fetch::new(data, optimal).ok();
         Self { entities, fetch }

@@ -1,7 +1,9 @@
-pub(super) use sealed::Sealed;
+pub use checked::CheckedQuery;
 
+use crate::mutability_check::MutabilityCheck as Sealed;
 use crate::system::foreach::fetch::Fetch;
 
+mod checked;
 mod impls;
 mod tuple;
 
@@ -19,8 +21,4 @@ pub(crate) type QueryItem<'data, Q> = <<Q as Query<'data>>::Fetch as Fetch<'data
 pub trait Query<'data>: Sealed + From<QueryItem<'data, Self>> + 'data {
     #[doc(hidden)]
     type Fetch: Fetch<'data>;
-}
-
-mod sealed {
-    pub trait Sealed {}
 }

@@ -807,20 +807,8 @@ impl World {
         ViewMut::new(entities, &mut data)
     }
 
-    pub(crate) fn components(&self) -> &ComponentRegistry {
-        &self.components
-    }
-
     pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
         &mut self.components
-    }
-
-    pub(crate) fn resources(&self) -> &ResourceRegistry {
-        &self.resources
-    }
-
-    pub(crate) fn resources_mut(&mut self) -> &mut ResourceRegistry {
-        &mut self.resources
     }
 
     pub(crate) fn split_refs(&self) -> (&EntityRegistry, WorldRefs) {

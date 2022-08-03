@@ -1,8 +1,7 @@
-use std::marker::PhantomData;
-
 use holder::ErasedSystemHolder;
 
 use crate::system::foreach::{ForeachSystem, FromForeachSystem, Query as ForeachQuery};
+use crate::system::query::CheckedQuery;
 use crate::world::World;
 
 use super::{Query, System};
@@ -62,7 +61,7 @@ impl<'data> ScheduleBuilder<'data> {
         S: System<'data, Q>,
         Q: Query<'data>,
     {
-        let erased = (system, PhantomData).into();
+        let erased = (system, CheckedQuery::new()).into();
         self.systems.push(erased);
         self
     }
