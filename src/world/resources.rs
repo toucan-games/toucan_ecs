@@ -2,6 +2,7 @@ use crate::resource::{Registry as ResourceRegistry, Resource};
 
 /// **Immutable** borrowed type of the [world](crate::world::World) that contains
 /// data of its resources.
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub struct Resources<'data> {
     resources: &'data ResourceRegistry,
 }
@@ -73,6 +74,7 @@ impl<'data> Resources<'data> {
 
 /// **Mutable** borrowed type of the [world](crate::world::World) that contains
 /// data of its resources.
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub struct ResourcesMut<'data> {
     resources: &'data mut ResourceRegistry,
 }

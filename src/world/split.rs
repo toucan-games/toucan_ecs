@@ -3,6 +3,7 @@ use crate::world::resources::{Resources, ResourcesMut};
 
 /// **Immutable** borrowed type of the [world](crate::world::World) that contains
 /// all the data of this world.
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub struct Split<'data> {
     components: Components<'data>,
     resources: Resources<'data>,
@@ -27,6 +28,7 @@ impl<'data> Split<'data> {
 
 /// **Mutable** borrowed type of the [world](crate::world::World) that contains
 /// all the data of this world.
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub struct SplitMut<'data> {
     components: ComponentsMut<'data>,
     resources: ResourcesMut<'data>,

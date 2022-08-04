@@ -128,7 +128,8 @@ impl<'data> Components<'data> {
     /// This iterator will return [entities](Entity) and their shared borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
-    /// More complex views can be constructed with [`view`][World::view()] associated function.
+    /// More complex views can be constructed with [`view`][crate::world::World::view()]
+    /// associated function.
     ///
     /// # Examples
     ///
@@ -343,7 +344,8 @@ impl<'data> ComponentsMut<'data> {
     /// This iterator will return [entities](Entity) and their shared borrows
     /// of components. Only entities that has that type of component will be returned.
     ///
-    /// More complex views can be constructed with [`view`][World::view()] associated function.
+    /// More complex views can be constructed with [`view`][crate::world::World::view()]
+    /// associated function.
     ///
     /// # Examples
     ///

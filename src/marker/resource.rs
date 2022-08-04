@@ -10,6 +10,7 @@ use crate::resource;
 /// [resource]: super::Resource
 /// [reference]: prim@reference
 #[repr(transparent)]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub struct Resource<'data, R>(&'data R)
 where
     R: resource::Resource;
@@ -42,6 +43,7 @@ where
 /// [resource]: super::Resource
 /// [reference]: prim@reference
 #[repr(transparent)]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub struct ResourceMut<'data, R>(&'data mut R)
 where
     R: resource::Resource;
