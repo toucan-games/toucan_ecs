@@ -815,7 +815,7 @@ impl World {
         let entities = &self.entities;
         #[cfg(not(feature = "resource"))]
         let refs = {
-            let storages = StorageRefs::from(&mut self.components);
+            let storages = StorageRefs::from(&self.components);
             WorldRefs::new(storages)
         };
         #[cfg(feature = "resource")]
