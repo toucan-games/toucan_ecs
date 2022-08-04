@@ -2,7 +2,6 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use syn::{Ident, Result};
 
-// todo make it hygienic (use full paths to the structs and traits)
 pub fn fetch(input: Vec<Ident>) -> Result<TokenStream> {
     let optimized_strategy = input.iter().enumerate().map(|(idx, ident)| {
         let fetch_entities = input

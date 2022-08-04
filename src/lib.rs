@@ -21,7 +21,7 @@
 //! ## Create and destroy entities
 //!
 //! ```
-//! use toucan_ecs::world::World;
+//! use toucan_ecs::prelude::*;
 //!
 //! let mut world = World::new();
 //!
@@ -35,8 +35,7 @@
 //! ## Use entries to simplify access to the entity's data
 //!
 //! ```
-//! use toucan_ecs::component::Component;
-//! use toucan_ecs::world::World;
+//! use toucan_ecs::prelude::*;
 //!
 //! #[derive(Copy, Clone, Component)]
 //! struct Name(&'static str);
@@ -65,9 +64,7 @@
 //! ## View components with ease
 //!
 //! ```
-//! use toucan_ecs::component::Component;
-//! use toucan_ecs::entity::Entity;
-//! use toucan_ecs::world::World;
+//! use toucan_ecs::prelude::*;
 //!
 //! #[derive(Debug, Copy, Clone, Component)]
 //! struct Position {
@@ -103,11 +100,7 @@
 //! ## Use systems to get and update data
 //!
 //! ```
-//! use toucan_ecs::component::Component;
-//! use toucan_ecs::entity::Entity;
-//! use toucan_ecs::world::World;
-//! use toucan_ecs::system::Schedule;
-//! use toucan_ecs::resource::marker::Resource;
+//! use toucan_ecs::prelude::*;
 //!
 //! #[derive(Copy, Clone, Component)]
 //! struct Name(&'static str);
@@ -150,3 +143,4 @@ pub mod entity;
 pub mod resource;
 pub mod system;
 pub mod world;
+pub mod prelude;

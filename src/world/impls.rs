@@ -36,7 +36,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let world = World::new();
     /// ```
     pub fn new() -> Self {
@@ -55,7 +55,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entity = world.create();
@@ -74,12 +74,12 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// struct Resource(u32);
+    /// # use toucan_ecs::prelude::*;
+    /// struct ExampleResource(u32);
     ///
     /// let mut world = World::new();
     ///
-    /// world.create_resource(Resource(42));
+    /// world.create_resource(ExampleResource(42));
     /// assert!(!world.is_empty());
     /// ```
     #[cfg(feature = "resource")]
@@ -98,8 +98,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -125,7 +124,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entry = world.create_entry();
@@ -146,8 +145,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -176,7 +174,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entity = world.create();
@@ -195,8 +193,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Position {
     ///     x: f32,
@@ -226,7 +223,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entities = world.extend(10);
@@ -243,8 +240,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -278,7 +274,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entity = world.create();
@@ -296,7 +292,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// struct Resource(u32);
     ///
     /// let mut world = World::new();
@@ -318,7 +314,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entity = world.create();
@@ -335,7 +331,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// struct Resource(u32);
     ///
     /// let mut world = World::new();
@@ -358,7 +354,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     /// assert!(world.is_empty());
     ///
@@ -386,7 +382,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// world.extend(100);
@@ -407,8 +403,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -433,8 +428,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -459,8 +453,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -487,7 +480,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// let mut world = World::new();
     ///
     /// let entity = world.create();
@@ -502,8 +495,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -532,8 +524,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component)]
     /// struct Name(&'static str);
     ///
@@ -556,8 +547,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
@@ -580,8 +570,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Eq, PartialEq, Debug)]
     /// struct Name(&'static str);
     ///
@@ -605,7 +594,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Debug, Eq, PartialEq)]
     /// struct Resource(u32);
     ///
@@ -629,7 +618,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Debug, Eq, PartialEq)]
     /// struct Resource(u32);
     ///
@@ -659,8 +648,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
@@ -689,8 +677,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
@@ -719,8 +706,7 @@ impl World {
     /// # Examples
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///
@@ -764,8 +750,7 @@ impl World {
     /// For this query function will panic:
     ///
     /// ```should_panic
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct ID(u32);
     ///
@@ -781,8 +766,7 @@ impl World {
     /// But for this query it will not panic:
     ///
     /// ```
-    /// # use toucan_ecs::world::World;
-    /// # use toucan_ecs::component::Component;
+    /// # use toucan_ecs::prelude::*;
     /// #[derive(Copy, Clone, Component, Debug)]
     /// struct Name(&'static str);
     ///

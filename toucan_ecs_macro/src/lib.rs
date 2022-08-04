@@ -1,5 +1,8 @@
 //! Contains macros for [`toucan_ecs`] crate.
 //!
+//! This crate contains internal details of [`toucan_ecs`] crate
+//! and not intended to use outside of it.
+//!
 //! [`toucan_ecs`]: https://crates.io/crates/toucan_ecs
 
 use proc_macro::TokenStream;

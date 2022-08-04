@@ -17,9 +17,9 @@ pub fn component(input: DeriveInput) -> Result<TokenStream> {
     } = input;
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
-    let trait_ident = quote! { toucan_ecs::component::Component };
+    let trait_ident = quote! { Component };
     let storage = match &storage[..] {
-        &[] => quote! { toucan_ecs::component::storage::DefaultStorage<Self> },
+        &[] => quote! { DefaultStorage<Self> },
         storage => quote! { #( #storage )* },
     };
     let output = quote! {

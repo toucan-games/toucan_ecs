@@ -24,7 +24,7 @@ pub type DynIterMut<'data, C> =
 /// use [`DefaultStorage`](DefaultStorage) type of storage:
 ///
 /// ```
-/// use toucan_ecs::component::Component;
+/// use toucan_ecs::prelude::*;
 ///
 /// // Uses `DefaultStorage` type of storage
 /// #[derive(Copy, Clone, Component)]
@@ -38,9 +38,7 @@ pub type DynIterMut<'data, C> =
 /// or by `#[component(storage = "...")]` helper attribute:
 ///
 /// ```
-/// use toucan_ecs::component::Component;
-/// use toucan_ecs::component::storage::{DynIter, DynIterMut, Storage};
-/// use toucan_ecs::entity::Entity;
+/// use toucan_ecs::prelude::*;
 ///
 /// // Uses `CustomStorage` type of storage
 /// #[derive(Copy, Clone, Component)]

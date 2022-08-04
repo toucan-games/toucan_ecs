@@ -1,4 +1,4 @@
-use toucan_ecs::component::Component;
+use toucan_ecs::prelude::*;
 
 pub struct Field {
     width: u16,

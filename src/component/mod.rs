@@ -10,7 +10,7 @@ pub(crate) use set::ComponentSet;
 /// Use default storage type:
 ///
 /// ```
-/// use toucan_ecs::component::Component;
+/// use toucan_ecs::prelude::*;
 ///
 /// #[derive(Copy, Clone, Component)]
 /// pub struct Position {
@@ -22,9 +22,7 @@ pub(crate) use set::ComponentSet;
 /// Use custom storage type:
 ///
 /// ```
-/// use toucan_ecs::component::Component;
-/// use toucan_ecs::component::storage::{DynIter, DynIterMut, Storage};
-/// use toucan_ecs::entity::Entity;
+/// use toucan_ecs::prelude::*;
 ///
 /// #[derive(Copy, Clone, Component)]
 /// #[component(storage = "CustomStorage")]
@@ -39,14 +37,15 @@ pub(crate) use set::ComponentSet;
 /// impl Storage for CustomStorage {
 ///     type Item = Position;
 ///
-///     fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
-///     fn attached(&self, entity: Entity) -> bool { unimplemented!() }
-///     fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
-///     fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
-///     fn remove(&mut self, entity: Entity) { unimplemented!() }
-///     fn clear(&mut self) { unimplemented!() }
-///     fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
-///     fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
+///     /* ... */
+/// #    fn attach(&mut self, entity: Entity, component: Self::Item) { unimplemented!() }
+/// #    fn attached(&self, entity: Entity) -> bool { unimplemented!() }
+/// #    fn get(&self, entity: Entity) -> Option<&Self::Item> { unimplemented!() }
+/// #    fn get_mut(&mut self, entity: Entity) -> Option<&mut Self::Item> { unimplemented!() }
+/// #    fn remove(&mut self, entity: Entity) { unimplemented!() }
+/// #    fn clear(&mut self) { unimplemented!() }
+/// #    fn iter(&self) -> Box<DynIter<Self::Item>> { unimplemented!() }
+/// #    fn iter_mut(&mut self) -> Box<DynIterMut<Self::Item>> { unimplemented!() }
 /// }
 /// ```
 pub use toucan_ecs_macro::Component;
@@ -73,7 +72,7 @@ pub mod storage;
 /// You can implement this trait with derive macro:
 ///
 /// ```
-/// use toucan_ecs::component::Component;
+/// use toucan_ecs::prelude::*;
 ///
 /// #[derive(Copy, Clone, Component)]
 /// pub struct Position {
@@ -85,8 +84,7 @@ pub mod storage;
 /// or manually (equivalent to the derive macro usage above):
 ///
 /// ```
-/// use toucan_ecs::component::Component;
-/// use toucan_ecs::component::storage::DefaultStorage;
+/// use toucan_ecs::prelude::*;
 ///
 /// #[derive(Copy, Clone)]
 /// pub struct Position {
