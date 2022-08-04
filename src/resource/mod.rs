@@ -4,6 +4,18 @@ use erased::ErasedResourceHolder;
 pub(crate) use registry::Registry;
 pub(crate) use registry_refs::RegistryRefs;
 pub(crate) use set::ResourceSet;
+/// Derive macro that implements [`Resource`] trait.
+///
+/// # Examples
+///
+/// ```
+/// use toucan_ecs::prelude::*;
+///
+/// #[derive(Resource)]
+/// pub struct Time {
+///     start: std::time::Instant,
+/// }
+/// ```
 pub use toucan_ecs_macro::Resource;
 pub(crate) use type_id::ResourceTypeId;
 
@@ -23,4 +35,29 @@ mod type_id;
 /// to share some state across entities and manage some resources.
 ///
 /// Storing and accessing resources can be useful to access unique data in systems.
+///
+/// ## How can I implement `Resource`?
+///
+/// You can implement this trait with derive macro:
+///
+/// ```
+/// use toucan_ecs::prelude::*;
+///
+/// #[derive(Resource)]
+/// pub struct Time {
+///     start: std::time::Instant,
+/// }
+/// ```
+///
+/// or manually (equivalent to the derive macro usage above):
+///
+/// ```
+/// use toucan_ecs::prelude::*;
+///
+/// pub struct Time {
+///     start: std::time::Instant,
+/// }
+///
+/// impl Resource for Time {}
+/// ```
 pub trait Resource: Send + Sync + 'static {}
