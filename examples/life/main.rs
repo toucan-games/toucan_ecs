@@ -33,7 +33,7 @@ fn main() -> utils::Result<()> {
     world.register::<Alive>();
     world.register::<WatchAfter>();
     let field = Field::new(field_width);
-    world.create_resource(field);
+    world.create_resources(field);
 
     println!("Generating the field...");
     let range: Vec<_> = (0..field_width).collect();

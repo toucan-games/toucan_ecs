@@ -3,14 +3,15 @@
 use erased::ErasedResourceHolder;
 pub(crate) use registry::Registry;
 pub(crate) use registry_refs::RegistryRefs;
+pub(crate) use set::ResourceSet;
+pub use toucan_ecs_macro::Resource;
 pub(crate) use type_id::ResourceTypeId;
 
 mod erased;
 mod registry;
 mod registry_refs;
+mod set;
 mod type_id;
-
-pub mod marker;
 
 /// Trait for data that can be stored as singleton in ECS.
 ///
@@ -23,5 +24,3 @@ pub mod marker;
 ///
 /// Storing and accessing resources can be useful to access unique data in systems.
 pub trait Resource: Send + Sync + 'static {}
-
-impl<T> Resource for T where T: Send + Sync + 'static {}

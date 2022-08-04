@@ -5,10 +5,7 @@ use crate::system::foreach::fetch::{find_optimal, Fetch, FetchData, FetchStrateg
 use crate::system::foreach::query::{CheckedQuery, Query};
 use crate::world::WorldRefs;
 
-// TODO: turn into the lending iterator because resources' mutable references could be copied freely
-//  (or remove possibility of querying resources in the query
-//  and provide more safe variant with world splitting
-//  [on components and resources if `resource` feature enabled])
+// TODO: turn into the lending iterator
 pub struct ForeachHolder<'data, Q>
 where
     Q: Query<'data>,

@@ -101,6 +101,7 @@
 //!
 //! ```
 //! use toucan_ecs::prelude::*;
+//! use toucan_ecs::marker;
 //!
 //! #[derive(Copy, Clone, Component)]
 //! struct Name(&'static str);
@@ -109,16 +110,17 @@
 //! struct ID(u32);
 //!
 //! // notice no `Copy` and `Clone`
+//! #[derive(Resource)]
 //! struct MyResource(i32);
 //!
 //! let mut world = World::new();
 //! // create new resource of this world
-//! world.create_resource(MyResource(128));
+//! world.create_resources(MyResource(128));
 //!
 //! let mut schedule = Schedule::builder()
 //!     .system(|| println!("Hello, World"))
 //!     // this system will be executed once
-//!     .system(|resource: Resource<MyResource>| println!("Resource value: {}", resource.0))
+//!     .system(|resource: marker::Resource<MyResource>| println!("Resource value: {}", resource.0))
 //!     // this system will be executed for each entity with `Name` and `ID` components
 //!     .foreach_system(|name: &Name, id: &mut ID| {
 //!         id.0 += 100;
@@ -138,9 +140,10 @@ mod type_id;
 
 pub mod component;
 pub mod entity;
+pub mod marker;
+pub mod prelude;
 #[cfg(feature = "resource")]
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
 pub mod resource;
 pub mod system;
 pub mod world;
-pub mod prelude;

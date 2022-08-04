@@ -38,7 +38,7 @@ where
         let world: &'data mut World = unsafe { transmute(world) };
         let (system, _) = self;
 
-        let (entities, mut data) = world.split_refs_mut();
+        let (entities, mut data) = world.split_refs_system_mut();
         let entities = entities.iter();
         let args = Q::Fetch::fetch(&entities, &mut data);
         if let Ok(args) = args {

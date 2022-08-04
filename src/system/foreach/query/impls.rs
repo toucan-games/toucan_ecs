@@ -1,8 +1,8 @@
-use crate::component::marker::Not;
 use crate::component::Component;
 use crate::entity::Entity;
+use crate::marker;
 #[cfg(feature = "resource")]
-use crate::resource::{marker, Resource};
+use crate::resource::Resource;
 use crate::system::foreach::fetch::*;
 use crate::system::foreach::query::Query;
 
@@ -28,7 +28,7 @@ where
     type Fetch = FetchOptionRead<'data, C>;
 }
 
-impl<'data, C> Query<'data> for Not<C>
+impl<'data, C> Query<'data> for marker::Not<C>
 where
     C: Component,
 {

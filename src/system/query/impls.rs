@@ -1,6 +1,8 @@
 use crate::component::Component;
 #[cfg(feature = "resource")]
-use crate::resource::{marker, Resource};
+use crate::marker;
+#[cfg(feature = "resource")]
+use crate::resource::Resource;
 use crate::system::fetch::*;
 use crate::system::foreach::{ForeachHolder, Query as ForeachQuery};
 use crate::system::query::Query;

@@ -1,8 +1,8 @@
-use crate::component::marker::Not;
 use crate::component::storage::Storage;
 use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
+use crate::marker::Not;
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
 use crate::world::WorldRefs;
 

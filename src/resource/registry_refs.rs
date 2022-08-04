@@ -34,6 +34,11 @@ impl<'data> From<&'data mut Registry> for RegistryRefs<'data> {
 }
 
 impl<'data> RegistryRefs<'data> {
+    pub fn empty() -> Self {
+        let refs = HashMap::default();
+        Self { refs }
+    }
+
     pub fn get_ref<R>(&self) -> Option<&R>
     where
         R: Resource,

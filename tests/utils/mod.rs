@@ -1,4 +1,4 @@
-use toucan_ecs::world::World;
+use toucan_ecs::prelude::*;
 
 use crate::components::{Mass, Position, Velocity};
 

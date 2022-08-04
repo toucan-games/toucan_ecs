@@ -1,6 +1,6 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::component::marker::Not;
-use toucan_ecs::entity::Entity;
+use toucan_ecs::marker::Not;
+use toucan_ecs::prelude::*;
 
 mod components;
 #[cfg(feature = "resource")]
@@ -53,26 +53,21 @@ fn complex_view() {
 #[cfg(feature = "resource")]
 fn complex_resource_view() {
     use resources::SimpleResource;
-    use toucan_ecs::resource::marker::Resource;
 
     let mut world = utils::prepare_for_complex_view();
-    world.create_resource(SimpleResource::default());
+    world.create_resources(SimpleResource::default());
 
-    type Query<'data> = (
-        Entity,
-        &'data Position,
-        Option<&'data Velocity>,
-        Not<Mass>,
-        Resource<'data, SimpleResource>,
-    );
+    type Query<'data> = (Entity, &'data Position, Option<&'data Velocity>, Not<Mass>);
 
-    for (entity, position, velocity, _, res) in world.view::<Query>() {
+    let (components, resources) = world.split().destruct();
+    for (entity, position, velocity, _) in components.view::<Query>() {
+        let resource = resources.get::<SimpleResource>().unwrap();
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}, inner: {}",
             entity,
             position,
             velocity.as_deref(),
-            res.inner(),
+            resource.inner(),
         )
     }
 }

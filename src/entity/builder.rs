@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
-use crate::component::{Component, ComponentTypeId, Registry};
+use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
 use crate::hash::TypeIdHasher;
 use crate::world::World;
@@ -15,7 +15,7 @@ use crate::world::World;
 /// Entity will be actually created on [`build`] function call.
 ///
 /// [`build`]: EntityBuilder::build()
-#[must_use = "Please call .build() on this to finish building the new entity"]
+#[must_use = "Please call .build() to create a new entity"]
 pub struct EntityBuilder<'data> {
     world: &'data mut World,
     data: HashMap<ComponentTypeId, ErasedComponentHolder, BuildHasherDefault<TypeIdHasher>>,
@@ -23,10 +23,8 @@ pub struct EntityBuilder<'data> {
 
 impl<'data> EntityBuilder<'data> {
     pub(crate) fn new(world: &'data mut World) -> Self {
-        Self {
-            world,
-            data: HashMap::default(),
-        }
+        let data = HashMap::default();
+        Self { world, data }
     }
 
     /// Saves provided component in temporary storage to attach it later
@@ -49,10 +47,10 @@ impl<'data> EntityBuilder<'data> {
     /// and returns new [entity](crate::entity::Entity) handle.
     pub fn build(self) -> Entity {
         let entity = self.world.create();
-        let registry = self.world.components_mut();
+        let world = self.world;
         self.data
             .into_values()
-            .for_each(|holder| holder.attach(entity, registry));
+            .for_each(|holder| holder.attach(entity, world));
         entity
     }
 }
@@ -70,21 +68,21 @@ where
 }
 
 impl ErasedComponentHolder {
-    pub fn attach(self, entity: Entity, registry: &mut Registry) {
-        self.0.attach(entity, registry)
+    pub fn attach(self, entity: Entity, world: &mut World) {
+        self.0.attach(entity, world)
     }
 }
 
 trait Holdable: Send + Sync + 'static {
-    fn attach(self: Box<Self>, entity: Entity, registry: &mut Registry);
+    fn attach(self: Box<Self>, entity: Entity, world: &mut World);
 }
 
 impl<C> Holdable for C
 where
     C: Component,
 {
-    fn attach(self: Box<Self>, entity: Entity, registry: &mut Registry) {
+    fn attach(self: Box<Self>, entity: Entity, world: &mut World) {
         let component = *self;
-        registry.attach(entity, component)
+        world.attach(entity, component)
     }
 }

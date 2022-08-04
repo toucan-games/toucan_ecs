@@ -1,8 +1,6 @@
-use crate::component::marker::Not;
 use crate::component::Component;
 use crate::entity::Entity;
-#[cfg(feature = "resource")]
-use crate::resource::{marker, Resource};
+use crate::marker::Not;
 use crate::world::query::{Query, QueryMut};
 
 impl<'data> Query<'data> for Entity {}
@@ -24,27 +22,3 @@ impl<'data, C> QueryMut<'data> for Not<C> where C: Component {}
 impl<'data, C> QueryMut<'data> for &'data mut C where C: Component {}
 
 impl<'data, C> QueryMut<'data> for Option<&'data mut C> where C: Component {}
-
-#[cfg(feature = "resource")]
-#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> Query<'data> for marker::Resource<'data, R> where R: Resource {}
-
-#[cfg(feature = "resource")]
-#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> QueryMut<'data> for marker::Resource<'data, R> where R: Resource {}
-
-#[cfg(feature = "resource")]
-#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> Query<'data> for Option<marker::Resource<'data, R>> where R: Resource {}
-
-#[cfg(feature = "resource")]
-#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> QueryMut<'data> for Option<marker::Resource<'data, R>> where R: Resource {}
-
-#[cfg(feature = "resource")]
-#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> QueryMut<'data> for marker::ResourceMut<'data, R> where R: Resource {}
-
-#[cfg(feature = "resource")]
-#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> QueryMut<'data> for Option<marker::ResourceMut<'data, R>> where R: Resource {}

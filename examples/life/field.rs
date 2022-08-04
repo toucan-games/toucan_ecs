@@ -1,5 +1,7 @@
 use toucan_ecs::prelude::*;
+use toucan_ecs::resource::Resource;
 
+#[derive(Resource)]
 pub struct Field {
     width: u16,
 }

@@ -1,6 +1,6 @@
-//! Special marker types for views and systems.
-
 use std::ops::{Deref, DerefMut};
+
+use crate::resource;
 
 /// Marker for retrieving **shared** borrow of [resource] from the world.
 /// It must be used in query to be retrieved.
@@ -12,11 +12,11 @@ use std::ops::{Deref, DerefMut};
 #[repr(transparent)]
 pub struct Resource<'data, R>(&'data R)
 where
-    R: super::Resource;
+    R: resource::Resource;
 
 impl<'data, R> Resource<'data, R>
 where
-    R: super::Resource,
+    R: resource::Resource,
 {
     pub(crate) fn new(resource: &'data R) -> Self {
         Self(resource)
@@ -25,7 +25,7 @@ where
 
 impl<'data, R> Deref for Resource<'data, R>
 where
-    R: super::Resource,
+    R: resource::Resource,
 {
     type Target = R;
 
@@ -44,11 +44,11 @@ where
 #[repr(transparent)]
 pub struct ResourceMut<'data, R>(&'data mut R)
 where
-    R: super::Resource;
+    R: resource::Resource;
 
 impl<'data, R> ResourceMut<'data, R>
 where
-    R: super::Resource,
+    R: resource::Resource,
 {
     pub(crate) fn new(resource: &'data mut R) -> Self {
         Self(resource)
@@ -57,7 +57,7 @@ where
 
 impl<'data, R> Deref for ResourceMut<'data, R>
 where
-    R: super::Resource,
+    R: resource::Resource,
 {
     type Target = R;
 
@@ -68,7 +68,7 @@ where
 
 impl<'data, R> DerefMut for ResourceMut<'data, R>
 where
-    R: super::Resource,
+    R: resource::Resource,
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.0

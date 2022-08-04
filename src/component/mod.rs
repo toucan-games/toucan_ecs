@@ -56,7 +56,6 @@ mod registry_refs;
 mod set;
 mod type_id;
 
-pub mod marker;
 pub mod storage;
 
 /// Trait for data that can be attached to the entity.

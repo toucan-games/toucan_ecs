@@ -1,15 +1,17 @@
-//! Prelude module contains all of the most commonly used crate items.
+//! Prelude module contains the most commonly used crate items.
 
 #[doc(hidden)]
 pub use crate::{
-    world::{World, Entry},
-    world::view::{View, ViewMut, ViewOne, ViewOneMut},
-    entity::{Entity, EntityBuilder},
+    component::storage::{DefaultStorage, DynIter, DynIterMut, Storage},
     component::Component,
-    component::storage::{Storage, DefaultStorage, DynIter, DynIterMut},
-    system::{System, Schedule, ScheduleBuilder},
+    entity::{Entity, EntityBuilder},
+    system::{Schedule, ScheduleBuilder, System},
+    world::view::{View, ViewMut, ViewOne, ViewOneMut},
+    world::{Components, ComponentsMut, Entry, World},
 };
-
 #[doc(hidden)]
 #[cfg(feature = "resource")]
-pub use crate::resource::marker::{Resource, ResourceMut};
+pub use crate::{
+    resource::Resource,
+    world::{Resources, ResourcesMut, Split, SplitMut},
+};

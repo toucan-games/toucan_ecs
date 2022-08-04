@@ -1,4 +1,4 @@
-use toucan_ecs::resource::marker::Resource;
+use toucan_ecs::marker::Resource;
 use toucan_ecs::world::view::View;
 
 use crate::field::{Alive, Field, Point};

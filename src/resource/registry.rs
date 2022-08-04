@@ -2,8 +2,7 @@ use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
 use crate::hash::TypeIdHasher;
-
-use super::{ErasedResourceHolder, Resource, ResourceTypeId};
+use crate::resource::{ErasedResourceHolder, Resource, ResourceSet, ResourceTypeId};
 
 #[derive(Default)]
 #[repr(transparent)]
@@ -20,7 +19,14 @@ impl Registry {
         self.resources.clear();
     }
 
-    pub fn create<R>(&mut self, resource: R)
+    pub fn create<S>(&mut self, set: S)
+    where
+        S: ResourceSet,
+    {
+        set.create(self)
+    }
+
+    pub(super) fn create_one<R>(&mut self, resource: R)
     where
         R: Resource,
     {
@@ -29,7 +35,14 @@ impl Registry {
         self.resources.insert(type_id, erased);
     }
 
-    pub fn destroy<R>(&mut self)
+    pub fn destroy<S>(&mut self)
+    where
+        S: ResourceSet,
+    {
+        S::destroy(self)
+    }
+
+    pub(super) fn destroy_one<R>(&mut self)
     where
         R: Resource,
     {
@@ -37,7 +50,14 @@ impl Registry {
         self.resources.remove(&type_id);
     }
 
-    pub fn contains<R>(&self) -> bool
+    pub fn contains<S>(&self) -> bool
+    where
+        S: ResourceSet,
+    {
+        S::contains(self)
+    }
+
+    pub(super) fn contains_one<R>(&self) -> bool
     where
         R: Resource,
     {

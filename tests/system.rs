@@ -3,13 +3,9 @@ use std::fmt::Debug;
 use components::{Mass, Position, Velocity};
 #[cfg(feature = "resource")]
 use resources::SimpleResource;
-use toucan_ecs::component::Component;
-use toucan_ecs::entity::Entity;
-#[cfg(feature = "resource")]
-use toucan_ecs::resource::marker::ResourceMut;
-use toucan_ecs::system::{Schedule, System};
+use toucan_ecs::marker;
+use toucan_ecs::prelude::*;
 use toucan_ecs::world::query::Query;
-use toucan_ecs::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 
 mod components;
 #[cfg(feature = "resource")]
@@ -22,7 +18,7 @@ fn foreach_component_system(
     position: &mut Position,
     velocity: &Velocity,
     mass: Option<&Mass>,
-    mut resource: ResourceMut<SimpleResource>,
+    mut resource: marker::ResourceMut<SimpleResource>,
 ) {
     position.x += 10.0;
     let inner = {
@@ -120,21 +116,25 @@ fn system() {
 #[test]
 #[cfg(feature = "resource")]
 fn for_each_system() {
-    use std::fs::File;
     use std::io::Read;
-    use toucan_ecs::resource::marker::Resource;
+    use toucan_ecs::resource::Resource;
+
+    #[derive(Resource)]
+    struct File(std::fs::File);
 
     let mut world = utils::prepare_for_view();
-    world.create_resource(SimpleResource::default());
+    world.create_resources(SimpleResource::default());
 
     let mut schedule = Schedule::builder()
-        .system(|res: Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .system(|res: marker::Resource<SimpleResource>| println!("Inner is {}", res.inner()))
         .foreach_system(|| println!("Will be repeated for each entity"))
-        .system(|file: Option<ResourceMut<File>>| {
+        .system(|file: Option<marker::ResourceMut<File>>| {
             println!("Is some file: {}", file.is_some());
             if let Some(mut file) = file {
                 let mut contents = String::new();
-                file.read_to_string(&mut contents).expect("not valid UTF-8");
+                file.0
+                    .read_to_string(&mut contents)
+                    .expect("not valid UTF-8");
                 println!("file contents: {}", contents);
             }
         })

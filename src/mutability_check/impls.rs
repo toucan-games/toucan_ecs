@@ -1,8 +1,8 @@
-use crate::component::marker::Not;
 use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
+use crate::marker;
 #[cfg(feature = "resource")]
-use crate::resource::{marker, Resource, ResourceTypeId};
+use crate::resource::{Resource, ResourceTypeId};
 use crate::system::foreach::{ForeachHolder, Query as ForeachQuery};
 use crate::world::query::{Query, QueryMut};
 use crate::world::view::{View, ViewMut, ViewOne, ViewOneMut};
@@ -65,7 +65,7 @@ where
     }
 }
 
-impl<C> MutabilityCheck for Not<C>
+impl<C> MutabilityCheck for marker::Not<C>
 where
     C: Component,
 {

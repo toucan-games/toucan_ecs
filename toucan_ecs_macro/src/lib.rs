@@ -21,6 +21,14 @@ pub fn component_derive(input: TokenStream) -> TokenStream {
         .into()
 }
 
+#[proc_macro_derive(Resource)]
+pub fn resource_derive(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+    derive::resource(input)
+        .unwrap_or_else(Error::into_compile_error)
+        .into()
+}
+
 #[proc_macro]
 pub fn fetch_tuple(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input with Punctuated::<Ident, Token![,]>::parse_terminated)

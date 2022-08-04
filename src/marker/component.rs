@@ -1,5 +1,3 @@
-//! Special marker types for views and systems.
-
 use std::marker::PhantomData;
 
 use crate::component::Component;

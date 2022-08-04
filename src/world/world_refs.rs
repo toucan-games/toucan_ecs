@@ -3,25 +3,12 @@ use crate::component::{Component, RegistryRefs as StorageRefs};
 use crate::resource::{RegistryRefs as ResourceRefs, Resource};
 
 pub struct WorldRefs<'data> {
-    storages: StorageRefs<'data>,
+    pub(super) storages: StorageRefs<'data>,
     #[cfg(feature = "resource")]
-    resources: ResourceRefs<'data>,
+    pub(super) resources: ResourceRefs<'data>,
 }
 
 impl<'data> WorldRefs<'data> {
-    #[cfg(feature = "resource")]
-    pub fn new(storages: StorageRefs<'data>, resources: ResourceRefs<'data>) -> Self {
-        Self {
-            storages,
-            resources,
-        }
-    }
-
-    #[cfg(not(feature = "resource"))]
-    pub fn new(storages: StorageRefs<'data>) -> Self {
-        Self { storages }
-    }
-
     pub fn get_storage_ref<C>(&self) -> Option<&C::Storage>
     where
         C: Component,

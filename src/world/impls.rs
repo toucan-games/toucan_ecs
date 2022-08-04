@@ -3,7 +3,12 @@ use crate::component::{
 };
 use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 #[cfg(feature = "resource")]
-use crate::resource::{Registry as ResourceRegistry, RegistryRefs as ResourceRefs, Resource};
+use crate::resource::{
+    Registry as ResourceRegistry, RegistryRefs as ResourceRefs, Resource, ResourceSet,
+};
+use crate::world::components::{Components, ComponentsMut};
+use crate::world::resources::{Resources, ResourcesMut};
+use crate::world::split::{Split, SplitMut};
 use crate::world::world_refs::WorldRefs;
 use crate::world::Entry;
 
@@ -66,29 +71,30 @@ impl World {
         self.entities.create()
     }
 
-    /// Creates new resource and stores it in the world.
+    /// Creates new resource or set of resources and stores them in the world.
     ///
-    /// To get created resource, call [`get_resource`][World::get_resource()] or
+    /// To get created resources, call [`get_resource`][World::get_resource()] or
     /// [`get_resource_mut`][World::get_resource_mut()] associated function.
     ///
     /// # Examples
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
+    /// #[derive(Resource)]
     /// struct ExampleResource(u32);
     ///
     /// let mut world = World::new();
     ///
-    /// world.create_resource(ExampleResource(42));
+    /// world.create_resources(ExampleResource(42));
     /// assert!(!world.is_empty());
     /// ```
     #[cfg(feature = "resource")]
     #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-    pub fn create_resource<R>(&mut self, resource: R)
+    pub fn create_resources<S>(&mut self, set: S)
     where
-        R: Resource,
+        S: ResourceSet,
     {
-        self.resources.create(resource)
+        self.resources.create(set)
     }
 
     /// Creates new entity with one component or set of components attached to it.
@@ -287,26 +293,27 @@ impl World {
         self.entities.contains(entity)
     }
 
-    /// Returns `true` if the world has resource of generic type.
+    /// Returns `true` if the world has resource or set of resources.
     ///
     /// # Examples
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// struct Resource(u32);
+    /// #[derive(Resource)]
+    /// struct ExampleResource(u32);
     ///
     /// let mut world = World::new();
     ///
-    /// world.create_resource(Resource(42));
-    /// assert!(world.contains_resource::<Resource>());
+    /// world.create_resources(ExampleResource(42));
+    /// assert!(world.contains_resources::<ExampleResource>());
     /// ```
     #[cfg(feature = "resource")]
     #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-    pub fn contains_resource<R>(&self) -> bool
+    pub fn contains_resources<S>(&self) -> bool
     where
-        R: Resource,
+        S: ResourceSet,
     {
-        self.resources.contains::<R>()
+        self.resources.contains::<S>()
     }
 
     /// Destroys the entity and removes all its attached components.
@@ -326,27 +333,28 @@ impl World {
         self.entities.destroy(entity);
     }
 
-    /// Destroys the resource of generic type and removes it from the world.
+    /// Destroys resource or set of resources and removes them from the world.
     ///
     /// # Examples
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// struct Resource(u32);
+    /// #[derive(Resource)]
+    /// struct ExampleResource(u32);
     ///
     /// let mut world = World::new();
     ///
-    /// world.create_resource(Resource(42));
-    /// world.destroy_resource::<Resource>();
-    /// assert!(!world.contains_resource::<Resource>());
+    /// world.create_resources(ExampleResource(42));
+    /// world.destroy_resources::<ExampleResource>();
+    /// assert!(!world.contains_resources::<ExampleResource>());
     /// ```
     #[cfg(feature = "resource")]
     #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-    pub fn destroy_resource<R>(&mut self)
+    pub fn destroy_resources<S>(&mut self)
     where
-        R: Resource,
+        S: ResourceSet,
     {
-        self.resources.destroy::<R>();
+        self.resources.destroy::<S>();
     }
 
     /// Returns `true` if the world does not contain any entity and any resource.
@@ -595,14 +603,14 @@ impl World {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// #[derive(Debug, Eq, PartialEq)]
-    /// struct Resource(u32);
+    /// #[derive(Debug, Eq, PartialEq, Resource)]
+    /// struct ExampleResource(u32);
     ///
     /// let mut world = World::new();
     ///
-    /// world.create_resource(Resource(42));
-    /// let resource = world.get_resource::<Resource>().unwrap();
-    /// assert_eq!(*resource, Resource(42));
+    /// world.create_resources(ExampleResource(42));
+    /// let resource = world.get_resource::<ExampleResource>().unwrap();
+    /// assert_eq!(*resource, ExampleResource(42));
     /// ```
     #[cfg(feature = "resource")]
     #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
@@ -619,15 +627,15 @@ impl World {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// #[derive(Debug, Eq, PartialEq)]
-    /// struct Resource(u32);
+    /// #[derive(Debug, Eq, PartialEq, Resource)]
+    /// struct ExampleResource(u32);
     ///
     /// let mut world = World::new();
-    /// world.create_resource(Resource(42));
+    /// world.create_resources(ExampleResource(42));
     ///
-    /// let mut resource = world.get_resource_mut::<Resource>().unwrap();
-    /// *resource = Resource(35);
-    /// assert_eq!(*resource, Resource(35));
+    /// let mut resource = world.get_resource_mut::<ExampleResource>().unwrap();
+    /// *resource = ExampleResource(35);
+    /// assert_eq!(*resource, ExampleResource(35));
     /// ```
     #[cfg(feature = "resource")]
     #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
@@ -719,9 +727,9 @@ impl World {
     ///     println!("name: {:?}, id: {:?}", name.as_deref(), *id)
     /// }
     /// ```
-    pub fn view<'data, Q>(&'data self) -> View<'data, Q>
+    pub fn view<'view, Q>(&'view self) -> View<'view, Q>
     where
-        Q: Query<'data>,
+        Q: Query<'view>,
     {
         let (entities, mut data) = self.split_refs();
         let entities = entities.iter();
@@ -782,47 +790,95 @@ impl World {
     /// ```
     ///
     /// [rust_book]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
-    pub fn view_mut<'data, Q>(&'data mut self) -> ViewMut<'data, Q>
+    pub fn view_mut<'view, Q>(&'view mut self) -> ViewMut<'view, Q>
     where
-        Q: QueryMut<'data>,
+        Q: QueryMut<'view>,
     {
         let (entities, mut data) = self.split_refs_mut();
         let entities = entities.iter();
         ViewMut::new(entities, &mut data)
     }
 
-    pub(crate) fn components_mut(&mut self) -> &mut ComponentRegistry {
-        &mut self.components
+    /// Retrieves **immutable** borrowed type of the [world](World)
+    /// that contains data of its entities and components.
+    pub fn components(&self) -> Components {
+        let entities = &self.entities;
+        let components = &self.components;
+        Components::new(entities, components)
     }
 
-    pub(crate) fn split_refs(&self) -> (&EntityRegistry, WorldRefs) {
+    /// Retrieves **mutable** borrowed type of the [world](World)
+    /// that contains data of its entities and components.
+    pub fn components_mut(&mut self) -> ComponentsMut {
         let entities = &self.entities;
-        #[cfg(not(feature = "resource"))]
-        let refs = {
-            let storages = StorageRefs::from(&self.components);
-            WorldRefs::new(storages)
-        };
-        #[cfg(feature = "resource")]
-        let refs = {
-            let storages = StorageRefs::from(&self.components);
-            let resources = ResourceRefs::from(&self.resources);
-            WorldRefs::new(storages, resources)
+        let components = &mut self.components;
+        ComponentsMut::new(entities, components)
+    }
+
+    /// Retrieves **immutable** borrowed type of the [world](World)
+    /// that contains data of its resources.
+    #[cfg(feature = "resource")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+    pub fn resources(&self) -> Resources {
+        let resources = &self.resources;
+        Resources::new(resources)
+    }
+
+    /// Retrieves **mutable** borrowed type of the [world](World)
+    /// that contains data of its resources.
+    #[cfg(feature = "resource")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+    pub fn resources_mut(&mut self) -> ResourcesMut {
+        let resources = &mut self.resources;
+        ResourcesMut::new(resources)
+    }
+
+    /// Retrieves **immutable** borrowed type of the [world](World)
+    /// that contains all the data of this world.
+    #[cfg(feature = "resource")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+    pub fn split(&self) -> Split {
+        let components = Components::new(&self.entities, &self.components);
+        let resources = Resources::new(&self.resources);
+        Split::new(components, resources)
+    }
+
+    /// Retrieves **mutable** borrowed type of the [world](World)
+    /// that contains all the data of this world.
+    #[cfg(feature = "resource")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+    pub fn split_mut(&mut self) -> SplitMut {
+        let components = ComponentsMut::new(&self.entities, &mut self.components);
+        let resources = ResourcesMut::new(&mut self.resources);
+        SplitMut::new(components, resources)
+    }
+
+    fn split_refs(&self) -> (&EntityRegistry, WorldRefs) {
+        let entities = &self.entities;
+        let refs = WorldRefs {
+            storages: StorageRefs::from(&self.components),
+            #[cfg(feature = "resource")]
+            resources: ResourceRefs::empty(),
         };
         (entities, refs)
     }
 
-    pub(crate) fn split_refs_mut(&mut self) -> (&EntityRegistry, WorldRefs) {
+    fn split_refs_mut(&mut self) -> (&EntityRegistry, WorldRefs) {
         let entities = &self.entities;
-        #[cfg(not(feature = "resource"))]
-        let refs = {
-            let storages = StorageRefs::from(&mut self.components);
-            WorldRefs::new(storages)
+        let refs = WorldRefs {
+            storages: StorageRefs::from(&mut self.components),
+            #[cfg(feature = "resource")]
+            resources: ResourceRefs::empty(),
         };
-        #[cfg(feature = "resource")]
-        let refs = {
-            let storages = StorageRefs::from(&mut self.components);
-            let resources = ResourceRefs::from(&mut self.resources);
-            WorldRefs::new(storages, resources)
+        (entities, refs)
+    }
+
+    pub(crate) fn split_refs_system_mut(&mut self) -> (&EntityRegistry, WorldRefs) {
+        let entities = &self.entities;
+        let refs = WorldRefs {
+            storages: StorageRefs::from(&mut self.components),
+            #[cfg(feature = "resource")]
+            resources: ResourceRefs::from(&mut self.resources),
         };
         (entities, refs)
     }

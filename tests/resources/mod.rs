@@ -1,4 +1,6 @@
-#[derive(Default, Debug)]
+use toucan_ecs::prelude::*;
+
+#[derive(Default, Debug, Resource)]
 pub struct SimpleResource {
     inner: i32,
 }

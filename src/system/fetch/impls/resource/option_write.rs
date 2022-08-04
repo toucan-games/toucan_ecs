@@ -2,7 +2,8 @@ use std::marker::PhantomData;
 
 use crate::entity::Iter;
 use crate::error::FetchResult;
-use crate::resource::{marker, Resource};
+use crate::marker;
+use crate::resource::Resource;
 use crate::system::fetch::Fetch;
 use crate::world::WorldRefs;
 
