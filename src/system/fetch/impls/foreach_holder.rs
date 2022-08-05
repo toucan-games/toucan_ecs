@@ -21,7 +21,8 @@ where
     type Item = ForeachHolder<'data, Q>;
 
     fn fetch(entities: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
-        let foreach_holder = ForeachHolder::new(entities.clone(), data);
+        let entities = Some(entities.clone());
+        let foreach_holder = ForeachHolder::new(entities, data);
         Ok(foreach_holder)
     }
 }

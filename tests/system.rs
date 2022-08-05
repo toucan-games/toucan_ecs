@@ -1,11 +1,10 @@
 use std::fmt::Debug;
 
 use components::{Mass, Position, Velocity};
-#[cfg(feature = "resource")]
-use resources::SimpleResource;
-use toucan_ecs::marker;
 use toucan_ecs::prelude::*;
 use toucan_ecs::world::query::Query;
+#[cfg(feature = "resource")]
+use {resources::SimpleResource, toucan_ecs::marker};
 
 mod components;
 #[cfg(feature = "resource")]

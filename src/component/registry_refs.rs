@@ -34,6 +34,12 @@ impl<'data> From<&'data mut Registry> for RegistryRefs<'data> {
 }
 
 impl<'data> RegistryRefs<'data> {
+    #[cfg(feature = "resource")]
+    pub fn empty() -> Self {
+        let refs = HashMap::default();
+        Self { refs }
+    }
+
     pub fn get_ref<C>(&self) -> Option<&C::Storage>
     where
         C: Component,

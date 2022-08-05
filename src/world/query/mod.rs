@@ -30,3 +30,21 @@ pub trait Query<'data>: QueryMut<'data> {}
 ///
 /// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
 pub trait QueryMut<'data>: foreach::Query<'data> {}
+
+/// Type which can be queried
+/// by **shared** resource [view][crate::world::World::resource_view()]
+/// of the [world](crate::world::World).
+///
+/// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+pub trait ResourceQuery<'data>: ResourceQueryMut<'data> {}
+
+/// Type which can be queried
+/// by **mutable** resource [view][crate::world::World::resource_view_mut()]
+/// of the [world](crate::world::World).
+///
+/// This trait is **sealed** and cannot be implemented for types outside of `toucan_ecs`.
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+pub trait ResourceQueryMut<'data>: foreach::Query<'data> {}

@@ -1,4 +1,4 @@
-use crate::entity;
+use crate::entity::Iter;
 use crate::system::foreach::ForeachHolder;
 use crate::world::query::Query;
 use crate::world::WorldRefs;
@@ -21,8 +21,8 @@ impl<'data, Q> View<'data, Q>
 where
     Q: Query<'data>,
 {
-    pub(crate) fn new(entities: entity::Iter<'data>, data: &mut WorldRefs<'data>) -> Self {
-        let inner = ForeachHolder::new(entities, data);
+    pub(crate) fn new(entities: Iter<'data>, data: &mut WorldRefs<'data>) -> Self {
+        let inner = ForeachHolder::new(Some(entities), data);
         Self { inner }
     }
 }

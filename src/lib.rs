@@ -109,26 +109,26 @@
 //! #[derive(Copy, Clone, Component)]
 //! struct ID(u32);
 //!
-//! // notice no `Copy` and `Clone`
+//! // Notice no `Copy` and `Clone`
 //! #[derive(Resource)]
 //! struct MyResource(i32);
 //!
 //! let mut world = World::new();
-//! // create new resource of this world
+//! // Create new resource of this world
 //! world.create_resources(MyResource(128));
 //!
 //! let mut schedule = Schedule::builder()
 //!     .system(|| println!("Hello, World"))
-//!     // this system will be executed once
+//!     // This system will be executed once
 //!     .system(|resource: marker::Resource<MyResource>| println!("Resource value: {}", resource.0))
-//!     // this system will be executed for each entity with `Name` and `ID` components
+//!     // This system will be executed for each entity with `Name` and `ID` components
 //!     .foreach_system(|name: &Name, id: &mut ID| {
 //!         id.0 += 100;
 //!         println!("Changed ID: {}", id.0);
 //!     })
 //!     .build();
 //!
-//! // execute all the systems in schedule
+//! // Execute all the systems in schedule
 //! schedule.run(&mut world);
 //! ```
 

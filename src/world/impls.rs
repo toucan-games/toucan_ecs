@@ -2,15 +2,17 @@ use crate::component::{
     Component, ComponentSet, Registry as ComponentRegistry, RegistryRefs as StorageRefs,
 };
 use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
-#[cfg(feature = "resource")]
-use crate::resource::{
-    Registry as ResourceRegistry, RegistryRefs as ResourceRefs, Resource, ResourceSet,
-};
 use crate::world::components::{Components, ComponentsMut};
-use crate::world::resources::{Resources, ResourcesMut};
-use crate::world::split::{Split, SplitMut};
 use crate::world::world_refs::WorldRefs;
 use crate::world::Entry;
+#[cfg(feature = "resource")]
+use crate::{
+    resource::{Registry as ResourceRegistry, RegistryRefs as ResourceRefs, Resource, ResourceSet},
+    system::foreach::ForeachHolder,
+    world::query::{ResourceQuery, ResourceQueryMut},
+    world::resources::{Resources, ResourcesMut},
+    world::split::{Split, SplitMut},
+};
 
 use super::query::{Query, QueryMut};
 use super::view::{View, ViewMut, ViewOne, ViewOneMut};
@@ -736,6 +738,62 @@ impl World {
         View::new(entities, &mut data)
     }
 
+    /// Retrieves multiple **shared** resource borrows by provided query.
+    ///
+    /// # Panics
+    ///
+    /// Function will panic if requested resources cannot be retrieved.
+    /// For example, if provided query contains resource which does not exist in the world,
+    /// it will panic.
+    ///
+    /// Also this function will panic if provided query does not satisfies
+    /// the first rule of references described in
+    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
+    ///
+    /// > - *At any given time, you can have either **one** mutable reference
+    /// or **any** number of immutable references.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::prelude::*;
+    /// use toucan_ecs::marker;
+    ///
+    /// #[derive(Debug, Eq, PartialEq, Resource)]
+    /// struct ExampleResource(u32);
+    ///
+    /// #[derive(Debug, Eq, PartialEq, Resource)]
+    /// struct AnotherResource;
+    ///
+    /// let mut world = World::new();
+    /// world.create_resources(ExampleResource(42));
+    ///
+    /// type Query<'a> = (
+    ///     marker::Resource<'a, ExampleResource>,
+    ///     Option<marker::Resource<'a, AnotherResource>>,
+    /// );
+    /// let (example, another) = world.resource_view::<Query>();
+    ///
+    /// assert_eq!(*example, ExampleResource(42));
+    /// assert!(another.is_none());
+    /// ```
+    ///
+    /// [rust_book]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
+    #[cfg(feature = "resource")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+    pub fn resource_view<'view, Q>(&'view self) -> Q
+    where
+        Q: ResourceQuery<'view>,
+    {
+        let mut data = WorldRefs {
+            storages: StorageRefs::empty(),
+            resources: ResourceRefs::from(&self.resources),
+        };
+        ForeachHolder::new(None, &mut data)
+            .next()
+            .expect("unable to view resources by provided query")
+    }
+
     /// Creates a [view](ViewMut) of the multiple component types.
     ///
     /// This iterator will return [entities](Entity) and their shared OR unique
@@ -797,6 +855,63 @@ impl World {
         let (entities, mut data) = self.split_refs_mut();
         let entities = entities.iter();
         ViewMut::new(entities, &mut data)
+    }
+
+    /// Retrieves multiple **unique** resource borrows by provided query.
+    ///
+    /// # Panics
+    ///
+    /// Function will panic if requested resources cannot be retrieved.
+    /// For example, if provided query contains resource which does not exist in the world,
+    /// it will panic.
+    ///
+    /// Also this function will panic if provided query does not satisfies
+    /// the first rule of references described in
+    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
+    ///
+    /// > - *At any given time, you can have either **one** mutable reference
+    /// or **any** number of immutable references.*
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use toucan_ecs::prelude::*;
+    /// use toucan_ecs::marker;
+    ///
+    /// #[derive(Debug, Eq, PartialEq, Resource)]
+    /// struct ExampleResource(u32);
+    ///
+    /// #[derive(Debug, Eq, PartialEq, Resource)]
+    /// struct AnotherResource;
+    ///
+    /// let mut world = World::new();
+    /// world.create_resources(ExampleResource(42));
+    ///
+    /// type Query<'a> = (
+    ///     marker::ResourceMut<'a, ExampleResource>,
+    ///     Option<marker::Resource<'a, AnotherResource>>,
+    /// );
+    /// let (mut example, another) = world.resource_view_mut::<Query>();
+    ///
+    /// example.0 = 10;
+    /// assert_eq!(*example, ExampleResource(10));
+    /// assert!(another.is_none());
+    /// ```
+    ///
+    /// [rust_book]: https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html#the-rules-of-references
+    #[cfg(feature = "resource")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+    pub fn resource_view_mut<'view, Q>(&'view mut self) -> Q
+    where
+        Q: ResourceQueryMut<'view>,
+    {
+        let mut data = WorldRefs {
+            storages: StorageRefs::empty(),
+            resources: ResourceRefs::from(&mut self.resources),
+        };
+        ForeachHolder::new(None, &mut data)
+            .next()
+            .expect("unable to view resources by provided query")
     }
 
     /// Retrieves **immutable** borrowed type of the [world](World)
