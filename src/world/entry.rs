@@ -12,13 +12,13 @@ use crate::world::World;
 /// [`World::create_entry`][crate::world::World::create_entry()] to create new entity and easily
 /// access it or from [`World::entry`][crate::world::World::entry()]
 /// if an entity was created earlier.
-pub struct Entry<'data> {
+pub struct Entry<'world> {
     entity: Entity,
-    world: &'data mut World,
+    world: &'world mut World,
 }
 
-impl<'data> Entry<'data> {
-    pub(crate) fn new(entity: Entity, world: &'data mut World) -> Self {
+impl<'world> Entry<'world> {
+    pub(crate) fn new(entity: Entity, world: &'world mut World) -> Self {
         Entry { entity, world }
     }
 
@@ -183,7 +183,7 @@ impl<'data> Entry<'data> {
     /// let name = entry.get::<Name>().unwrap();
     /// assert_eq!(*name, Name("Hello, World"));
     /// ```
-    pub fn get<C>(&'data self) -> Option<&'data C>
+    pub fn get<C>(&'world self) -> Option<&'world C>
     where
         C: Component,
     {
@@ -207,7 +207,7 @@ impl<'data> Entry<'data> {
     /// assert_ne!(*name, Name("Hello, World"));
     /// assert_eq!(*name, Name("This name was changed"));
     /// ```
-    pub fn get_mut<C>(&'data mut self) -> Option<&'data mut C>
+    pub fn get_mut<C>(&'world mut self) -> Option<&'world mut C>
     where
         C: Component,
     {

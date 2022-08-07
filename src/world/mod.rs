@@ -7,8 +7,8 @@ pub use impls::World;
 pub(crate) use world_refs::WorldRefs;
 #[cfg(feature = "resource")]
 pub use {
+    impls::{Split, SplitMut},
     resources::{Resources, ResourcesMut},
-    split::{Split, SplitMut},
 };
 
 mod components;
@@ -16,8 +16,6 @@ mod entry;
 mod impls;
 #[cfg(feature = "resource")]
 mod resources;
-#[cfg(feature = "resource")]
-mod split;
 mod world_refs;
 
 pub mod query;

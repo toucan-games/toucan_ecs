@@ -7,12 +7,12 @@ use crate::world::WorldRefs;
 /// **Immutable** borrowed type of the [world](crate::world::World) that contains
 /// data of its resources.
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-pub struct Resources<'data> {
-    resources: &'data ResourceRegistry,
+pub struct Resources<'world> {
+    resources: &'world ResourceRegistry,
 }
 
-impl<'data> Resources<'data> {
-    pub(super) fn new(resources: &'data ResourceRegistry) -> Self {
+impl<'world> Resources<'world> {
+    pub(super) fn new(resources: &'world ResourceRegistry) -> Self {
         Self { resources }
     }
 
@@ -83,13 +83,6 @@ impl<'data> Resources<'data> {
     /// For example, if provided query contains resource which does not exist in the world,
     /// it will panic.
     ///
-    /// Also this function will panic if provided query does not satisfies
-    /// the first rule of references described in
-    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
-    ///
-    /// > - *At any given time, you can have either **one** mutable reference
-    /// or **any** number of immutable references.*
-    ///
     /// # Examples
     ///
     /// ```
@@ -134,12 +127,12 @@ impl<'data> Resources<'data> {
 /// **Mutable** borrowed type of the [world](crate::world::World) that contains
 /// data of its resources.
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-pub struct ResourcesMut<'data> {
-    resources: &'data mut ResourceRegistry,
+pub struct ResourcesMut<'world> {
+    resources: &'world mut ResourceRegistry,
 }
 
-impl<'data> ResourcesMut<'data> {
-    pub(super) fn new(resources: &'data mut ResourceRegistry) -> Self {
+impl<'world> ResourcesMut<'world> {
+    pub(super) fn new(resources: &'world mut ResourceRegistry) -> Self {
         Self { resources }
     }
 
@@ -233,13 +226,6 @@ impl<'data> ResourcesMut<'data> {
     /// Function will panic if requested resources cannot be retrieved.
     /// For example, if provided query contains resource which does not exist in the world,
     /// it will panic.
-    ///
-    /// Also this function will panic if provided query does not satisfies
-    /// the first rule of references described in
-    /// **References and Borrowing** section of [**Rust Book**][rust_book]:
-    ///
-    /// > - *At any given time, you can have either **one** mutable reference
-    /// or **any** number of immutable references.*
     ///
     /// # Examples
     ///

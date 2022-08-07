@@ -3,6 +3,8 @@ use crate::component::{
 };
 use crate::entity::{Entity, EntityBuilder, Registry as EntityRegistry};
 use crate::world::components::{Components, ComponentsMut};
+use crate::world::query::{Query, QueryMut};
+use crate::world::view::{View, ViewMut, ViewOne, ViewOneMut};
 use crate::world::world_refs::WorldRefs;
 use crate::world::Entry;
 #[cfg(feature = "resource")]
@@ -11,11 +13,19 @@ use crate::{
     system::foreach::ForeachHolder,
     world::query::{ResourceQuery, ResourceQueryMut},
     world::resources::{Resources, ResourcesMut},
-    world::split::{Split, SplitMut},
 };
 
-use super::query::{Query, QueryMut};
-use super::view::{View, ViewMut, ViewOne, ViewOneMut};
+/// **Immutable** borrowed type of the [world](crate::world::World) that contains
+/// all the data of this world.
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+pub type Split<'world> = (Components<'world>, Resources<'world>);
+
+/// **Mutable** borrowed type of the [world](crate::world::World) that contains
+/// all the data of this world.
+#[cfg(feature = "resource")]
+#[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
+pub type SplitMut<'world> = (ComponentsMut<'world>, ResourcesMut<'world>);
 
 /// Storage of the entities and all the data attached to them.
 /// Additionally can store resources if enabled by the feature `resource`.
@@ -955,7 +965,7 @@ impl World {
     pub fn split(&self) -> Split {
         let components = Components::new(&self.entities, &self.components);
         let resources = Resources::new(&self.resources);
-        Split::new(components, resources)
+        (components, resources)
     }
 
     /// Retrieves **mutable** borrowed type of the [world](World)
@@ -965,7 +975,7 @@ impl World {
     pub fn split_mut(&mut self) -> SplitMut {
         let components = ComponentsMut::new(&self.entities, &mut self.components);
         let resources = ResourcesMut::new(&mut self.resources);
-        SplitMut::new(components, resources)
+        (components, resources)
     }
 
     fn split_refs(&self) -> (&EntityRegistry, WorldRefs) {

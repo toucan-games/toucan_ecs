@@ -82,7 +82,7 @@ fn complex_resource_view_mut() {
         Option<&'data mut Mass>,
     );
 
-    let (mut components, mut resources) = world.split_mut().destruct();
+    let (mut components, mut resources) = world.split_mut();
     let resource = resources.get_mut::<SimpleResource>().unwrap();
     for (entity, position, _, mut mass) in components.view_mut::<Query>() {
         position.x -= 10.0;

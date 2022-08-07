@@ -59,7 +59,7 @@ fn complex_resource_view() {
 
     type Query<'data> = (Entity, &'data Position, Option<&'data Velocity>, Not<Mass>);
 
-    let (components, resources) = world.split().destruct();
+    let (components, resources) = world.split();
     for (entity, position, velocity, _) in components.view::<Query>() {
         let resource = resources.get::<SimpleResource>().unwrap();
         println!(

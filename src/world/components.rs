@@ -10,15 +10,15 @@ use crate::world::WorldRefs;
 
 /// **Immutable** borrowed type of the [world](crate::world::World) that contains
 /// data of its entities and components.
-pub struct Components<'data> {
-    entities: &'data EntityRegistry,
-    components: &'data ComponentRegistry,
+pub struct Components<'world> {
+    entities: &'world EntityRegistry,
+    components: &'world ComponentRegistry,
 }
 
-impl<'data> Components<'data> {
+impl<'world> Components<'world> {
     pub(super) fn new(
-        entities: &'data EntityRegistry,
-        components: &'data ComponentRegistry,
+        entities: &'world EntityRegistry,
+        components: &'world ComponentRegistry,
     ) -> Self {
         Self {
             entities,
@@ -199,15 +199,15 @@ impl<'data> Components<'data> {
 
 /// **Mutable** borrowed type of the [world](crate::world::World) that contains
 /// data of its entities and components.
-pub struct ComponentsMut<'data> {
-    entities: &'data EntityRegistry,
-    components: &'data mut ComponentRegistry,
+pub struct ComponentsMut<'world> {
+    entities: &'world EntityRegistry,
+    components: &'world mut ComponentRegistry,
 }
 
-impl<'data> ComponentsMut<'data> {
+impl<'world> ComponentsMut<'world> {
     pub(super) fn new(
-        entities: &'data EntityRegistry,
-        components: &'data mut ComponentRegistry,
+        entities: &'world EntityRegistry,
+        components: &'world mut ComponentRegistry,
     ) -> Self {
         Self {
             entities,
