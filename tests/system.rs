@@ -116,7 +116,6 @@ fn system() {
 #[cfg(feature = "resource")]
 fn for_each_system() {
     use std::io::Read;
-    use toucan_ecs::resource::Resource;
 
     #[derive(Resource)]
     struct File(std::fs::File);
@@ -130,10 +129,9 @@ fn for_each_system() {
         .system(|file: Option<marker::ResourceMut<File>>| {
             println!("Is some file: {}", file.is_some());
             if let Some(mut file) = file {
+                let File(ref mut file) = *file;
                 let mut contents = String::new();
-                file.0
-                    .read_to_string(&mut contents)
-                    .expect("not valid UTF-8");
+                file.read_to_string(&mut contents).expect("not valid UTF-8");
                 println!("file contents: {}", contents);
             }
         })
