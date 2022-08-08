@@ -1,4 +1,4 @@
-use toucan_ecs::component::Component;
+use toucan_ecs::prelude::*;
 
 #[derive(Copy, Clone, Component, Debug, PartialEq)]
 pub struct Position {
