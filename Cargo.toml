@@ -18,7 +18,7 @@ toucan_ecs_macro = { path = "toucan_ecs_macro" }
 
 [dev-dependencies]
 criterion = { version = "0.3.6", features = ["html_reports"] }
-crossterm = "0.24.0"
+crossterm = "0.25.0"
 rand = "0.8.5"
 
 [lib]
