@@ -23,7 +23,7 @@ fn main() -> utils::Result<()> {
     print!("Enter probability of cell to be initially alive: ");
     stdout.flush()?;
     let probability = utils::read_and_parse(&mut stdin)?;
-    if probability < 0.0 || probability > 1.0 {
+    if !(0.0..=1.0).contains(&probability) {
         let error = format!("Probability must be between 0 and 1, got {}", probability);
         return Err(error.into());
     }

@@ -30,7 +30,7 @@ fn foreach_component_system(
         entity,
         position,
         velocity,
-        mass.as_deref(),
+        mass,
         inner,
     );
 }

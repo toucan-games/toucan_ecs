@@ -49,9 +49,9 @@ fn view_mut(criterion: &mut Criterion) {
     fn routine(mut world: World) {
         let view = world.view_mut::<(&mut Position, Option<&mut Velocity>, &mut Mass)>();
         for item in view {
-            let (position, mut velocity, mass) = black_box(item);
+            let (position, velocity, mass) = black_box(item);
             position.x -= 1.0;
-            if let Some(velocity) = velocity.as_deref_mut() {
+            if let Some(velocity) = velocity {
                 velocity.dy += 1.0;
             }
             mass.0 += 1.0;

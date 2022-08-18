@@ -44,7 +44,7 @@ fn complex_view() {
             "entity: {:?}, position: {:?}, velocity: {:?}",
             entity,
             position,
-            velocity.as_deref(),
+            velocity,
         )
     }
 }
@@ -66,7 +66,7 @@ fn complex_resource_view() {
             "entity: {:?}, position: {:?}, velocity: {:?}, inner: {}",
             entity,
             position,
-            velocity.as_deref(),
+            velocity,
             resource.inner(),
         )
     }
