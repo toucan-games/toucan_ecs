@@ -23,7 +23,7 @@ where
     fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
     fn new(data: &mut WorldRefs<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let resource = data.move_resource_ref_mut().ok_or(FetchError)?;
+        let resource = data.move_resource_mut().ok_or(FetchError)?;
         Ok(Self { resource })
     }
 

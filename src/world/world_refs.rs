@@ -23,11 +23,11 @@ impl<'world> WorldRefs<'world> {
         self.storages.move_ref::<C>()
     }
 
-    pub fn move_storage_ref_mut<C>(&mut self) -> Option<&'world mut C::Storage>
+    pub fn move_storage_mut<C>(&mut self) -> Option<&'world mut C::Storage>
     where
         C: Component,
     {
-        self.storages.move_ref_mut::<C>()
+        self.storages.move_mut::<C>()
     }
 
     #[cfg(feature = "resource")]
@@ -47,10 +47,10 @@ impl<'world> WorldRefs<'world> {
     }
 
     #[cfg(feature = "resource")]
-    pub fn move_resource_ref_mut<R>(&mut self) -> Option<&'world mut R>
+    pub fn move_resource_mut<R>(&mut self) -> Option<&'world mut R>
     where
         R: Resource,
     {
-        self.resources.move_ref_mut::<R>()
+        self.resources.move_mut::<R>()
     }
 }

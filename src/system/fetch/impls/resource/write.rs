@@ -22,7 +22,7 @@ where
     type Item = marker::ResourceMut<'data, R>;
 
     fn fetch(_: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
-        let resource = data.move_resource_ref_mut().ok_or(FetchError)?;
+        let resource = data.move_resource_mut().ok_or(FetchError)?;
         let resource = marker::ResourceMut::new(resource);
         Ok(resource)
     }

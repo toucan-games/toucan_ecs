@@ -191,7 +191,7 @@ impl<'world> Components<'world> {
         let refs = WorldRefs {
             storages: StorageRefs::from(self.components),
             #[cfg(feature = "resource")]
-            resources: ResourceRefs::empty(),
+            resources: ResourceRefs::default(),
         };
         (entities, refs)
     }
@@ -502,7 +502,7 @@ impl<'world> ComponentsMut<'world> {
         let refs = WorldRefs {
             storages: StorageRefs::from(&*self.components),
             #[cfg(feature = "resource")]
-            resources: ResourceRefs::empty(),
+            resources: ResourceRefs::default(),
         };
         (entities, refs)
     }
@@ -512,7 +512,7 @@ impl<'world> ComponentsMut<'world> {
         let refs = WorldRefs {
             storages: StorageRefs::from(&mut *self.components),
             #[cfg(feature = "resource")]
-            resources: ResourceRefs::empty(),
+            resources: ResourceRefs::default(),
         };
         (entities, refs)
     }

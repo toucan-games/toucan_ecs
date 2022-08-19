@@ -42,9 +42,7 @@ fn complex_view() {
     for (entity, position, velocity, _) in world.view::<Query>() {
         println!(
             "entity: {:?}, position: {:?}, velocity: {:?}",
-            entity,
-            position,
-            velocity,
+            entity, position, velocity,
         )
     }
 }

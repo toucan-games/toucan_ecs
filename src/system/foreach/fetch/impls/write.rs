@@ -31,7 +31,7 @@ where
     }
 
     fn new(data: &mut WorldRefs<'data>, optimal: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let storage = data.move_storage_ref_mut::<C>().ok_or(FetchError)?;
+        let storage = data.move_storage_mut::<C>().ok_or(FetchError)?;
         if optimal == Some(ComponentTypeId::of::<C>()) {
             let iter = storage.iter_mut();
             Ok(Self::Iter(iter))

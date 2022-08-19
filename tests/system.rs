@@ -27,11 +27,7 @@ fn foreach_component_system(
     };
     println!(
         "entity: {:?}, position: {:?}, velocity: {:?}, mass: {:?}, inner: {}",
-        entity,
-        position,
-        velocity,
-        mass,
-        inner,
+        entity, position, velocity, mass, inner,
     );
 }
 

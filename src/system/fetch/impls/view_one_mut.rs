@@ -22,7 +22,7 @@ where
     type Item = ViewOneMut<'data, C>;
 
     fn fetch(_: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
-        let storage = data.move_storage_ref_mut::<C>();
+        let storage = data.move_storage_mut::<C>();
         let view_one_mut = ViewOneMut::new(storage);
         Ok(view_one_mut)
     }

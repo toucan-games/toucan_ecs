@@ -115,7 +115,7 @@ impl<'world> Resources<'world> {
         Q: ResourceQuery<'view>,
     {
         let mut data = WorldRefs {
-            storages: StorageRefs::empty(),
+            storages: StorageRefs::default(),
             resources: ResourceRefs::from(self.resources),
         };
         ForeachHolder::new(None, &mut data)
@@ -259,7 +259,7 @@ impl<'world> ResourcesMut<'world> {
         Q: ResourceQuery<'view>,
     {
         let mut data = WorldRefs {
-            storages: StorageRefs::empty(),
+            storages: StorageRefs::default(),
             resources: ResourceRefs::from(&*self.resources),
         };
         ForeachHolder::new(None, &mut data)
@@ -315,7 +315,7 @@ impl<'world> ResourcesMut<'world> {
         Q: ResourceQueryMut<'view>,
     {
         let mut data = WorldRefs {
-            storages: StorageRefs::empty(),
+            storages: StorageRefs::default(),
             resources: ResourceRefs::from(&mut *self.resources),
         };
         ForeachHolder::new(None, &mut data)

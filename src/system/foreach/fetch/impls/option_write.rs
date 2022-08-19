@@ -22,7 +22,7 @@ where
     fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
     fn new(data: &mut WorldRefs<'data>, _: Option<ComponentTypeId>) -> FetchResult<Self> {
-        let storage = data.move_storage_ref_mut::<C>();
+        let storage = data.move_storage_mut::<C>();
         Ok(Self { storage })
     }
 
