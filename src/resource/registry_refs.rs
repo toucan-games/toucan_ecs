@@ -1,19 +1,15 @@
 use std::hash::BuildHasherDefault;
 
+use ref_kind::RefKindMap;
+
 use crate::hash::TypeIdHasher;
-use crate::ref_kind::RefKindStorage;
 use crate::resource::erased::ErasedResourceHolder;
 use crate::resource::{Registry, Resource, ResourceTypeId};
 
 #[repr(transparent)]
 #[derive(Default)]
 pub struct RegistryRefs<'data> {
-    refs: RefKindStorage<
-        'data,
-        ResourceTypeId,
-        ErasedResourceHolder,
-        BuildHasherDefault<TypeIdHasher>,
-    >,
+    refs: RefKindMap<'data, ResourceTypeId, ErasedResourceHolder, BuildHasherDefault<TypeIdHasher>>,
 }
 
 impl<'data> From<&'data Registry> for RegistryRefs<'data> {
