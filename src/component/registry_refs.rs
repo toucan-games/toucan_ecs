@@ -48,7 +48,7 @@ impl<'data> RegistryRefs<'data> {
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let erased = self.refs.move_ref(type_id)?;
+        let erased = self.refs.move_ref(&type_id)?;
         let storage = erased.as_storage_ref().expect("downcast error");
         Some(storage)
     }
@@ -58,7 +58,7 @@ impl<'data> RegistryRefs<'data> {
         C: Component,
     {
         let type_id = ComponentTypeId::of::<C>();
-        let erased = self.refs.move_mut(type_id)?;
+        let erased = self.refs.move_mut(&type_id)?;
         let storage = erased.as_storage_mut().expect("downcast error");
         Some(storage)
     }

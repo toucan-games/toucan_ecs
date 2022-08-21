@@ -13,7 +13,7 @@ edition = "2021"
 [dependencies]
 slotmap = "1.0.6"
 as-any = "0.3.0"
-ref_kind = "0.1.0"
+ref_kind = "0.2.1"
 multimap = { version = "0.8.3", default-features = false }
 toucan_ecs_macro = { path = "toucan_ecs_macro" }
 

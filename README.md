@@ -2,7 +2,7 @@
 
 [![Crate](https://img.shields.io/crates/v/toucan_ecs.svg)](https://crates.io/crates/toucan_ecs)
 [![Docs](https://docs.rs/toucan_ecs/badge.svg)](https://docs.rs/toucan_ecs)
-[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache%202.0-blue.svg)](./docs)
+![License](https://img.shields.io/badge/license-MIT%20OR%20Apache%202.0-blue.svg)
 
 Simple and safe ECS library for Rust.
 
@@ -16,7 +16,7 @@ Provides basic features, such as:
 
 ## Feature flags
 
-This library contains some feature flags:
+This crate has the following Cargo features:
 
 | Feature name | Description                                |
 |--------------|--------------------------------------------|
@@ -26,8 +26,7 @@ This library contains some feature flags:
 
 Licensed under either of
 
-- Apache License, Version 2.0,
-  ([docs/LICENSE-APACHE-2.0](./docs/LICENSE-APACHE-2.0) or <http://www.apache.org/licenses/LICENSE-2.0>)
-- MIT license ([docs/LICENSE-MIT](./docs/LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+- Apache License, Version 2.0, ([LICENSE-APACHE](./LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([LICENSE-MIT](./LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
 
 at your option.

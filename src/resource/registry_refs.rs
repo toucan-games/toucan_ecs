@@ -48,7 +48,7 @@ impl<'data> RegistryRefs<'data> {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        let erased = self.refs.move_ref(type_id)?;
+        let erased = self.refs.move_ref(&type_id)?;
         let resource = erased.as_resource_ref().expect("downcast error");
         Some(resource)
     }
@@ -58,7 +58,7 @@ impl<'data> RegistryRefs<'data> {
         R: Resource,
     {
         let type_id = ResourceTypeId::of::<R>();
-        let erased = self.refs.move_mut(type_id)?;
+        let erased = self.refs.move_mut(&type_id)?;
         let resource = erased.as_resource_mut().expect("downcast error");
         Some(resource)
     }
