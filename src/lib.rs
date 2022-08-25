@@ -101,7 +101,6 @@
 //!
 //! ```
 //! use toucan_ecs::prelude::*;
-//! use toucan_ecs::marker;
 //!
 //! #[derive(Copy, Clone, Component)]
 //! struct Name(&'static str);
@@ -120,7 +119,7 @@
 //! let mut schedule = Schedule::builder()
 //!     .system(|| println!("Hello, World"))
 //!     // This system will be executed once
-//!     .system(|resource: marker::Resource<MyResource>| println!("Resource value: {}", resource.0))
+//!     .system(|resource: Res<MyResource>| println!("Resource value: {}", (*resource).0))
 //!     // This system will be executed for each entity with `Name` and `ID` components
 //!     .foreach_system(|name: &Name, id: &mut ID| {
 //!         id.0 += 100;

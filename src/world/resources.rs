@@ -87,8 +87,6 @@ impl<'world> Resources<'world> {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// use toucan_ecs::marker;
-    ///
     /// #[derive(Debug, Eq, PartialEq, Resource)]
     /// struct ExampleResource(u32);
     ///
@@ -99,8 +97,8 @@ impl<'world> Resources<'world> {
     /// world.create_resources(ExampleResource(42));
     ///
     /// type Query<'a> = (
-    ///     marker::Resource<'a, ExampleResource>,
-    ///     Option<marker::Resource<'a, AnotherResource>>,
+    ///     Res<'a, ExampleResource>,
+    ///     Option<Res<'a, AnotherResource>>,
     /// );
     /// let resources = world.resources();
     /// let (example, another) = resources.view::<Query>();
@@ -231,8 +229,6 @@ impl<'world> ResourcesMut<'world> {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// use toucan_ecs::marker;
-    ///
     /// #[derive(Debug, Eq, PartialEq, Resource)]
     /// struct ExampleResource(u32);
     ///
@@ -243,8 +239,8 @@ impl<'world> ResourcesMut<'world> {
     /// world.create_resources(ExampleResource(42));
     ///
     /// type Query<'a> = (
-    ///     marker::Resource<'a, ExampleResource>,
-    ///     Option<marker::Resource<'a, AnotherResource>>,
+    ///     Res<'a, ExampleResource>,
+    ///     Option<Res<'a, AnotherResource>>,
     /// );
     /// let resources = world.resources_mut();
     /// let (example, another) = resources.view::<Query>();
@@ -286,8 +282,6 @@ impl<'world> ResourcesMut<'world> {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// use toucan_ecs::marker;
-    ///
     /// #[derive(Debug, Eq, PartialEq, Resource)]
     /// struct ExampleResource(u32);
     ///
@@ -298,13 +292,13 @@ impl<'world> ResourcesMut<'world> {
     /// world.create_resources(ExampleResource(42));
     ///
     /// type Query<'a> = (
-    ///     marker::ResourceMut<'a, ExampleResource>,
-    ///     Option<marker::Resource<'a, AnotherResource>>,
+    ///     ResMut<'a, ExampleResource>,
+    ///     Option<Res<'a, AnotherResource>>,
     /// );
     /// let mut resources = world.resources_mut();
     /// let (mut example, another) = resources.view_mut::<Query>();
     ///
-    /// example.0 = 10;
+    /// (*example).0 = 10;
     /// assert_eq!(*example, ExampleResource(10));
     /// assert!(another.is_none());
     /// ```

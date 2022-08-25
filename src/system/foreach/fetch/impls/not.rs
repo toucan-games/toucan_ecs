@@ -33,9 +33,9 @@ where
 
     fn fetch_entity(&'data mut self, entity: Entity) -> FetchResult<Self::Item> {
         match self.storage {
-            None => Ok(Not::new()),
+            None => Ok(Not::default()),
             Some(storage) => match storage.attached(entity) {
-                false => Ok(Not::new()),
+                false => Ok(Not::default()),
                 true => Err(FetchError),
             },
         }

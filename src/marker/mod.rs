@@ -2,7 +2,7 @@
 
 pub use component::Not;
 #[cfg(feature = "resource")]
-pub use resource::{Resource, ResourceMut};
+pub use resource::{Res, ResMut};
 
 mod component;
 #[cfg(feature = "resource")]

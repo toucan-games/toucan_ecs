@@ -1,6 +1,6 @@
 use crate::component::Component;
 use crate::entity::Entity;
-use crate::marker;
+use crate::marker::*;
 #[cfg(feature = "resource")]
 use crate::resource::Resource;
 use crate::system::foreach::fetch::*;
@@ -28,7 +28,7 @@ where
     type Fetch = FetchOptionRead<'data, C>;
 }
 
-impl<'data, C> Query<'data> for marker::Not<C>
+impl<'data, C> Query<'data> for Not<C>
 where
     C: Component,
 {
@@ -51,7 +51,7 @@ where
 
 #[cfg(feature = "resource")]
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> Query<'data> for marker::Resource<'data, R>
+impl<'data, R> Query<'data> for Res<'data, R>
 where
     R: Resource,
 {
@@ -60,7 +60,7 @@ where
 
 #[cfg(feature = "resource")]
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> Query<'data> for Option<marker::Resource<'data, R>>
+impl<'data, R> Query<'data> for Option<Res<'data, R>>
 where
     R: Resource,
 {
@@ -69,7 +69,7 @@ where
 
 #[cfg(feature = "resource")]
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> Query<'data> for marker::ResourceMut<'data, R>
+impl<'data, R> Query<'data> for ResMut<'data, R>
 where
     R: Resource,
 {
@@ -78,7 +78,7 @@ where
 
 #[cfg(feature = "resource")]
 #[cfg_attr(docsrs, doc(cfg(feature = "resource")))]
-impl<'data, R> Query<'data> for Option<marker::ResourceMut<'data, R>>
+impl<'data, R> Query<'data> for Option<ResMut<'data, R>>
 where
     R: Resource,
 {

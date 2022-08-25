@@ -2,7 +2,7 @@ use std::marker::PhantomData;
 
 use crate::entity::Iter;
 use crate::error::{FetchError, FetchResult};
-use crate::marker;
+use crate::marker::ResMut;
 use crate::resource::Resource;
 use crate::system::fetch::Fetch;
 use crate::world::WorldRefs;
@@ -19,11 +19,11 @@ impl<'data, R> Fetch<'data> for FetchResourceWrite<R>
 where
     R: Resource,
 {
-    type Item = marker::ResourceMut<'data, R>;
+    type Item = ResMut<'data, R>;
 
     fn fetch(_: &Iter<'data>, data: &mut WorldRefs<'data>) -> FetchResult<Self::Item> {
         let resource = data.move_resource_mut().ok_or(FetchError)?;
-        let resource = marker::ResourceMut::new(resource);
+        let resource = ResMut(resource);
         Ok(resource)
     }
 }

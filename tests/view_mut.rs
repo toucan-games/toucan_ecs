@@ -1,5 +1,4 @@
 use components::{Mass, Position, Velocity};
-use toucan_ecs::marker::Not;
 use toucan_ecs::prelude::*;
 
 mod components;

@@ -767,8 +767,6 @@ impl World {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// use toucan_ecs::marker;
-    ///
     /// #[derive(Debug, Eq, PartialEq, Resource)]
     /// struct ExampleResource(u32);
     ///
@@ -779,8 +777,8 @@ impl World {
     /// world.create_resources(ExampleResource(42));
     ///
     /// type Query<'a> = (
-    ///     marker::Resource<'a, ExampleResource>,
-    ///     Option<marker::Resource<'a, AnotherResource>>,
+    ///     Res<'a, ExampleResource>,
+    ///     Option<Res<'a, AnotherResource>>,
     /// );
     /// let (example, another) = world.resource_view::<Query>();
     ///
@@ -886,8 +884,6 @@ impl World {
     ///
     /// ```
     /// # use toucan_ecs::prelude::*;
-    /// use toucan_ecs::marker;
-    ///
     /// #[derive(Debug, Eq, PartialEq, Resource)]
     /// struct ExampleResource(u32);
     ///
@@ -898,12 +894,12 @@ impl World {
     /// world.create_resources(ExampleResource(42));
     ///
     /// type Query<'a> = (
-    ///     marker::ResourceMut<'a, ExampleResource>,
-    ///     Option<marker::Resource<'a, AnotherResource>>,
+    ///     ResMut<'a, ExampleResource>,
+    ///     Option<Res<'a, AnotherResource>>,
     /// );
     /// let (mut example, another) = world.resource_view_mut::<Query>();
     ///
-    /// example.0 = 10;
+    /// (*example).0 = 10;
     /// assert_eq!(*example, ExampleResource(10));
     /// assert!(another.is_none());
     /// ```

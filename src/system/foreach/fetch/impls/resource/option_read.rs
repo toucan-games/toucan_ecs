@@ -1,7 +1,7 @@
 use crate::component::ComponentTypeId;
 use crate::entity::Entity;
 use crate::error::{FetchError, FetchResult};
-use crate::marker;
+use crate::marker::Res;
 use crate::resource::Resource;
 use crate::system::foreach::fetch::{Fetch, FetchData, FetchStrategy};
 use crate::world::WorldRefs;
@@ -18,7 +18,7 @@ impl<'data, R> Fetch<'data> for FetchResourceOptionRead<'data, R>
 where
     R: Resource,
 {
-    type Item = Option<marker::Resource<'data, R>>;
+    type Item = Option<Res<'data, R>>;
 
     fn push_fetch_data(_: &WorldRefs<'data>, _: &mut Vec<FetchData>) {}
 
@@ -32,7 +32,7 @@ where
     }
 
     fn fetch_entity(&'data mut self, _: Entity) -> FetchResult<Self::Item> {
-        let resource = self.resource.map(marker::Resource::new);
+        let resource = self.resource.map(Res);
         Ok(resource)
     }
 

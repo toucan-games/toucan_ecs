@@ -1,10 +1,10 @@
 use std::fmt::Debug;
 
 use components::{Mass, Position, Velocity};
+#[cfg(feature = "resource")]
+use resources::SimpleResource;
 use toucan_ecs::prelude::*;
 use toucan_ecs::world::query::Query;
-#[cfg(feature = "resource")]
-use {resources::SimpleResource, toucan_ecs::marker};
 
 mod components;
 #[cfg(feature = "resource")]
@@ -17,7 +17,7 @@ fn foreach_component_system(
     position: &mut Position,
     velocity: &Velocity,
     mass: Option<&Mass>,
-    mut resource: marker::ResourceMut<SimpleResource>,
+    mut resource: ResMut<SimpleResource>,
 ) {
     position.x += 10.0;
     let inner = {
@@ -120,9 +120,9 @@ fn for_each_system() {
     world.create_resources(SimpleResource::default());
 
     let mut schedule = Schedule::builder()
-        .system(|res: marker::Resource<SimpleResource>| println!("Inner is {}", res.inner()))
+        .system(|res: Res<SimpleResource>| println!("Inner is {}", res.inner()))
         .foreach_system(|| println!("Will be repeated for each entity"))
-        .system(|file: Option<marker::ResourceMut<File>>| {
+        .system(|file: Option<ResMut<File>>| {
             println!("Is some file: {}", file.is_some());
             if let Some(mut file) = file {
                 let File(ref mut file) = *file;

@@ -1,11 +1,10 @@
-use toucan_ecs::marker::Resource;
-use toucan_ecs::world::view::View;
+use toucan_ecs::prelude::*;
 
 use crate::field::{Alive, Field, Point};
 
 type PrintQuery<'a> = (&'a Point, Option<&'a Alive>);
 
-pub fn print_field<'a>(data: View<'a, PrintQuery<'a>>, field: Resource<'a, Field>) {
+pub fn print_field<'a>(data: View<'a, PrintQuery<'a>>, field: Res<'a, Field>) {
     let width = field.width();
     for (point, alive) in data {
         print!("{}", alive.map(|_| 'X').unwrap_or('O'));

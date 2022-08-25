@@ -1,6 +1,6 @@
 use crate::component::{Component, ComponentTypeId};
 use crate::entity::Entity;
-use crate::marker;
+use crate::marker::*;
 #[cfg(feature = "resource")]
 use crate::resource::{Resource, ResourceTypeId};
 use crate::system::foreach::{ForeachHolder, Query as ForeachQuery};
@@ -65,7 +65,7 @@ where
     }
 }
 
-impl<C> MutabilityCheck for marker::Not<C>
+impl<C> MutabilityCheck for Not<C>
 where
     C: Component,
 {
@@ -77,7 +77,7 @@ where
 }
 
 #[cfg(feature = "resource")]
-impl<'data, R> MutabilityCheck for marker::Resource<'data, R>
+impl<'data, R> MutabilityCheck for Res<'data, R>
 where
     R: Resource,
 {
@@ -89,7 +89,7 @@ where
 }
 
 #[cfg(feature = "resource")]
-impl<'data, R> MutabilityCheck for marker::ResourceMut<'data, R>
+impl<'data, R> MutabilityCheck for ResMut<'data, R>
 where
     R: Resource,
 {
@@ -101,11 +101,11 @@ where
 }
 
 #[cfg(feature = "resource")]
-impl<'data, R> MutabilityCheck for Option<marker::Resource<'data, R>>
+impl<'data, R> MutabilityCheck for Option<Res<'data, R>>
 where
     R: Resource,
 {
-    const MUTABLE: bool = marker::Resource::<'data, R>::MUTABLE;
+    const MUTABLE: bool = Res::<'data, R>::MUTABLE;
 
     fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)
@@ -113,11 +113,11 @@ where
 }
 
 #[cfg(feature = "resource")]
-impl<'data, R> MutabilityCheck for Option<marker::ResourceMut<'data, R>>
+impl<'data, R> MutabilityCheck for Option<ResMut<'data, R>>
 where
     R: Resource,
 {
-    const MUTABLE: bool = marker::ResourceMut::<'data, R>::MUTABLE;
+    const MUTABLE: bool = ResMut::<'data, R>::MUTABLE;
 
     fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
         multimap.insert(ResourceTypeId::of::<R>().into(), Self::MUTABLE)

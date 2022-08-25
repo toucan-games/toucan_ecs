@@ -1,11 +1,10 @@
 use std::io::{stdin, stdout, Write};
 
 use rand::{thread_rng, Rng};
+use toucan_ecs::prelude::*;
 
-use field::{Alive, Field, Point, WatchAfter};
-use print::print_field;
-use toucan_ecs::system::Schedule;
-use toucan_ecs::world::World;
+use crate::field::{Alive, Field, Point, WatchAfter};
+use crate::print::print_field;
 
 mod field;
 mod print;
