@@ -1,15 +1,17 @@
 use super::*;
 
+use tupleops::TupleLength;
+
 macro_rules! mutability_check {
     ($($types:ident),*) => {
         impl<$($types),*> MutabilityCheck for ($($types,)*)
         where
             $($types: MutabilityCheck,)*
         {
-            const MUTABLE: bool = $($types::MUTABLE)||*;
+            const LENGTH: usize = <Self as TupleLength>::LENGTH;
 
-            fn extend_before_check(multimap: &mut MultiMap<DataTypeId, bool>) {
-                $($types::extend_before_check(multimap);)*
+            fn check(check_map: &mut CheckMap) {
+                $($types::check(check_map);)*
             }
         }
     };

@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use std::hash::BuildHasherDefault;
 
+use hashbrown::HashMap;
 use ref_kind::{Many, RefKind};
 
 use crate::hash::TypeIdHasher;

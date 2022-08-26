@@ -14,3 +14,9 @@ impl ComponentTypeId {
         Self(TypeId::of::<C>())
     }
 }
+
+impl From<ComponentTypeId> for TypeId {
+    fn from(type_id: ComponentTypeId) -> Self {
+        type_id.0
+    }
+}

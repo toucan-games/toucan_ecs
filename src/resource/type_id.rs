@@ -14,3 +14,9 @@ impl ResourceTypeId {
         Self(TypeId::of::<R>())
     }
 }
+
+impl From<ResourceTypeId> for TypeId {
+    fn from(type_id: ResourceTypeId) -> Self {
+        type_id.0
+    }
+}
